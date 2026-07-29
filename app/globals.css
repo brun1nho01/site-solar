@@ -1,0 +1,302 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
+
+/* ═══════════════════════════════════════════════════
+   Design Tokens — W.Lima Soluções
+   Dourado/Amarelo + Azul Tecnológico + Fundo Navy
+   ═══════════════════════════════════════════════════ */
+
+:root {
+  /* ── Gold (Amarelo W.Lima) ── */
+  --gold-50: #fef7e8;
+  --gold-100: #fdedc5;
+  --gold-200: #fce29d;
+  --gold-300: #fad46f;
+  --gold-400: #f7c244;
+  --gold-500: #f2b223;
+  --gold-600: #d38c11;
+  --gold-700: #aa6311;
+  --gold-800: #8a4d13;
+  --gold-900: #743f16;
+  --gold-950: #422007;
+
+  /* ── Blue (Azul W.Lima) ── */
+  --blue-50: #f0f7ff;
+  --blue-100: #e0f0fe;
+  --blue-200: #bae1fe;
+  --blue-300: #7dcafe;
+  --blue-400: #37aefa;
+  --blue-500: #1098d8;
+  --blue-600: #0575b6;
+  --blue-700: #045c92;
+  --blue-800: #1755bc;
+  --blue-900: #0b3b85;
+  --blue-950: #082559;
+
+  /* ── Navy / Midnight Blue (Background) ── */
+  --navy-50: #f2f6fb;
+  --navy-100: #e2ecf5;
+  --navy-200: #cbdceb;
+  --navy-300: #a7c3dd;
+  --navy-400: #7da2ca;
+  --navy-500: #5d85b1;
+  --navy-600: #496a92;
+  --navy-700: #3b5577;
+  --navy-800: #324763;
+  --navy-900: #1a2637;
+  --navy-950: #060b14;
+
+  /* ── Background (Navy profundo) ── */
+  --bg-primary: #040911;
+  --bg-secondary: #060b14;
+  --bg-card: #0a1120;
+  --text-primary: #f0f7ff;
+  --text-secondary: #a7c3dd;
+  --text-muted: #5d85b1;
+  --border-subtle: rgba(255, 255, 255, 0.05);
+
+  /* ── Gradients W.Lima ── */
+  --gradient-hero: radial-gradient(circle at center, var(--navy-900) 0%, var(--bg-primary) 100%);
+  --gradient-cta: linear-gradient(135deg, #feb51f 0%, #f2cd42 100%);
+  --gradient-blue: linear-gradient(135deg, #1755bc 0%, #1098d8 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+
+  /* ── Shadows ── */
+  --shadow-glow: 0 0 60px rgba(242, 205, 66, 0.15);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5);
+  --shadow-button: 0 4px 20px rgba(242, 205, 66, 0.35);
+}
+
+/* ── Tailwind v4 Theme Tokens ── */
+@theme inline {
+  --color-gold-50: var(--gold-50);
+  --color-gold-100: var(--gold-100);
+  --color-gold-200: var(--gold-200);
+  --color-gold-300: var(--gold-300);
+  --color-gold-400: var(--gold-400);
+  --color-gold-500: var(--gold-500);
+  --color-gold-600: var(--gold-600);
+  --color-gold-700: var(--gold-700);
+  --color-gold-800: var(--gold-800);
+  --color-gold-900: var(--gold-900);
+  --color-gold-950: var(--gold-950);
+
+  --color-blue-50: var(--blue-50);
+  --color-blue-100: var(--blue-100);
+  --color-blue-200: var(--blue-200);
+  --color-blue-300: var(--blue-300);
+  --color-blue-400: var(--blue-400);
+  --color-blue-500: var(--blue-500);
+  --color-blue-600: var(--blue-600);
+  --color-blue-700: var(--blue-700);
+  --color-blue-800: var(--blue-800);
+  --color-blue-900: var(--blue-900);
+  --color-blue-950: var(--blue-950);
+
+  --color-navy-50: var(--navy-50);
+  --color-navy-100: var(--navy-100);
+  --color-navy-200: var(--navy-200);
+  --color-navy-300: var(--navy-300);
+  --color-navy-400: var(--navy-400);
+  --color-navy-500: var(--navy-500);
+  --color-navy-600: var(--navy-600);
+  --color-navy-700: var(--navy-700);
+  --color-navy-800: var(--navy-800);
+  --color-navy-900: var(--navy-900);
+  --color-navy-950: var(--navy-950);
+
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border-subtle: var(--border-subtle);
+
+  --font-sans: var(--font-satoshi), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), monospace;
+  --font-display: var(--font-satoshi), system-ui, sans-serif;
+}
+
+/* ═══════════════════════════════════════════════════
+   Global Styles
+   ═══════════════════════════════════════════════════ */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════════════════
+   Glassmorphism — Plano 4.1
+   backdrop-blur + bg translúcido + borda sutil
+   ═══════════════════════════════════════════════════ */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+}
+
+:is(.dark .glass) {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+:is(.dark .glass-strong) {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════
+   Tipografia — Plano seção 4.2
+   text-wrap: balance, tabular-nums
+   ═══════════════════════════════════════════════════ */
+.text-balance {
+  text-wrap: balance;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════════════════
+   Animações — Plano seção 4.1
+   Suaves, leves (transform + opacity)
+   Respeita prefers-reduced-motion
+   ═══════════════════════════════════════════════════ */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(242, 205, 66, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(242, 205, 66, 0.35);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.6s ease-out both;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Delay utilities for staggered animations */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* ── Respeita preferência de movimento reduzido (4.2) ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Form Focus Styles — Plano seção 4.2
+   focus-visible claro, sem outline:none solto
+   ═══════════════════════════════════════════════════ */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(242, 205, 66, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════
+   Selection & Scrollbar
+   ═══════════════════════════════════════════════════ */
+::selection {
+  background: rgba(242, 205, 66, 0.35);
+  color: #1a2637;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f2f6fb;
+}
+
+:is(.dark) ::-webkit-scrollbar-track,
+:is(.dark)::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbdceb;
+  border-radius: 4px;
+}
+
+:is(.dark) ::-webkit-scrollbar-thumb,
+:is(.dark)::-webkit-scrollbar-thumb {
+  background: var(--navy-700);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a7c3dd;
+}
+
+:is(.dark) ::-webkit-scrollbar-thumb:hover,
+:is(.dark)::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-600);
+}

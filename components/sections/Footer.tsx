@@ -1,0 +1,140 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Lightning, CheckCircle, ChatCircleDots } from "@phosphor-icons/react";
+import MagneticButton from "@/components/ui/MagneticButton";
+
+export default function Footer() {
+  const handleSimularClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const el = document.getElementById("simulador");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const [year, setYear] = useState<number>(new Date().getFullYear());
+
+  return (
+    <footer id="footer" className="relative border-t border-navy-900/10 dark:border-white/10 overflow-hidden bg-white dark:bg-navy-950">
+
+      {/* ── CTA Final de Alto Impacto (Awwwards Style) ── */}
+      <div className="relative py-20 lg:py-28 bg-slate-50 dark:bg-navy-950">
+
+        {/* Glow fotovoltaico no fundo */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gold-500/10 rounded-full blur-[140px] pointer-events-none" />
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white/80 dark:bg-navy-900/60 backdrop-blur-2xl rounded-3xl p-8 sm:p-14 lg:p-16 flex flex-col items-center text-center border border-navy-900/10 dark:border-white/10 shadow-2xl relative overflow-hidden">
+
+            {/* Headline Gigante de Encerramento */}
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold mb-6 text-balance text-navy-950 dark:text-white leading-[1.1] max-w-4xl">
+              Sua Conta de Luz Pode Ser <span className="text-gold-500 dark:text-gold-400">Quase Zero</span> no Mês Que Vem.
+            </h2>
+
+            <p className="text-navy-600 dark:text-text-secondary text-base sm:text-xl max-w-2xl mb-8 leading-relaxed">
+              Solicite uma análise de viabilidade técnica gratuita e descubra o quanto você vai economizar antes de gastar um único centavo.
+            </p>
+
+            {/* Botão Magnético de Ação Principal */}
+            <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center justify-center gap-4">
+              <MagneticButton>
+                <a
+                  href="#simulador"
+                  onClick={handleSimularClick}
+                  className="flex items-center justify-center gap-3 px-9 py-4 font-bold text-navy-950 text-base sm:text-lg rounded-2xl bg-gradient-to-r from-gold-400 via-amber-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 shadow-[0_10px_30px_rgba(242,205,66,0.3)] transition-all duration-300 group cursor-pointer"
+                >
+                  <Lightning weight="fill" className="w-5 h-5 text-navy-950" />
+                  <span>Simular Minha Economia Agora</span>
+                </a>
+              </MagneticButton>
+
+              <a
+                href="https://wa.me/5522999618883"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 px-7 py-4 font-bold text-navy-950 dark:text-white text-base rounded-2xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-navy-900/10 dark:border-white/10 transition-colors"
+              >
+                <ChatCircleDots weight="bold" className="w-5 h-5 text-emerald-500" />
+                <span>Falar no WhatsApp</span>
+              </a>
+            </div>
+
+            <ul className="flex flex-wrap items-center justify-center gap-6 mt-8 text-xs font-mono text-navy-500 dark:text-text-muted">
+              <li className="flex items-center gap-1.5">
+                <CheckCircle weight="fill" className="w-4 h-4 text-emerald-500" /> Simulação 100% Gratuita
+              </li>
+              <li className="flex items-center gap-1.5">
+                <CheckCircle weight="fill" className="w-4 h-4 text-emerald-500" /> Sem Compromisso
+              </li>
+              <li className="flex items-center gap-1.5">
+                <CheckCircle weight="fill" className="w-4 h-4 text-emerald-500" /> Garantia de 25 Anos
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+
+      {/* ── Dados da empresa + Links legais ── */}
+      <div className="border-t border-navy-900/10 dark:border-white/10 py-10 bg-slate-100 dark:bg-navy-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 text-sm text-navy-600 dark:text-text-muted">
+            {/* Coluna 1: Empresa */}
+            <div>
+              <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">W Lima Soluções</p>
+              <p>CNPJ: 56.652.464/0001-16</p>
+              <p>Rua Virgílio Franklin, Centro</p>
+              <p>Cambuci — RJ, CEP 28430-000</p>
+            </div>
+
+            {/* Coluna 2: Links Legais */}
+            <div>
+              <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">Legal</p>
+              <ul className="space-y-1.5">
+                <li>
+                  <a href="/privacidade" className="text-navy-400 dark:text-text-muted hover:text-gold-500 transition-colors">
+                    Política de Privacidade
+                  </a>
+                </li>
+                <li>
+                  <a href="/termos" className="text-navy-400 dark:text-text-muted hover:text-gold-500 transition-colors">
+                    Termos de Uso
+                  </a>
+                </li>
+                <li>
+                  <span className="text-navy-400 dark:text-text-muted cursor-default">
+                    Homologação Concessionária
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Coluna 3: Contato */}
+            <div>
+              <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">Atendimento Direct</p>
+              <ul className="space-y-1.5">
+                <li>
+                  <a href="https://wa.me/5522999618883" className="hover:text-gold-500 transition-colors font-mono">
+                    (22) 99961-8883
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:contato@wlimasolucoes.com.br" className="hover:text-gold-500 transition-colors font-mono">
+                    contato@wlimasolucoes.com.br
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Copyright */}
+          <div className="mt-10 pt-6 border-t border-navy-900/10 dark:border-white/10 text-center text-xs text-navy-500 dark:text-text-muted flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>© {year || 2025} W Lima Soluções. Todos os direitos reservados.</p>
+            <p className="font-mono text-[11px]">Engenharia Solar de Alto Padrão no Rio de Janeiro</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
