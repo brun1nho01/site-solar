@@ -2,28 +2,24 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { Heart, ChatCircle as MessageCircle, Play, X, SpeakerHigh as Volume2, SpeakerX as VolumeX, ShareNetwork as Share2 } from "@phosphor-icons/react";
+import { ArrowSquareOut, Play, X, SpeakerHigh as Volume2, SpeakerX as VolumeX } from "@phosphor-icons/react";
 import Image from "next/image";
 
 interface InstagramPost {
   id: number;
   image: string;
   alt: string;
-  likes: number;
-  comments: number;
   isVideo: boolean;
   link: string;
   poster?: string;
 }
 
-const MOCK_POSTS: InstagramPost[] = [
+const GALLERY_ITEMS: InstagramPost[] = [
   {
     id: 1,
     image: "/images/video_bateria.mp4",
     poster: "/images/video_bateria.mp4#t=0.001",
     alt: "Vídeo mostrando a bateria instalada",
-    likes: 74,
-    comments: 2,
     isVideo: true,
     link: "https://www.instagram.com/p/DUWLdXkEShG/",
   },
@@ -31,8 +27,6 @@ const MOCK_POSTS: InstagramPost[] = [
     id: 2,
     image: "/images/post_2.jpg",
     alt: "Painel solar instalado com vista do telhado",
-    likes: 20,
-    comments: 0,
     isVideo: false,
     link: "https://www.instagram.com/p/DWplIfXDCFc/?img_index=1",
   },
@@ -41,8 +35,6 @@ const MOCK_POSTS: InstagramPost[] = [
     image: "/images/video_instalacao.mp4",
     poster: "/images/video_instalacao.mp4#t=0.001",
     alt: "Instalação da estrutura de painéis solares",
-    likes: 17,
-    comments: 0,
     isVideo: true,
     link: "https://www.instagram.com/p/DUsvUCEkWfE/",
   },
@@ -50,8 +42,6 @@ const MOCK_POSTS: InstagramPost[] = [
     id: 4,
     image: "/images/post_1.jpg",
     alt: "Cliente feliz com seu novo sistema solar",
-    likes: 121,
-    comments: 7,
     isVideo: false,
     link: "https://www.instagram.com/p/DSBjov0jOzs/?img_index=1",
   },
@@ -168,7 +158,7 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost, onClose: () => voi
 
         {/* Overlay UI Bottom */}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 pt-24 pointer-events-none z-10">
-          <div className="flex items-end justify-between pointer-events-auto">
+          <div className="flex items-end justify-between gap-4 pointer-events-auto">
             {/* Left Info */}
             <div className="text-white pr-4">
               <div className="flex items-center gap-2 mb-3">
@@ -179,26 +169,9 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost, onClose: () => voi
               </div>
             </div>
 
-            {/* Right Actions */}
-            <div className="flex flex-col items-center gap-5">
-              <button aria-label="Curtir post" className="flex flex-col items-center gap-1.5 group/btn">
-                <div className="p-3 rounded-full bg-black/30 backdrop-blur-md group-hover/btn:bg-white/20 transition-colors">
-                  <Heart className="w-6 h-6 text-white group-hover/btn:fill-red-500 group-hover/btn:text-red-500 transition-colors" />
-                </div>
-                <span className="text-xs text-white font-semibold drop-shadow-md">{post.likes}</span>
-              </button>
-              <button aria-label="Comentar post" className="flex flex-col items-center gap-1.5 group/btn">
-                <div className="p-3 rounded-full bg-black/30 backdrop-blur-md group-hover/btn:bg-white/20 transition-colors">
-                  <MessageCircle className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-xs text-white font-semibold drop-shadow-md">{post.comments}</span>
-              </button>
-              <button aria-label="Compartilhar post" className="flex flex-col items-center gap-1.5 group/btn">
-                <div className="p-3 rounded-full bg-black/30 backdrop-blur-md group-hover/btn:bg-white/20 transition-colors">
-                  <Share2 className="w-6 h-6 text-white" />
-                </div>
-              </button>
-            </div>
+            <a href={post.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-bold text-white backdrop-blur-md transition-colors hover:bg-white/25">
+              Ver publicação <ArrowSquareOut className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </motion.div>
@@ -217,10 +190,10 @@ export default function InstagramSection() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-8">
           <div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-navy-950 dark:text-white mb-4">
-              O ecossistema em <span className="text-gold-500 dark:text-gold-400">tempo real.</span>
+              Projetos e bastidores da <span className="text-gold-500 dark:text-gold-400">W. Lima.</span>
             </h2>
             <p className="text-navy-600 dark:text-text-secondary mt-3 max-w-xl text-lg">
-              Acompanhe nossos testes de baterias solares, obras entregues e usinas operacionais ativas hoje nas cidades do Estado do RJ.
+              Acompanhe conteúdos sobre energia solar, equipamentos, etapas de instalação e o dia a dia da equipe.
             </p>
           </div>
 
@@ -260,7 +233,7 @@ export default function InstagramSection() {
 
         {/* Grid de Posts */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {MOCK_POSTS.map((post) => (
+          {GALLERY_ITEMS.map((post) => (
             <div
               key={post.id}
               onClick={() => setActivePost(post)}
@@ -286,18 +259,8 @@ export default function InstagramSection() {
                 </div>
               )}
 
-              {/* Overlay On Hover */}
-              <div className="absolute inset-0 bg-navy-950/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
-                <div className="flex items-center gap-6 mb-4 text-white font-bold">
-                  <div className="flex items-center gap-2">
-                    <Heart className="w-6 h-6 fill-white" />
-                    <span>{post.likes}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MessageCircle className="w-6 h-6 fill-white" />
-                    <span>{post.comments}</span>
-                  </div>
-                </div>
+              <div className="absolute inset-0 bg-navy-950/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center z-10 pointer-events-none">
+                <span className="rounded-full border border-white/20 bg-black/20 px-4 py-2 text-sm font-bold text-white backdrop-blur-md">Abrir mídia</span>
               </div>
             </div>
           ))}

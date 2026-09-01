@@ -6,7 +6,7 @@ import "leaflet/dist/leaflet.css";
 // O Mapa Leaflet usa a API "window" nativa, portanto não pode renderizar no servidor (SSR).
 const LeafletMapRender = dynamic(
   () => import("@/components/ui/LeafletMapRender"),
-  { ssr: false, loading: () => <div className="w-full h-full bg-[#0a0f1c] animate-pulse flex items-center justify-center text-emerald-500/50 font-mono text-sm uppercase tracking-widest">Sincronizando Cartografia da Usina...</div> }
+  { ssr: false, loading: () => <div className="w-full h-full bg-[#0a0f1c] animate-pulse flex items-center justify-center text-emerald-500/50 font-mono text-sm uppercase tracking-widest">Carregando mapa de projetos ativos...</div> }
 );
 
 export default function RegionalMapSection() {
@@ -16,13 +16,13 @@ export default function RegionalMapSection() {
 
         <div className="text-center mb-16 max-w-2xl mx-auto">
           <span className="font-mono text-xs font-bold text-emerald-500 uppercase tracking-widest block mb-3">
-            Infraestrutura em Operação
+            Energia em Operação
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-navy-950 dark:text-white mb-6 text-balance">
-            Geometria exata das nossas instalações entre <span className="text-emerald-500">RJ, MG e ES.</span>
+            Energia solar ativa em <span className="text-emerald-500">várias cidades do Rio de Janeiro.</span>
           </h2>
           <p className="text-navy-600 dark:text-text-secondary text-lg">
-            Acompanhe o mapa real da nossa cartela atual de usinas limpas gerando economia local a cada nascer do sol nas regiões do Sudeste.
+            Cambuci, Itaocara, São Fidélis, Aperibé, Pádua, Rio de Janeiro e Saquarema. Os pontos ficam no centro aproximado de cada município para preservar o endereço exato dos clientes.
           </p>
         </div>
 
@@ -43,7 +43,6 @@ export default function RegionalMapSection() {
         __html: `
         .leaflet-container { background: transparent !important; font-family: inherit; }
         .dark .leaflet-container { background: #0a0f1c !important;}
-        .leaflet-bottom.leaflet-right { display: none !important; } 
       `}} />
     </section>
   );

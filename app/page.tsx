@@ -7,7 +7,6 @@
 import HeroSection from "@/components/sections/HeroSection";
 import QualitySection from "@/components/sections/QualitySection";
 import ProcessSection from "@/components/sections/ProcessSection";
-import TaximetroDor from "@/components/sections/TaximetroDor";
 import EconomyCalculator from "@/components/calculator/EconomyCalculator";
 import dynamic from "next/dynamic";
 
@@ -22,10 +21,7 @@ export default function Home() {
   return (
     <main className="relative">
       <HeroSection />
-      
-      {/* Fase 3: O Taxímetro da Dor */}
-      <TaximetroDor />
-      
+
       {/* Container Integrado do Simulador */}
       <section id="simulador" className="relative z-10 pb-32 pt-4 px-4 overflow-hidden">
         <div className="max-w-3xl mx-auto">

@@ -109,7 +109,7 @@ export default function HeroSection() {
               }}
               className="text-lg sm:text-xl text-navy-700 dark:text-text-secondary max-w-xl mx-auto lg:mx-0 mb-10"
             >
-              Liberte-se dos aumentos constantes e economize até 95% na sua conta de luz com uma instalação solar de alto padrão.
+              Descubra o potencial de economia do seu imóvel com um projeto solar dimensionado para o seu consumo e para as condições do local.
             </motion.p>
 
             <motion.div 

@@ -6,28 +6,28 @@ import { useRef } from "react";
 
 const STEPS = [
   {
-    title: "Estudo & Parecer de Acesso",
-    description: "Engenharia de precisão com análise da sua fatura e viabilidade estrutural do telhado/solo conforme normas da ANEEL e concessionária (Enel/Light/Energisa/CEMIG).",
+    title: "Análise de Viabilidade",
+    description: "Levantamento da fatura, do perfil de consumo e das condições do telhado ou do solo para orientar o dimensionamento inicial.",
     icon: <Calculator weight="duotone" className="w-12 h-12 text-gold-500" />
   },
   {
-    title: "Projeto Executivo (CREA)",
-    description: "Emissão de ART assinada por engenheiro eletricista responsável e homologação burocrática integral na sua concessionária de energia sem você sair de casa.",
+    title: "Projeto e Homologação",
+    description: "Definição técnica do sistema e condução das etapas aplicáveis junto à concessionária, conforme o escopo formal da proposta.",
     icon: <FileText weight="duotone" className="w-12 h-12 text-gold-500" />
   },
   {
-    title: "Instalação Certificada (NR-10/35)",
-    description: "Equipe técnica própria habilitada para trabalho em altura e alta tensão executando a montagem com infraestrutura eletrodutada invisível em até 48h.",
+    title: "Instalação Conforme o Projeto",
+    description: "Montagem dos equipamentos e da infraestrutura conforme as condições verificadas no local e o cronograma definido para cada obra.",
     icon: <Wrench weight="duotone" className="w-12 h-12 text-gold-500" />
   },
   {
-    title: "Vistoria & Relógio Bidirecional",
-    description: "Acompanhamento no dia da vistoria da concessionária para verificação obrigatória de segurança e ativação oficial do novo medidor de créditos.",
+    title: "Vistoria e Conexão",
+    description: "Acompanhamento das etapas de vistoria, troca ou configuração do medidor e liberação, nos prazos e procedimentos da concessionária.",
     icon: <MapPin weight="duotone" className="w-12 h-12 text-gold-500" />
   },
   {
-    title: "Usinagem da Conta 95% Off",
-    description: "Usina ativa! O sistema injeta energia na rede, gira o relógio ao contrário e derruba até 95% do seu boleto de energia já no primeiro ciclo da fatura.",
+    title: "Geração e Compensação",
+    description: "Depois da liberação, o sistema começa a gerar energia. Créditos, economia e cobranças remanescentes variam conforme geração, consumo e regras da concessionária.",
     icon: <Lightning weight="duotone" className="w-12 h-12 text-gold-500" />
   }
 ];

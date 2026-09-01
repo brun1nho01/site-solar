@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LeadForm from "@/components/calculator/LeadForm";
 import { OdometerValue } from "@/components/ui/OdometerValue";
 import MagneticButton from "@/components/ui/MagneticButton";
@@ -9,6 +9,32 @@ import { Lightning, TrendUp, Clock, CaretRight } from "@phosphor-icons/react";
 export default function EconomyCalculator() {
   const [billValue, setBillValue] = useState(600);
   const [showForm, setShowForm] = useState(false);
+  const formWasToggledRef = useRef(false);
+  const continueButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!formWasToggledRef.current) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      if (showForm) {
+        document.getElementById("lead-step-1-title")?.focus();
+      } else {
+        continueButtonRef.current?.focus();
+      }
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [showForm]);
+
+  const handleShowForm = () => {
+    formWasToggledRef.current = true;
+    setShowForm(true);
+  };
+
+  const handleHideForm = () => {
+    formWasToggledRef.current = true;
+    setShowForm(false);
+  };
 
   /* ── Cálculos de Engenharia Solar (Plano Mestre) ── */
   const monthlySavings = billValue * 0.95;
@@ -34,7 +60,7 @@ export default function EconomyCalculator() {
           Simule o Retorno da Sua <span className="text-gold-500 dark:text-gold-400">Energia Própria</span>
         </h2>
         <p className="text-sm sm:text-base text-navy-600 dark:text-text-secondary max-w-lg mx-auto mt-2">
-          Ajuste o slider com o valor médio da sua conta de luz e veja a mágica da economia acontecer.
+          Ajuste o valor médio da sua conta de luz para visualizar uma estimativa inicial de economia.
         </p>
       </div>
 
@@ -71,6 +97,7 @@ export default function EconomyCalculator() {
 
           <input
             id="bill-slider"
+            name="billValue"
             type="range"
             min={min}
             max={max}
@@ -79,6 +106,8 @@ export default function EconomyCalculator() {
             onChange={(e) => setBillValue(Number(e.target.value))}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer m-0 z-20"
             aria-label="Valor da conta de luz mensal"
+            aria-valuetext={`R$ ${billValue.toLocaleString("pt-BR")} por mês`}
+            aria-describedby="bill-slider-description"
           />
         </div>
 
@@ -101,20 +130,20 @@ export default function EconomyCalculator() {
             prefix="R$ "
             className="text-xl sm:text-2xl font-mono font-bold text-navy-950 dark:text-white tabular-nums tracking-tight"
           />
-          <p className="text-[11px] text-navy-500 dark:text-text-muted mt-2">Redução de até 95% na conta todo mês.</p>
+          <p className="text-[11px] text-navy-500 dark:text-text-muted mt-2">Cenário máximo de referência usado pelo simulador.</p>
         </div>
 
         {/* Métrica 2: Retorno 25 Anos */}
         <div className="bg-gradient-to-br from-gold-500/15 via-gold-500/5 to-transparent p-6 rounded-2xl border border-gold-500/30 flex flex-col justify-between relative overflow-hidden shadow-[inset_0_1px_rgba(255,255,255,0.15)] group hover:border-gold-400/60 transition-all duration-300">
           <div className="flex items-center gap-2 text-xs font-mono font-semibold text-gold-500 dark:text-gold-400 uppercase tracking-wider mb-2">
-            <TrendUp weight="bold" className="w-4 h-4" /> Acumulado 25 Anos
+            <TrendUp weight="bold" className="w-4 h-4" /> Projeção em 25 Anos
           </div>
           <OdometerValue
             value={savings25Years}
             prefix="R$ "
             className="text-2xl sm:text-3xl font-mono font-bold text-gold-500 dark:text-gold-400 tabular-nums tracking-tight tracking-tighter"
           />
-          <p className="text-[11px] text-gold-600 dark:text-gold-300 font-medium mt-2">Patrimônio livre retido com a sua energia.</p>
+          <p className="text-[11px] text-gold-600 dark:text-gold-300 font-medium mt-2">Soma ilustrativa sem substituir análise financeira.</p>
         </div>
 
         {/* Métrica 3: Payback Estimado */}
@@ -125,19 +154,25 @@ export default function EconomyCalculator() {
           <div className="text-xl sm:text-2xl font-mono font-bold text-navy-950 dark:text-white lowercase">
             ~{paybackYears} <span className="text-sm font-normal text-navy-500 dark:text-text-muted">anos</span>
           </div>
-          <p className="text-[11px] text-navy-500 dark:text-text-muted mt-2">Após este prazo, sua energia é 100% livre.</p>
+          <p className="text-[11px] text-navy-500 dark:text-text-muted mt-2">Prazo aproximado calculado para este cenário.</p>
         </div>
 
       </div>
+
+      <p id="bill-slider-description" className="relative z-10 -mt-3 mb-8 text-center text-xs leading-5 text-navy-500 dark:text-text-muted">
+        Estimativa ilustrativa baseada em premissas simplificadas, incluindo redução de até 95%. O resultado real depende da análise técnica, da tarifa, do consumo, da geração, dos equipamentos e da forma de pagamento; não constitui proposta ou garantia.
+      </p>
 
       {/* ── CTA & Alternância do Formulário ── */}
       {!showForm ? (
         <MagneticButton className="w-full relative z-10">
           <button
-            onClick={() => setShowForm(true)}
+            ref={continueButtonRef}
+            type="button"
+            onClick={handleShowForm}
             className="w-full py-4 px-6 rounded-2xl font-bold text-navy-950 text-base sm:text-lg bg-gradient-to-b from-[#f2cd42] to-[#c9a016] hover:from-[#fbe275] hover:to-[#dfaf18] shadow-[0_10px_30px_rgba(242,205,66,0.3),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-400/50 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer"
           >
-            <span>Solicitar Análise de Engenharia Gratuita</span>
+            <span>Continuar para a Análise Inicial</span>
             <CaretRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </button>
         </MagneticButton>
@@ -145,10 +180,11 @@ export default function EconomyCalculator() {
         <div className="animate-fade-in-up relative z-10 pt-4 border-t border-navy-900/10 dark:border-white/10">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-navy-950 dark:text-white">
-              Preencha para receber o estudo dimensionado para <span className="text-gold-500 font-mono">R$ {billValue.toLocaleString("pt-BR")}/mês</span>:
+              Preencha para conversar sobre o cenário de <span className="text-gold-500 font-mono">R$ {billValue.toLocaleString("pt-BR")}/mês</span>:
             </p>
             <button
-              onClick={() => setShowForm(false)}
+              type="button"
+              onClick={handleHideForm}
               className="text-sm font-medium text-navy-600 dark:text-text-secondary hover:text-gold-500 dark:hover:text-gold-400 underline underline-offset-2 cursor-pointer transition-colors whitespace-nowrap ml-4"
             >
               ← Voltar ao cálculo

@@ -1,56 +1,81 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { siteConfig } from "@/lib/site-config";
 
-export const metadata = {
-  title: "Política de Privacidade | W.Lima Soluções",
+export const metadata: Metadata = {
+  title: "Política de Privacidade",
+  description: "Saiba como a W. Lima Soluções trata os dados usados no simulador e nos canais de atendimento.",
 };
+
+const sectionClass = "mt-8 text-xl font-bold text-navy-950 dark:text-white";
+const paragraphClass = "mt-3 leading-7 text-navy-700 dark:text-text-secondary";
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-navy-950 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto glass p-8 sm:p-12 rounded-3xl border border-navy-900/10 dark:border-white/10">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-gold-500 font-bold hover:underline mb-8">
-          Voltar para a Home
+    <main className="min-h-screen bg-slate-50 px-4 pb-16 pt-28 dark:bg-navy-950 sm:px-6">
+      <article className="glass mx-auto max-w-3xl rounded-3xl border border-navy-900/10 p-7 dark:border-white/10 sm:p-12">
+        <Link href="/" className="inline-flex text-sm font-bold text-gold-600 hover:underline dark:text-gold-400">
+          Voltar para o início
         </Link>
-        <h1 className="text-3xl font-display font-bold text-navy-950 dark:text-white mb-6">Política de Privacidade</h1>
-        <div className="prose dark:prose-invert prose-navy max-w-none text-navy-700 dark:text-text-secondary">
-          <p>Última atualização: Julho de 2026</p>
-          <p>
-            A sua privacidade é importante para nós. É política da W Lima Soluções respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site W Lima Soluções, e outros sites que possuímos e operamos.
-          </p>
-          <h2>1. Quais dados coletamos e por que</h2>
-          <p>
-            Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer um serviço (como simulações e orçamentos de sistemas de energia solar). Coletamos dados como nome, e-mail, telefone e, quando necessário para o orçamento, informações sobre o seu consumo de energia. Fazemos isso por meios justos e legais, com o seu conhecimento e consentimento.
-          </p>
-          <h2>2. Retenção e Segurança dos Dados</h2>
-          <p>
-            Apenas retemos as informações coletadas pelo tempo necessário para fornecer o serviço solicitado ou para contato comercial. Quando armazenamos dados, protegemos dentro de meios comercialmente aceitáveis ​​para evitar perdas e roubos, bem como acesso, divulgação, cópia, uso ou modificação não autorizados. Não compartilhamos informações de identificação pessoal publicamente ou com terceiros, exceto quando exigido por lei ou com parceiros estritamente necessários para a execução do projeto solar.
-          </p>
-          <h2>3. Uso de Google Analytics</h2>
-          <p>
-            Nosso site utiliza o Google Analytics, um serviço de análise web, para entender como os usuários interagem com nossa página. O Google Analytics usa "cookies" (arquivos de texto) para avaliar o uso do site de forma anônima. Você é livre para recusar a nossa solicitação de cookies analíticos através do nosso banner de preferências ao acessar o site.
-          </p>
-          <h2>4. Links Externos</h2>
-          <p>
-            O nosso site pode ter links para sites externos (como concessionárias de energia ou fabricantes) que não são operados por nós. Esteja ciente de que não temos controle sobre o conteúdo e práticas desses sites e não podemos aceitar responsabilidade por suas respectivas políticas de privacidade.
-          </p>
-          <h2>5. Seus Direitos (LGPD)</h2>
-          <p>
-            Em conformidade com a Lei Geral de Proteção de Dados (LGPD), você tem o direito de solicitar o acesso, a correção ou a exclusão dos seus dados pessoais dos nossos bancos de dados a qualquer momento. Para exercer seus direitos ou tirar dúvidas sobre como lidamos com seus dados, entre em contato através do e-mail: [INSERIR SEU E-MAIL DE CONTATO AQUI].
-          </p>
-          <h2>Compromisso do Usuário</h2>
-          <p>
-            O usuário se compromete a fazer uso adequado dos conteúdos e da informação que a W Lima Soluções oferece no site e com caráter enunciativo, mas não limitativo:
-          </p>
-          <ul className="list-disc pl-5 space-y-2 mt-2">
-            <li>A) Não se envolver em atividades que sejam ilegais ou contrárias à boa fé e à ordem pública;</li>
-            <li>B) Não difundir propaganda ou conteúdo de natureza racista, xenofóbica, qualquer tipo de pornografia ilegal, de apologia ao terrorismo ou contra os direitos humanos;</li>
-            <li>C) Não causar danos aos sistemas físicos (hardwares) e lógicos (softwares) da W Lima Soluções, de seus fornecedores ou terceiros.</li>
-          </ul>
-          <p>
-            O uso continuado de nosso site será considerado como aceitação de nossas práticas em torno de privacidade e informações pessoais.
-          </p>
-        </div>
-      </div>
-    </div>
+
+        <h1 className="mt-8 text-3xl font-display font-bold text-navy-950 dark:text-white sm:text-4xl">
+          Política de Privacidade
+        </h1>
+        <p className="mt-3 text-sm text-navy-500 dark:text-text-muted">Última atualização: 31 de agosto de 2026.</p>
+
+        <p className={paragraphClass}>
+          Esta política explica como a {siteConfig.company.legalName}, CNPJ {siteConfig.company.taxId}, trata dados pessoais durante o uso deste site e no atendimento solicitado pelo visitante.
+        </p>
+
+        <h2 className={sectionClass}>1. Quem controla os dados</h2>
+        <p className={paragraphClass}>
+          A controladora é a {siteConfig.company.legalName}, com sede em {siteConfig.company.address.street}, {siteConfig.company.address.number}, {siteConfig.company.address.district}, {siteConfig.company.address.city}/{siteConfig.company.address.state}. Dúvidas e solicitações podem ser enviadas para{" "}
+          <a href={`mailto:${siteConfig.company.email}`} className="font-semibold text-gold-600 hover:underline dark:text-gold-400">{siteConfig.company.email}</a>.
+        </p>
+
+        <h2 className={sectionClass}>2. Dados usados no simulador</h2>
+        <p className={paragraphClass}>
+          O simulador pode usar valor da conta de energia, CEP, estado, tipo de imóvel, local de instalação, tipo de telhado, interesse em financiamento, nome e e-mail. O cálculo inicial acontece no próprio navegador e o site não grava esse formulário em um banco de dados próprio.
+        </p>
+
+        <h2 className={sectionClass}>3. Contato pelo WhatsApp</h2>
+        <p className={paragraphClass}>
+          Ao concluir a simulação, o site prepara uma mensagem e abre o WhatsApp. Os dados aparecem no endereço de compartilhamento e só são recebidos pela W. Lima Soluções depois que você revisa e envia a mensagem. A partir desse envio, o tratamento também segue os termos e a política da Meta/WhatsApp.
+        </p>
+
+        <h2 className={sectionClass}>4. Serviços necessários ao funcionamento</h2>
+        <ul className="mt-3 list-disc space-y-3 pl-6 leading-7 text-navy-700 dark:text-text-secondary">
+          <li><strong>ViaCEP:</strong> recebe o CEP consultado para retornar dados de localidade.</li>
+          <li><strong>OpenStreetMap:</strong> fornece os blocos visuais do mapa e pode receber dados técnicos da conexão, como endereço IP e informações do navegador.</li>
+          <li><strong>Links externos:</strong> Instagram e WhatsApp passam a tratar dados quando seus respectivos links são abertos.</li>
+        </ul>
+
+        <h2 className={sectionClass}>5. Cookies e medição de acesso</h2>
+        <p className={paragraphClass}>
+          O Google Analytics só é carregado depois que você aceita cookies analíticos. Se você recusar, a ferramenta não é carregada. A escolha fica salva no armazenamento local do navegador e pode ser revista em “Preferências de cookies”, no rodapé do site.
+        </p>
+
+        <h2 className={sectionClass}>6. Finalidades e bases legais</h2>
+        <p className={paragraphClass}>
+          Os dados enviados são usados para responder ao pedido, preparar uma proposta e realizar procedimentos preliminares à eventual contratação. A medição analítica depende do seu consentimento. Nenhuma simulação exibida no site constitui proposta comercial definitiva.
+        </p>
+
+        <h2 className={sectionClass}>7. Retenção, compartilhamento e segurança</h2>
+        <p className={paragraphClass}>
+          Conversas e dados de atendimento são mantidos apenas pelo período necessário para responder à solicitação, cumprir obrigações contratuais ou legais e proteger direitos. O compartilhamento ocorre com os serviços descritos nesta política, quando necessário ao atendimento ou por obrigação legal. Adotamos medidas razoáveis para reduzir riscos de acesso, alteração ou divulgação indevidos.
+        </p>
+
+        <h2 className={sectionClass}>8. Seus direitos</h2>
+        <p className={paragraphClass}>
+          Nos termos da LGPD, você pode solicitar confirmação de tratamento, acesso, correção, informação sobre compartilhamento, portabilidade quando aplicável, anonimização, bloqueio ou eliminação nos casos previstos em lei, além de revogar consentimentos. Envie o pedido para{" "}
+          <a href={`mailto:${siteConfig.company.email}`} className="font-semibold text-gold-600 hover:underline dark:text-gold-400">{siteConfig.company.email}</a>. Podemos pedir informações para confirmar a identidade do solicitante.
+        </p>
+
+        <h2 className={sectionClass}>9. Alterações desta política</h2>
+        <p className={paragraphClass}>
+          Esta política pode ser atualizada para refletir mudanças no site ou no tratamento de dados. A data da versão mais recente será sempre indicada no início desta página.
+        </p>
+      </article>
+    </main>
   );
 }

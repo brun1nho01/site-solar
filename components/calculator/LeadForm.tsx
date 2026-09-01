@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import Link from "next/link";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -15,6 +16,7 @@ import {
   CaretRight as ChevronRight,
   ChatCircle as MessageCircle
 } from "@phosphor-icons/react";
+import { createWhatsAppUrl, siteConfig } from "@/lib/site-config";
 
 interface LeadFormProps {
   billValue: number;
@@ -40,8 +42,36 @@ interface FormErrors {
   [key: string]: string;
 }
 
-interface ExtendedWindow extends Window {
-  gtag?: (event: string, action: string, data: object) => void;
+type CepStatus =
+  | { type: "idle"; message: "" }
+  | { type: "loading" | "success" | "error"; message: string };
+
+interface WhatsAppFallback {
+  url: string;
+  billValue: number;
+}
+
+const fieldFocusIds: Record<keyof FormData, string> = {
+  cep: "lead-cep",
+  uf: "lead-cep",
+  propertyType: "lead-property-residencial",
+  installLocation: "lead-install-telhado",
+  roofType: "lead-roof-type",
+  wantsFinancing: "lead-financing-sim",
+  name: "lead-name",
+  email: "lead-email",
+  lgpdConsent: "lead-consent",
+};
+
+function mapIssuesToErrors(issues: z.ZodIssue[]): FormErrors {
+  const nextErrors: FormErrors = {};
+
+  issues.forEach((issue) => {
+    const field = issue.path[0];
+    if (field) nextErrors[field.toString()] = issue.message;
+  });
+
+  return nextErrors;
 }
 
 const step1Schema = z.object({
@@ -67,7 +97,7 @@ const step2Schema = z.object({
 });
 
 /* ── Gráfico SVG artesanal — 0KB de dependência extra ── */
-function CashFlowChart({ data, paybackYear }: { data: { year: number; saldo: number }[]; paybackYear: number }) {
+function CashFlowChart({ data }: { data: { year: number; saldo: number }[] }) {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   
   const W = 560;
@@ -244,8 +274,55 @@ export default function LeadForm({ billValue }: LeadFormProps) {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingCep, setIsLoadingCep] = useState(false);
+  const [announcement, setAnnouncement] = useState("Etapa 1 de 2: dados da instalação.");
+  const [cepStatus, setCepStatus] = useState<CepStatus>({ type: "idle", message: "" });
+  const [whatsappFallback, setWhatsappFallback] = useState<WhatsAppFallback | null>(null);
+  const [copyStatus, setCopyStatus] = useState("");
+  const stepTitleRef = useRef<HTMLHeadingElement>(null);
+  const cepRequestRef = useRef<AbortController | null>(null);
+  const whatsappOpenAttemptRef = useRef(false);
+
+  useEffect(() => {
+    return () => cepRequestRef.current?.abort();
+  }, []);
+
+  const clearFieldError = (field: keyof FormData) => {
+    setErrors((currentErrors) => {
+      if (!currentErrors[field]) return currentErrors;
+
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[field];
+      return nextErrors;
+    });
+  };
+
+  const updateField = <K extends keyof FormData>(field: K, value: FormData[K]) => {
+    setFormData((currentData) => ({ ...currentData, [field]: value }));
+    clearFieldError(field);
+    setWhatsappFallback(null);
+    setCopyStatus("");
+  };
+
+  const reportValidationErrors = (nextErrors: FormErrors) => {
+    const entries = Object.entries(nextErrors);
+    const firstEntry = entries[0];
+
+    setErrors(nextErrors);
+    setAnnouncement(
+      entries.length === 1
+        ? `Há um campo para corrigir. ${firstEntry[1]}`
+        : `Há ${entries.length} campos para corrigir. ${firstEntry[1]}`,
+    );
+
+    const firstField = firstEntry[0] as keyof FormData;
+    window.requestAnimationFrame(() => {
+      document.getElementById(fieldFocusIds[firstField])?.focus();
+    });
+  };
+
+  const focusCurrentStepTitle = () => {
+    stepTitleRef.current?.focus();
+  };
 
   // ── Máscara e Busca de CEP ──
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -255,20 +332,59 @@ export default function LeadForm({ billValue }: LeadFormProps) {
     let formatted = value;
     if (value.length > 5) formatted = `${value.slice(0, 5)}-${value.slice(5)}`;
     
-    setFormData(prev => ({ ...prev, cep: formatted }));
+    cepRequestRef.current?.abort();
+    cepRequestRef.current = null;
+    setFormData((currentData) => ({ ...currentData, cep: formatted, uf: "" }));
+    clearFieldError("cep");
+    setCepStatus({ type: "idle", message: "" });
+    setWhatsappFallback(null);
+    setCopyStatus("");
 
     if (value.length === 8) {
-      setIsLoadingCep(true);
+      const controller = new AbortController();
+      cepRequestRef.current = controller;
+      setCepStatus({ type: "loading", message: "Consultando CEP..." });
+      const timeoutId = window.setTimeout(() => controller.abort(), 8000);
+
       try {
-        const res = await fetch(`https://viacep.com.br/ws/${value}/json/`);
-        const data = await res.json();
-        if (!data.erro) {
-          setFormData((prev) => ({ ...prev, uf: data.uf }));
+        const res = await fetch(`https://viacep.com.br/ws/${value}/json/`, {
+          signal: controller.signal,
+        });
+
+        if (!res.ok) throw new Error(`ViaCEP respondeu com status ${res.status}.`);
+
+        const data: { erro?: boolean; uf?: string } = await res.json();
+        if (controller.signal.aborted) return;
+
+        if (data.erro || !data.uf) {
+          setCepStatus({
+            type: "error",
+            message: "CEP não encontrado. Você pode continuar e confirmar a localização no atendimento.",
+          });
+          return;
         }
+
+        setFormData((currentData) => ({ ...currentData, uf: data.uf ?? "" }));
+        setCepStatus({ type: "success", message: `Estado encontrado: ${data.uf}.` });
       } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") {
+          if (cepRequestRef.current !== controller) return;
+
+          setCepStatus({
+            type: "error",
+            message: "A consulta do CEP demorou para responder. Você pode continuar e confirmar a localização no atendimento.",
+          });
+          return;
+        }
+
         console.error("Erro ao buscar CEP", err);
+        setCepStatus({
+          type: "error",
+          message: "Não foi possível consultar este CEP agora. Você pode continuar e confirmar a localização no atendimento.",
+        });
       } finally {
-        setIsLoadingCep(false);
+        window.clearTimeout(timeoutId);
+        if (cepRequestRef.current === controller) cepRequestRef.current = null;
       }
     }
   };
@@ -293,8 +409,6 @@ export default function LeadForm({ billValue }: LeadFormProps) {
   const isFinanced = formData.wantsFinancing === "sim";
   const systemCost = isFinanced ? baseSystemCost * 1.35 : baseSystemCost;
 
-  const total25Years = Array.from({ length: 25 }).reduce((acc: number, _, i) => acc + (yearlySavings * Math.pow(1.05, i)), 0) as number;
-  
   let paybackYear = 0;
 
   const chartData = Array.from({ length: 26 }).map((_, year) => {
@@ -316,73 +430,147 @@ export default function LeadForm({ billValue }: LeadFormProps) {
   });
 
   const paybackText = paybackYear > 0 
-    ? `O sistema se paga em aproximadamente ${paybackYear} anos${isFinanced ? ' (inclusos juros do financiamento)' : ''}.`
-    : "Retorno financeiro a longo prazo.";
+    ? `Nesta simulação, o retorno estimado ocorre em aproximadamente ${paybackYear} anos${isFinanced ? " (com acréscimo financeiro estimado)" : ""}.`
+    : "Nesta simulação, o retorno ocorre em um horizonte de longo prazo.";
 
   // ── Navegação do Wizard ──
   const handleNextStep = () => {
     const result = step1Schema.safeParse(formData);
     if (!result.success) {
-      const newErrors: FormErrors = {};
-      result.error.issues.forEach((i) => { if (i.path[0]) newErrors[i.path[0].toString()] = i.message; });
-      setErrors(newErrors);
+      reportValidationErrors(mapIssuesToErrors(result.error.issues));
       return;
     }
     setErrors({});
+    setAnnouncement("Etapa 2 de 2: projeção e contato.");
     setStep(2);
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleWhatsApp = () => {
+    if (whatsappOpenAttemptRef.current) return;
+
     const result = step2Schema.safeParse(formData);
     if (!result.success) {
-      const newErrors: FormErrors = {};
-      result.error.issues.forEach((i) => { if (i.path[0]) newErrors[i.path[0].toString()] = i.message; });
-      setErrors(newErrors);
+      reportValidationErrors(mapIssuesToErrors(result.error.issues));
       return;
     }
     setErrors({});
-    setIsSubmitting(true);
+    whatsappOpenAttemptRef.current = true;
 
     const economyFormatted = (yearlySavings).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    const message = `Olá! Vim pelo site e quero meu estudo de viabilidade.
-*Dados do Projeto:*
+    const message = `Olá! Vim pelo site e quero conversar sobre minha simulação inicial.
+*Dados informados:*
 - Nome: ${formData.name}${formData.email ? `\n- E-mail: ${formData.email}` : ""}
-- CEP: ${formData.cep} (${formData.uf})
+- CEP: ${formData.cep}${formData.uf ? ` (${formData.uf})` : ""}
 - Imóvel: ${formData.propertyType}
-- Instalação: ${formData.installLocation} ${formData.roofType ? `(${formData.roofType})` : ''}
+- Instalação: ${formData.installLocation}${formData.roofType ? ` (${formData.roofType})` : ""}
 - Financiamento: ${formData.wantsFinancing}
 - Conta atual: R$ ${billValue},00/mês
-- *Economia 1º Ano:* ${economyFormatted}`;
+- *Economia estimada no 1º ano:* ${economyFormatted}
 
-    const whatsappUrl = `https://wa.me/5522999618883?text=${encodeURIComponent(message)}`;
-    
-    // Tracking GA4
-    const win = window as unknown as ExtendedWindow;
-    if (typeof win !== "undefined" && typeof win.gtag === "function") {
-      win.gtag("event", "lead_gerado_wizard", {
-        value: yearlySavings,
-        currency: "BRL",
-        property_type: formData.propertyType,
-      });
+Entendo que os valores do site são ilustrativos e precisam de análise técnica e proposta formal.`;
+
+    const whatsappUrl = createWhatsAppUrl(message);
+
+    let whatsappWindow: Window | null = null;
+    try {
+      whatsappWindow = window.open(whatsappUrl, "_blank");
+    } catch {
+      whatsappWindow = null;
     }
 
-    // Abre o WhatsApp SINCRONAMENTE (antes do await) para não ser bloqueado
-    const whatsappWindow = window.open(whatsappUrl, "_blank");
+    if (whatsappWindow) {
+      try {
+        whatsappWindow.opener = null;
+      } catch {
+        // Alguns navegadores não permitem alterar a referência da nova aba.
+      }
+    }
 
-    await new Promise(r => setTimeout(r, 800)); // UI Loading
-    setIsSubmitting(false);
+    if (!whatsappWindow) {
+      whatsappOpenAttemptRef.current = false;
+      setWhatsappFallback({ url: whatsappUrl, billValue });
+      setAnnouncement("O navegador bloqueou a nova aba. Nenhuma mensagem foi enviada.");
+      return;
+    }
+
+    trackLeadGenerated();
+    setWhatsappFallback(null);
+    setAnnouncement("Conversa preparada. Revise a mensagem no WhatsApp antes de enviar.");
     setStep(3);
+  };
 
-    // Fallback: se o popup foi bloqueado, redireciona na mesma aba
-    if (!whatsappWindow || whatsappWindow.closed) {
-      window.location.href = whatsappUrl;
+  const trackLeadGenerated = () => {
+    try {
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "lead_gerado_wizard", {
+          value: yearlySavings,
+          currency: "BRL",
+          property_type: formData.propertyType,
+        });
+      }
+    } catch (error) {
+      console.error("Não foi possível registrar o evento do formulário.", error);
     }
   };
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (step === 1) {
+      handleNextStep();
+      return;
+    }
+
+    if (step === 2) handleWhatsApp();
+  };
+
+  const handleFormKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
+    if (e.key !== "Enter" || !(e.target instanceof HTMLInputElement)) return;
+    if (!['text', 'email'].includes(e.target.type)) return;
+
+    e.preventDefault();
+    e.currentTarget.requestSubmit();
+  };
+
+  const handleBackToStepOne = () => {
+    setErrors({});
+    setWhatsappFallback(null);
+    setCopyStatus("");
+    whatsappOpenAttemptRef.current = false;
+    setAnnouncement("Etapa 1 de 2: dados da instalação.");
+    setStep(1);
+  };
+
+  const handleCopyPhone = async () => {
+    const phone = siteConfig.company.phone.international;
+
+    try {
+      if (!navigator.clipboard) throw new Error("Clipboard indisponível.");
+      await navigator.clipboard.writeText(phone);
+      setCopyStatus("Telefone copiado.");
+      setAnnouncement("Telefone copiado.");
+    } catch {
+      const message = "Não foi possível copiar. Selecione o telefone abaixo e use a opção de copiar do seu aparelho.";
+      setCopyStatus(message);
+      setAnnouncement(message);
+    }
+  };
+
+  const activeWhatsappFallback =
+    whatsappFallback?.billValue === billValue ? whatsappFallback : null;
+
   // ── Renderização dos Passos ──
   return (
-    <div className="w-full relative min-h-[400px]">
+    <form
+      className="w-full relative min-h-[400px]"
+      onSubmit={handleSubmit}
+      onKeyDown={handleFormKeyDown}
+      noValidate
+      aria-labelledby={`lead-step-${step}-title`}
+    >
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {announcement}
+      </p>
       <AnimatePresence mode="wait">
         
         {/* ================= STEP 1: QUALIFICAÇÃO ================= */}
@@ -392,132 +580,243 @@ export default function LeadForm({ billValue }: LeadFormProps) {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
+            onAnimationComplete={focusCurrentStepTitle}
             className="space-y-6"
           >
+            <div className="text-center mb-2">
+              <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-gold-500 dark:text-gold-400">
+                Etapa 1 de 2
+              </p>
+              <h3
+                id="lead-step-1-title"
+                ref={stepTitleRef}
+                tabIndex={-1}
+                className="mt-1 text-lg font-bold text-navy-950 dark:text-white outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-navy-900 rounded-md"
+              >
+                Dados da instalação
+              </h3>
+            </div>
+
             {/* CEP */}
             <div className="relative">
-              <label className="text-sm text-text-secondary mb-1.5 block">CEP da Instalação</label>
+              <label htmlFor="lead-cep" className="text-sm text-text-secondary mb-1.5 block">
+                CEP da instalação
+              </label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+                <MapPin aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
                 <input
+                  id="lead-cep"
+                  name="cep"
                   type="text"
                   inputMode="numeric"
+                  autoComplete="postal-code"
                   placeholder="00000-000"
+                  maxLength={9}
+                  required
                   value={formData.cep}
                   onChange={handleCepChange}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-navy-400 dark:placeholder:text-text-muted focus:border-gold-400 transition-colors"
+                  aria-invalid={Boolean(errors.cep)}
+                  aria-describedby={[
+                    cepStatus.message ? "lead-cep-status" : "",
+                    errors.cep ? "lead-cep-error" : "",
+                  ].filter(Boolean).join(" ") || undefined}
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-navy-400 dark:placeholder:text-text-muted focus:border-gold-400 focus:outline-none focus:ring-2 focus:ring-gold-400/30 transition-colors"
                 />
-                {isLoadingCep && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                {cepStatus.type === "loading" && (
+                  <div aria-hidden="true" className="absolute right-3 top-1/2 -translate-y-1/2">
                     <div className="w-4 h-4 border-2 border-gold-400 border-t-transparent rounded-full animate-spin" />
                   </div>
                 )}
               </div>
-              {formData.uf && <p className="text-xs text-gold-400 mt-1">Estado: {formData.uf}</p>}
-              {errors.cep && <p className="text-red-400 text-xs mt-1">{errors.cep}</p>}
+              {cepStatus.message && (
+                <p
+                  id="lead-cep-status"
+                  aria-live="polite"
+                  className={`text-xs mt-1 ${cepStatus.type === "error" ? "text-amber-600 dark:text-amber-300" : "text-gold-600 dark:text-gold-400"}`}
+                >
+                  {cepStatus.message}
+                </p>
+              )}
+              {errors.cep && (
+                <p id="lead-cep-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
+                  {errors.cep}
+                </p>
+              )}
             </div>
 
             {/* Tipo de Imóvel (Cards) */}
-            <div>
-              <label className="text-sm text-text-secondary mb-1.5 block">Tipo de Imóvel</label>
+            <fieldset aria-describedby={errors.propertyType ? "lead-property-error" : undefined}>
+              <legend className="text-sm text-text-secondary mb-1.5">Tipo de imóvel</legend>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { id: "residencial", icon: Home, label: "Residencial" },
                   { id: "empresa", icon: Building2, label: "Empresa" },
                   { id: "agronegocio", icon: Tractor, label: "Agro" }
                 ].map((item) => (
-                  <button
+                  <label
                     key={item.id}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, propertyType: item.id as PropertyType })}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 ${
+                    htmlFor={`lead-property-${item.id}`}
+                    className={`flex min-h-16 cursor-pointer flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold-400 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-white dark:has-[:focus-visible]:ring-offset-navy-900 ${
                       formData.propertyType === item.id
                         ? "border-gold-400 bg-gold-500/10 text-gold-400 shadow-[0_0_15px_rgba(250,204,21,0.1)]"
-                        : "border-white/10 bg-white/5 text-text-secondary hover:border-white/20 hover:bg-white/10"
+                        : "border-navy-900/10 dark:border-white/10 bg-navy-900/5 dark:bg-white/5 text-text-secondary hover:border-navy-900/20 dark:hover:border-white/20 hover:bg-navy-900/10 dark:hover:bg-white/10"
                     }`}
                   >
-                    <item.icon className="w-5 h-5 mb-1.5" />
+                    <input
+                      id={`lead-property-${item.id}`}
+                      name="propertyType"
+                      type="radio"
+                      value={item.id}
+                      checked={formData.propertyType === item.id}
+                      onChange={() => updateField("propertyType", item.id as PropertyType)}
+                      aria-describedby={errors.propertyType ? "lead-property-error" : undefined}
+                      required
+                      className="sr-only"
+                    />
+                    <item.icon aria-hidden="true" className="w-5 h-5 mb-1.5" />
                     <span className="text-xs font-medium">{item.label}</span>
-                  </button>
+                  </label>
                 ))}
               </div>
-              {errors.propertyType && <p className="text-red-400 text-xs mt-1">{errors.propertyType}</p>}
-            </div>
+              {errors.propertyType && (
+                <p id="lead-property-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
+                  {errors.propertyType}
+                </p>
+              )}
+            </fieldset>
 
             {/* Local de Instalação (Cards) */}
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm text-text-secondary mb-1.5 block">Onde instalar?</label>
+              <fieldset aria-describedby={errors.installLocation ? "lead-install-error" : undefined}>
+                <legend className="text-sm text-text-secondary mb-1.5">Onde instalar?</legend>
                 <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, installLocation: "telhado" })}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 ${
+                  <label
+                    htmlFor="lead-install-telhado"
+                    className={`flex min-h-16 cursor-pointer flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold-400 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-white dark:has-[:focus-visible]:ring-offset-navy-900 ${
                       formData.installLocation === "telhado"
                         ? "border-gold-400 bg-gold-500/10 text-gold-400"
-                        : "border-white/10 bg-white/5 text-text-secondary hover:bg-white/10"
+                        : "border-navy-900/10 dark:border-white/10 bg-navy-900/5 dark:bg-white/5 text-text-secondary hover:bg-navy-900/10 dark:hover:bg-white/10"
                     }`}
                   >
-                    <Home className="w-5 h-5 mb-1" />
+                    <input
+                      id="lead-install-telhado"
+                      name="installLocation"
+                      type="radio"
+                      value="telhado"
+                      checked={formData.installLocation === "telhado"}
+                      onChange={() => updateField("installLocation", "telhado")}
+                      aria-describedby={errors.installLocation ? "lead-install-error" : undefined}
+                      required
+                      className="sr-only"
+                    />
+                    <Home aria-hidden="true" className="w-5 h-5 mb-1" />
                     <span className="text-xs font-medium">Telhado</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, installLocation: "solo", roofType: "" })}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 ${
+                  </label>
+                  <label
+                    htmlFor="lead-install-solo"
+                    className={`flex min-h-16 cursor-pointer flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold-400 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-white dark:has-[:focus-visible]:ring-offset-navy-900 ${
                       formData.installLocation === "solo"
                         ? "border-gold-400 bg-gold-500/10 text-gold-400"
-                        : "border-white/10 bg-white/5 text-text-secondary hover:bg-white/10"
+                        : "border-navy-900/10 dark:border-white/10 bg-navy-900/5 dark:bg-white/5 text-text-secondary hover:bg-navy-900/10 dark:hover:bg-white/10"
                     }`}
                   >
-                    <Sun className="w-5 h-5 mb-1" />
+                    <input
+                      id="lead-install-solo"
+                      name="installLocation"
+                      type="radio"
+                      value="solo"
+                      checked={formData.installLocation === "solo"}
+                      onChange={() => {
+                        updateField("installLocation", "solo");
+                        updateField("roofType", "");
+                      }}
+                      aria-describedby={errors.installLocation ? "lead-install-error" : undefined}
+                      required
+                      className="sr-only"
+                    />
+                    <Sun aria-hidden="true" className="w-5 h-5 mb-1" />
                     <span className="text-xs font-medium">Solo</span>
-                  </button>
+                  </label>
                 </div>
-                {errors.installLocation && <p className="text-red-400 text-xs mt-1">{errors.installLocation}</p>}
-              </div>
+                {errors.installLocation && (
+                  <p id="lead-install-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
+                    {errors.installLocation}
+                  </p>
+                )}
+              </fieldset>
 
               {/* Financiamento */}
-              <div>
-                <label className="text-sm text-text-secondary mb-1.5 block">Precisa financiar?</label>
+              <fieldset aria-describedby={errors.wantsFinancing ? "lead-financing-error" : undefined}>
+                <legend className="text-sm text-text-secondary mb-1.5">Precisa financiar?</legend>
                 <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, wantsFinancing: "sim" })}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 ${
+                  <label
+                    htmlFor="lead-financing-sim"
+                    className={`flex min-h-16 cursor-pointer flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold-400 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-white dark:has-[:focus-visible]:ring-offset-navy-900 ${
                       formData.wantsFinancing === "sim"
                         ? "border-gold-400 bg-gold-500/10 text-gold-400"
-                        : "border-white/10 bg-white/5 text-text-secondary hover:bg-white/10"
+                        : "border-navy-900/10 dark:border-white/10 bg-navy-900/5 dark:bg-white/5 text-text-secondary hover:bg-navy-900/10 dark:hover:bg-white/10"
                     }`}
                   >
-                    <Landmark className="w-5 h-5 mb-1" />
+                    <input
+                      id="lead-financing-sim"
+                      name="wantsFinancing"
+                      type="radio"
+                      value="sim"
+                      checked={formData.wantsFinancing === "sim"}
+                      onChange={() => updateField("wantsFinancing", "sim")}
+                      aria-describedby={errors.wantsFinancing ? "lead-financing-error" : undefined}
+                      required
+                      className="sr-only"
+                    />
+                    <Landmark aria-hidden="true" className="w-5 h-5 mb-1" />
                     <span className="text-xs font-medium">Sim</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, wantsFinancing: "nao" })}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 ${
+                  </label>
+                  <label
+                    htmlFor="lead-financing-nao"
+                    className={`flex min-h-16 cursor-pointer flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold-400 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-white dark:has-[:focus-visible]:ring-offset-navy-900 ${
                       formData.wantsFinancing === "nao"
                         ? "border-gold-400 bg-gold-500/10 text-gold-400"
-                        : "border-white/10 bg-white/5 text-text-secondary hover:bg-white/10"
+                        : "border-navy-900/10 dark:border-white/10 bg-navy-900/5 dark:bg-white/5 text-text-secondary hover:bg-navy-900/10 dark:hover:bg-white/10"
                     }`}
                   >
-                    <Banknote className="w-5 h-5 mb-1" />
+                    <input
+                      id="lead-financing-nao"
+                      name="wantsFinancing"
+                      type="radio"
+                      value="nao"
+                      checked={formData.wantsFinancing === "nao"}
+                      onChange={() => updateField("wantsFinancing", "nao")}
+                      aria-describedby={errors.wantsFinancing ? "lead-financing-error" : undefined}
+                      required
+                      className="sr-only"
+                    />
+                    <Banknote aria-hidden="true" className="w-5 h-5 mb-1" />
                     <span className="text-xs font-medium">Não</span>
-                  </button>
+                  </label>
                 </div>
-                {errors.wantsFinancing && <p className="text-red-400 text-xs mt-1">{errors.wantsFinancing}</p>}
-              </div>
+                {errors.wantsFinancing && (
+                  <p id="lead-financing-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
+                    {errors.wantsFinancing}
+                  </p>
+                )}
+              </fieldset>
             </div>
 
             {/* Condicional Telhado */}
             {formData.installLocation === "telhado" && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
-                <label className="text-sm text-text-secondary mb-1.5 block">Qual o tipo de telhado?</label>
+                <label htmlFor="lead-roof-type" className="text-sm text-text-secondary mb-1.5 block">
+                  Qual o tipo de telhado?
+                </label>
                 <select
+                  id="lead-roof-type"
+                  name="roofType"
+                  required
                   value={formData.roofType}
-                  onChange={(e) => setFormData({ ...formData, roofType: e.target.value as RoofType })}
-                  className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white focus:border-gold-400 outline-none"
+                  onChange={(e) => updateField("roofType", e.target.value as RoofType)}
+                  aria-invalid={Boolean(errors.roofType)}
+                  aria-describedby={errors.roofType ? "lead-roof-error" : undefined}
+                  className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white focus:border-gold-400 focus:outline-none focus:ring-2 focus:ring-gold-400/30"
                 >
                   <option value="" disabled className="bg-white dark:bg-navy-900 text-navy-950 dark:text-white">Selecione o telhado</option>
                   <option value="metalico" className="bg-white dark:bg-navy-900 text-navy-950 dark:text-white">Metálico</option>
@@ -525,16 +824,19 @@ export default function LeadForm({ billValue }: LeadFormProps) {
                   <option value="fibrocimento" className="bg-white dark:bg-navy-900 text-navy-950 dark:text-white">Fibrocimento (Eternit)</option>
                   <option value="laje" className="bg-white dark:bg-navy-900 text-navy-950 dark:text-white">Laje Plana</option>
                 </select>
-                {errors.roofType && <p className="text-red-400 text-xs mt-1">{errors.roofType}</p>}
+                {errors.roofType && (
+                  <p id="lead-roof-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
+                    {errors.roofType}
+                  </p>
+                )}
               </motion.div>
             )}
 
             <button
-              type="button"
-              onClick={handleNextStep}
+              type="submit"
               className="w-full py-4 mt-4 rounded-xl font-bold text-navy-950 bg-gold-400 hover:bg-gold-300 transition-all duration-300 flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(250,204,21,0.3)] hover:shadow-[0_0_30px_rgba(250,204,21,0.5)]"
             >
-              Gerar Estudo de Viabilidade
+              Gerar Simulação Inicial
               <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </motion.div>
@@ -547,22 +849,31 @@ export default function LeadForm({ billValue }: LeadFormProps) {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
+            onAnimationComplete={focusCurrentStepTitle}
             className="space-y-5"
           >
             <div className="text-center mb-2">
-              <h3 className="text-lg font-bold text-navy-950 dark:text-white flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
-                Estudo Gerado com Sucesso!
+              <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-gold-500 dark:text-gold-400">
+                Etapa 2 de 2
+              </p>
+              <h3
+                id="lead-step-2-title"
+                ref={stepTitleRef}
+                tabIndex={-1}
+                className="mt-1 text-lg font-bold text-navy-950 dark:text-white flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-navy-900 rounded-md"
+              >
+                <CheckCircle2 aria-hidden="true" className="w-5 h-5 text-green-400" />
+                Projeção Estimada
               </h3>
               <p className="text-sm text-text-secondary mt-1">
-                Veja a projeção do seu retorno financeiro.
+                Confira o cenário calculado com os dados informados.
               </p>
             </div>
 
             {/* Texto de Payback */}
             <div className="bg-gold-500/10 border border-gold-500/20 rounded-xl p-3 text-center mb-2">
               <p className="text-sm font-semibold text-gold-400 flex items-center justify-center gap-1.5">
-                <Sun className="w-4 h-4" />
+                <Sun aria-hidden="true" className="w-4 h-4" />
                 {paybackText}
               </p>
             </div>
@@ -572,73 +883,147 @@ export default function LeadForm({ billValue }: LeadFormProps) {
               <div className="absolute top-2 left-4 z-10">
                 <p className="text-xs text-navy-500 dark:text-text-muted font-mono uppercase tracking-wider font-semibold">Retorno Cumulativo do Caixa no Tempo (Deslize)</p>
               </div>
-              <CashFlowChart data={chartData} paybackYear={paybackYear} />
+              <CashFlowChart data={chartData} />
 
               {/* O Blur Overlay na parte de baixo do gráfico */}
               <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 dark:from-navy-900 to-transparent pointer-events-none" />
             </div>
 
+            <p className="text-xs leading-5 text-navy-500 dark:text-text-muted">
+              Projeção ilustrativa, baseada em premissas simplificadas. Valores, geração, economia e prazo de retorno serão confirmados somente após análise técnica e proposta formal.
+            </p>
+
             {/* Formulário de Contato */}
             <div className="pt-2 border-t border-navy-900/10 dark:border-white/10">
-              <p className="text-sm text-navy-950 dark:text-white font-medium mb-3">Gostou da projeção? Receba um orçamento exato pelo WhatsApp:</p>
+              <p className="text-sm text-navy-950 dark:text-white font-medium mb-3">Quer confirmar este cenário? Abra uma conversa com a equipe pelo WhatsApp:</p>
               <div className="space-y-3">
                 <div>
+                  <label htmlFor="lead-name" className="text-sm text-text-secondary mb-1.5 block">
+                    Nome completo
+                  </label>
                   <input
+                    id="lead-name"
+                    name="name"
                     type="text"
-                    placeholder="Seu Nome Completo"
+                    autoComplete="name"
+                    placeholder="Seu nome completo"
+                    required
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-navy-400 dark:placeholder:text-text-muted text-sm focus:border-gold-400 transition-colors"
+                    onChange={(e) => updateField("name", e.target.value)}
+                    aria-invalid={Boolean(errors.name)}
+                    aria-describedby={errors.name ? "lead-name-error" : undefined}
+                    className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-navy-400 dark:placeholder:text-text-muted text-sm focus:border-gold-400 focus:outline-none focus:ring-2 focus:ring-gold-400/30 transition-colors"
                   />
-                  {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+                  {errors.name && (
+                    <p id="lead-name-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
                 <div>
+                  <label htmlFor="lead-email" className="text-sm text-text-secondary mb-1.5 block">
+                    E-mail <span className="text-text-muted">(opcional)</span>
+                  </label>
                   <input
+                    id="lead-email"
+                    name="email"
                     type="email"
-                    placeholder="E-mail (opcional)"
+                    autoComplete="email"
+                    placeholder="voce@exemplo.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-navy-400 dark:placeholder:text-text-muted text-sm focus:border-gold-400 transition-colors"
+                    onChange={(e) => updateField("email", e.target.value)}
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={errors.email ? "lead-email-error" : undefined}
+                    className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-navy-400 dark:placeholder:text-text-muted text-sm focus:border-gold-400 focus:outline-none focus:ring-2 focus:ring-gold-400/30 transition-colors"
                   />
-                  {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+                  {errors.email && (
+                    <p id="lead-email-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
 
-                <label className="flex items-start gap-3 cursor-pointer group mt-2">
+                <div className="flex items-start gap-3 mt-2">
                   <input
+                    id="lead-consent"
+                    name="lgpdConsent"
                     type="checkbox"
+                    required
                     checked={formData.lgpdConsent}
-                    onChange={(e) => setFormData({ ...formData, lgpdConsent: e.target.checked })}
+                    onChange={(e) => updateField("lgpdConsent", e.target.checked)}
+                    aria-invalid={Boolean(errors.lgpdConsent)}
+                    aria-describedby={errors.lgpdConsent ? "lead-consent-error" : undefined}
                     className="mt-1 w-4 h-4 rounded border-white/20 bg-white/5 text-gold-500 focus:ring-gold-400 cursor-pointer"
                   />
-                  <span className="text-xs text-text-muted leading-tight group-hover:text-text-secondary transition-colors">
-                    Concordo em receber meu estudo de viabilidade e propostas comerciais da equipe via WhatsApp/Email.
-                  </span>
-                </label>
-                {errors.lgpdConsent && <p className="text-red-400 text-xs mt-1">{errors.lgpdConsent}</p>}
+                  <p className="text-xs text-text-muted leading-tight">
+                    <label htmlFor="lead-consent" className="hover:text-text-secondary transition-colors cursor-pointer">
+                      Autorizo o uso dos dados informados para preparar este atendimento e eventual contato comercial por WhatsApp ou e-mail. Li a{" "}
+                    </label>
+                    <Link
+                      href="/privacidade"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-gold-500 hover:underline"
+                    >
+                      Política de Privacidade
+                    </Link>
+                    .
+                  </p>
+                </div>
+                {errors.lgpdConsent && (
+                  <p id="lead-consent-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
+                    {errors.lgpdConsent}
+                  </p>
+                )}
 
                 <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="w-full py-4 mt-2 rounded-xl font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-60 disabled:cursor-wait"
+                  type="submit"
+                  className="w-full py-4 mt-2 rounded-xl font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group"
                   style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-button)" }}
                 >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Iniciando conversa...
-                    </span>
-                  ) : (
-                    <>
-                      <MessageCircle className="w-5 h-5" />
-                      Receber Proposta no WhatsApp
-                    </>
-                  )}
+                  <MessageCircle aria-hidden="true" className="w-5 h-5" />
+                  Abrir Conversa no WhatsApp
                 </button>
+
+                {activeWhatsappFallback && (
+                  <div role="alert" className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-navy-800 dark:text-amber-50">
+                    <p className="font-semibold">O navegador bloqueou a nova aba.</p>
+                    <p className="mt-1 text-xs leading-5 text-navy-600 dark:text-amber-100/80">
+                      Nenhuma mensagem foi enviada. Abra o WhatsApp nesta aba ou use o telefone abaixo.
+                    </p>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      <a
+                        href={activeWhatsappFallback.url}
+                        onClick={trackLeadGenerated}
+                        className="inline-flex min-h-11 items-center justify-center rounded-lg bg-gold-400 px-3 py-2 text-center text-xs font-bold text-navy-950 hover:bg-gold-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-navy-900"
+                      >
+                        Abrir WhatsApp nesta aba
+                      </a>
+                      <button
+                        type="button"
+                        onClick={handleCopyPhone}
+                        className="min-h-11 rounded-lg border border-navy-900/15 dark:border-white/15 px-3 py-2 text-xs font-semibold hover:border-gold-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+                      >
+                        Copiar telefone
+                      </button>
+                    </div>
+                    <a
+                      href={`tel:${siteConfig.company.phone.e164}`}
+                      className="mt-3 block select-all text-center font-mono font-semibold text-gold-600 dark:text-gold-300 underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+                    >
+                      {siteConfig.company.phone.international}
+                    </a>
+                    {copyStatus && (
+                      <p role="status" className="mt-2 text-center text-xs text-navy-600 dark:text-amber-100/80">
+                        {copyStatus}
+                      </p>
+                    )}
+                  </div>
+                )}
                 
                 <button 
                   type="button" 
-                  onClick={() => setStep(1)} 
+                  onClick={handleBackToStepOne}
                   className="w-full text-center text-xs text-navy-400 dark:text-text-muted hover:text-navy-950 dark:hover:text-white mt-4 transition-colors"
                 >
                   Voltar e alterar dados
@@ -654,21 +1039,27 @@ export default function LeadForm({ billValue }: LeadFormProps) {
             key="step3"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
+            onAnimationComplete={focusCurrentStepTitle}
             className="text-center py-8 space-y-4"
           >
             <div className="w-20 h-20 mx-auto rounded-full bg-green-500/20 flex items-center justify-center border border-green-500/30">
-              <CheckCircle2 className="w-10 h-10 text-green-400" />
+              <CheckCircle2 aria-hidden="true" className="w-10 h-10 text-green-400" />
             </div>
-            <h3 className="text-2xl font-display font-bold text-navy-950 dark:text-white">
-              Estudo Desbloqueado!
+            <h3
+              id="lead-step-3-title"
+              ref={stepTitleRef}
+              tabIndex={-1}
+              className="text-2xl font-display font-bold text-navy-950 dark:text-white outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-navy-900 rounded-md"
+            >
+              Conversa Preparada
             </h3>
             <p className="text-navy-600 dark:text-text-secondary text-sm px-4">
-              Nossa equipe acabou de receber seus dados. Uma nova aba do WhatsApp foi aberta para você falar diretamente conosco.
+              O WhatsApp foi aberto com os dados da simulação. Revise a mensagem e toque em enviar; a equipe só receberá as informações depois desse envio.
             </p>
           </motion.div>
         )}
 
       </AnimatePresence>
-    </div>
+    </form>
   );
 }

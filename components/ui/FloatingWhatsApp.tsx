@@ -2,11 +2,12 @@
 
 import { motion } from "framer-motion";
 import { WhatsappLogo } from "@phosphor-icons/react";
+import { createWhatsAppUrl } from "@/lib/site-config";
 
 export function FloatingWhatsApp() {
   return (
     <motion.a
-      href="https://wa.me/5522999618883?text=Ol%C3%A1%2C%20gostaria%20de%20simular%20meu%20projeto%20solar!"
+      href={createWhatsAppUrl("Olá, gostaria de simular meu projeto solar!")}
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full bg-green-500 text-white shadow-lg shadow-green-500/30 hover:bg-green-600 transition-colors group"

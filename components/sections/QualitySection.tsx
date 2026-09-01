@@ -22,7 +22,7 @@ export default function QualitySection() {
         {/* ── Grid de Diferenciais de Engenharia (Opção 1 — Minimalista e Elegante) ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:auto-rows-fr">
 
-          {/* Card Grande: 25 Anos de Garantia (2 colunas, 2 linhas) */}
+          {/* Card principal: garantias e especificações da proposta */}
           <MouseGlowCard
             className="sm:col-span-2 lg:col-span-2 sm:row-span-2 rounded-3xl overflow-hidden glass bg-white/40 dark:bg-transparent flex flex-col border border-navy-900/10 dark:border-white/10 transition-colors duration-500 hover:border-gold-500/30 relative p-8 sm:p-10"
           >
@@ -34,19 +34,19 @@ export default function QualitySection() {
                 </div>
 
                 <h3 className="font-display font-bold text-3xl sm:text-4xl text-navy-950 dark:text-white mb-4 leading-tight">
-                  25 Anos de Garantia de Geração
+                  Garantias Claras na Proposta
                 </h3>
                 <p className="text-navy-600 dark:text-text-secondary text-base sm:text-lg leading-relaxed max-w-md mb-8">
-                  Painéis de alta eficiência Tier 1 global com garantia contratual. Degradação máxima garantida de apenas 0.5% ao ano durante 2.5 décadas.
+                  Cada projeto informa fabricante, modelo, cobertura e prazo das garantias dos equipamentos selecionados, sem transformar estimativas em promessa.
                 </p>
               </div>
 
-              {/* Selo INMETRO / PROCEL A+ limpo e integrado */}
+              {/* Critérios técnicos informados na proposta */}
               <div className="mt-auto pt-6 border-t border-navy-900/10 dark:border-white/10 flex items-center gap-4">
                 <Certificate weight="fill" className="w-8 h-8 text-gold-500 dark:text-gold-400 shrink-0" />
                 <div>
-                  <p className="font-display font-bold text-navy-950 dark:text-white text-sm uppercase tracking-wider">Selo Procel A+ / INMETRO</p>
-                  <p className="text-xs text-navy-500 dark:text-text-muted">Certificação máxima de eficiência energética</p>
+                  <p className="font-display font-bold text-navy-950 dark:text-white text-sm uppercase tracking-wider">Equipamentos regularizados</p>
+                  <p className="text-xs text-navy-500 dark:text-text-muted">Especificações e registros aplicáveis conferidos antes da contratação</p>
                 </div>
               </div>
 
@@ -66,15 +66,15 @@ export default function QualitySection() {
             </div>
           </MouseGlowCard>
 
-          {/* Card 3: Equipe Própria e Certificada */}
+          {/* Card 3: acompanhamento técnico */}
           <MouseGlowCard className="rounded-3xl p-6 sm:p-8 flex flex-col justify-between glass group border border-navy-900/10 dark:border-white/10 transition-colors duration-500 hover:border-gold-500/30 bg-white/40 dark:bg-transparent">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-gold-500/10 text-gold-500 dark:text-gold-400 flex items-center justify-center mb-6 border border-gold-500/20">
                 <Users weight="duotone" className="w-6 h-6" />
               </div>
-              <h3 className="font-display font-bold text-xl text-navy-950 dark:text-white mb-3">Equipe Própria e Certificada</h3>
+              <h3 className="font-display font-bold text-xl text-navy-950 dark:text-white mb-3">Acompanhamento Técnico</h3>
               <p className="text-sm text-navy-600 dark:text-text-secondary leading-relaxed">
-                Sem terceirizados. Instalações executadas por engenheiros e técnicos habilitados nas normas CREA, NR-10 e NR-35.
+                Responsabilidades, profissionais envolvidos e documentação técnica são definidos conforme as características e o escopo de cada obra.
               </p>
             </div>
           </MouseGlowCard>
@@ -87,7 +87,7 @@ export default function QualitySection() {
             <div>
               <h3 className="font-display font-bold text-xl text-navy-950 dark:text-white mb-2">Monitoramento e Suporte Local</h3>
               <p className="text-sm text-navy-600 dark:text-text-secondary leading-relaxed">
-                Acompanhe a produção de energia diária diretamente pelo smartphone. Nossa equipe oferece suporte técnico presente em Cambuci e região.
+                Quando o equipamento selecionado oferece essa função, a produção pode ser acompanhada por aplicativo. O suporte parte de Cambuci e atende a região conforme disponibilidade.
               </p>
             </div>
           </MouseGlowCard>

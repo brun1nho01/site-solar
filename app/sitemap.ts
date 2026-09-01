@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
+import { siteConfig } from "@/lib/site-config";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://wlimasolucoes.com.br";
+  const baseUrl = siteConfig.siteUrl;
   const now = new Date();
 
   return [

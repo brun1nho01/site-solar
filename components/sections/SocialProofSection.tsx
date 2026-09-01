@@ -11,36 +11,36 @@ const CATEGORIES = [
   { id: "Agronegócio", label: "Agronegócio", icon: Plant },
 ];
 
-const PROJECTS_SHOWCASE = [
+const REFERENCE_SCENARIOS = [
   {
     id: 1,
     category: "Residencial",
-    location: "Cambuci — RJ",
+    location: "Referência residencial",
     systemSize: "8.4 kWp",
     monthlySavings: "R$ 780,00 / mês",
     yearlySavings: "R$ 9.360,00 / ano",
     returnTime: "3,1 anos",
-    highlight: "Independência total de aumentos de tarifas e bandeiras tarifárias para a família."
+    highlight: "Exemplo de como consumo e potência podem ser organizados em uma análise residencial."
   },
   {
     id: 2,
     category: "Comercial",
-    location: "Itaperuna — RJ",
+    location: "Referência comercial",
     systemSize: "24.6 kWp",
     monthlySavings: "R$ 2.450,00 / mês",
     yearlySavings: "R$ 29.400,00 / ano",
     returnTime: "2,8 anos",
-    highlight: "Redução direta do custo fixo operacional com investimento financiado no próprio payback."
+    highlight: "Exemplo de cenário para uma empresa com consumo mensal mais elevado."
   },
   {
     id: 3,
     category: "Agronegócio",
-    location: "Campos dos Goytacazes — RJ",
+    location: "Referência rural",
     systemSize: "45.0 kWp",
     monthlySavings: "R$ 4.800,00 / mês",
     yearlySavings: "R$ 57.600,00 / ano",
     returnTime: "2,6 anos",
-    highlight: "Energia limpa e constante para irrigação e bombas de alta potência sem surpresa na conta."
+    highlight: "Exemplo de dimensionamento inicial para cargas típicas de uma propriedade rural."
   }
 ];
 
@@ -48,8 +48,8 @@ export default function SocialProofSection() {
   const [activeCategory, setActiveCategory] = useState("all");
 
   const filteredProjects = activeCategory === "all"
-    ? PROJECTS_SHOWCASE
-    : PROJECTS_SHOWCASE.filter(p => p.category === activeCategory);
+    ? REFERENCE_SCENARIOS
+    : REFERENCE_SCENARIOS.filter(p => p.category === activeCategory);
 
   return (
     <section id="autoridade" className="relative py-20 lg:py-28 overflow-hidden bg-slate-50 dark:bg-navy-950">
@@ -59,13 +59,13 @@ export default function SocialProofSection() {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
           <div className="max-w-2xl">
             <span className="font-mono text-xs font-bold text-gold-500 uppercase tracking-widest block mb-3">
-              Métricas Auditadas de Engenharia
+              Cenários Ilustrativos
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-4 text-balance text-navy-950 dark:text-white">
-              Resultados Comprovados em <span className="text-gold-500 dark:text-gold-400">Cada Perfil</span>
+              Referências para <span className="text-gold-500 dark:text-gold-400">Diferentes Perfis</span>
             </h2>
             <p className="text-navy-600 dark:text-text-secondary text-base sm:text-lg">
-              Projetos reais executados pela W Lima no Estado do Rio de Janeiro com métricas reais de retorno.
+              Exemplos de simulação para ajudar a visualizar diferenças entre projetos residenciais, comerciais e rurais.
             </p>
           </div>
 
@@ -126,7 +126,7 @@ export default function SocialProofSection() {
                   </div>
 
                   <p className="text-sm text-navy-600 dark:text-text-secondary leading-relaxed mb-6">
-                    &ldquo;{project.highlight}&rdquo;
+                    {project.highlight}
                   </p>
                 </div>
 
@@ -148,6 +148,10 @@ export default function SocialProofSection() {
             ))}
           </AnimatePresence>
         </motion.div>
+
+        <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-5 text-navy-500 dark:text-text-muted">
+          Valores meramente ilustrativos. Potência, investimento, economia e prazo de retorno dependem da tarifa, do consumo, da irradiação, do local, dos equipamentos e da forma de pagamento.
+        </p>
 
       </div>
     </section>

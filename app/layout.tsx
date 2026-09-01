@@ -7,7 +7,8 @@ import GridBackground from "@/components/ui/GridBackground";
 import Navbar from "@/components/ui/Navbar";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { CookieConsent } from "@/components/ui/CookieConsent";
+import { siteConfig } from "@/lib/site-config";
 
 /* ── Fontes self-hosted via next/font (eliminando requests externos) ── */
 const satoshi = localFont({
@@ -32,13 +33,13 @@ const jetbrainsMono = JetBrains_Mono({
    Tags precisas de title, description e OG
    para prévia atrativa no WhatsApp e redes sociais */
 export const metadata: Metadata = {
-  metadataBase: new URL("https://wlimasolucoes.com.br"),
+  metadataBase: new URL(siteConfig.siteUrl),
   title: {
-    default: "Energia Solar | Economize até 95% na Conta de Luz",
-    template: "%s | Energia Solar",
+    default: "Energia Solar para Residências e Empresas | W. Lima Soluções",
+    template: "%s | W. Lima Soluções",
   },
   description:
-    "Produza sua própria energia e livre-se dos aumentos na conta de luz. Simule sua economia e receba um orçamento gratuito para energia solar.",
+    "Projetos de energia solar para residências, empresas e propriedades rurais. Faça uma simulação inicial e fale com a W. Lima Soluções.",
   keywords: [
     "energia solar",
     "painel solar",
@@ -50,24 +51,24 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: "https://wlimasolucoes.com.br",
-    title: "Energia Solar | Economize até 95% na Conta de Luz",
+    url: siteConfig.siteUrl,
+    title: "Energia Solar para Residências e Empresas | W. Lima Soluções",
     description:
-      "Simule quanto você pode economizar com energia solar. Orçamento gratuito e sem compromisso.",
-    siteName: "W.Lima Soluções em Energia Solar",
+      "Faça uma estimativa inicial para seu imóvel e fale com a equipe da W. Lima Soluções.",
+    siteName: siteConfig.company.displayName,
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "W.Lima Soluções — Energia Solar de Alto Padrão no Rio de Janeiro",
+        alt: `${siteConfig.company.displayName} — Energia Solar de Alto Padrão no Rio de Janeiro`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Energia Solar | Economize até 95% na Conta de Luz",
-    description: "Simule quanto você pode economizar com energia solar.",
+    title: "Energia Solar | W. Lima Soluções",
+    description: "Faça uma estimativa inicial para seu imóvel e fale com nossa equipe.",
     images: ["/og-image.jpg"],
   },
   robots: {
@@ -84,40 +85,25 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": "W.Lima Soluções em Energia Solar",
-    "url": "https://wlimasolucoes.com.br",
-    "image": "https://wlimasolucoes.com.br/og-image.jpg",
-    "description": "Economize até 95% na sua conta de luz com energia solar. Projetos completos e instalação em Cambuci e região.",
-    "priceRange": "$$",
-    "telephone": "+5522999618883",
-    "email": "contato@wlimasolucoes.com.br",
+    "name": siteConfig.company.displayName,
+    "legalName": siteConfig.company.legalName,
+    "taxID": siteConfig.company.taxId,
+    "url": siteConfig.siteUrl,
+    "image": `${siteConfig.siteUrl}/og-image.jpg`,
+    "description": "Projetos de energia solar para residências, empresas e propriedades rurais.",
+    "telephone": siteConfig.company.phone.e164,
+    "email": siteConfig.company.email,
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Rua Virgílio Franklin, Centro",
-      "addressLocality": "Cambuci",
-      "addressRegion": "RJ",
-      "postalCode": "28430-000",
-      "addressCountry": "BR"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": -21.576,
-      "longitude": -41.911
-    },
-    "openingHoursSpecification": {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      "opens": "08:00",
-      "closes": "18:00"
+      "streetAddress": `${siteConfig.company.address.street}, ${siteConfig.company.address.number}`,
+      "addressLocality": siteConfig.company.address.city,
+      "addressRegion": siteConfig.company.address.state,
+      "postalCode": siteConfig.company.address.postalCode,
+      "addressCountry": siteConfig.company.address.country
     },
     "sameAs": [
-      "https://www.instagram.com/wlimasolucoes/"
-    ],
-    "areaServed": {
-      "@type": "GeoCircle",
-      "geoMidpoint": { "@type": "GeoCoordinates", "latitude": -21.576, "longitude": -41.911 },
-      "geoRadius": "100000"
-    }
+      siteConfig.instagramUrl
+    ]
   };
 
   return (
@@ -135,10 +121,8 @@ export default function RootLayout({
             <Navbar />
             {children}
           </div>
+          <CookieConsent gaId={process.env.NEXT_PUBLIC_GA_ID} />
         </ThemeProvider>
-        {process.env.NEXT_PUBLIC_GA_ID && process.env.NEXT_PUBLIC_GA_ID !== "G-XXXXXXX" && (
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

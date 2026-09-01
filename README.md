@@ -1,54 +1,72 @@
-# Site Solar
+# W. Lima Soluções
 
-Este é um projeto em [Next.js](https://nextjs.org) criado para o Site Solar.
+Site institucional da W. Lima Soluções, desenvolvido com Next.js.
 
-## 🚀 Como iniciar o projeto (Git Clone)
+## Requisitos
 
-Se você acabou de clonar o repositório (`git clone https://github.com/brun1nho01/site-solar.git`), siga os passos abaixo para rodar o projeto localmente na sua máquina:
+- Node.js 20.9.0 ou superior
+- npm, incluído na instalação do Node.js
 
-### 1. Instale as dependências
+## Instalação local
 
-Como a pasta `node_modules` não é enviada para o GitHub, você precisa baixar as dependências do projeto. Abra o terminal na pasta do projeto e rode **um** dos comandos abaixo:
+Instale exatamente as versões registradas no projeto:
 
 ```bash
-npm install
-# ou
-yarn install
-# ou
-pnpm install
-# ou
-bun install
+npm ci
 ```
 
-### 2. Variáveis de Ambiente
+Crie o arquivo local de ambiente a partir do exemplo:
 
-O projeto utiliza algumas chaves e configurações que ficam salvas localmente num arquivo `.env.local`.
-Como esse arquivo também não vai para o GitHub por motivos de segurança, você precisará criá-lo na raiz do projeto e colocar as variáveis corretas (peça os valores para quem já está no projeto).
+```powershell
+Copy-Item .env.example .env.local
+```
 
-### 3. Rode o servidor de desenvolvimento
+O arquivo `.env.local` não deve ser enviado ao repositório.
 
-Com tudo instalado, inicie o projeto rodando:
+## Variáveis de ambiente
+
+| Variável | Obrigatória | Uso |
+| --- | --- | --- |
+| `NEXT_PUBLIC_GA_ID` | Não | Identificador do Google Analytics no formato `G-...`. O Analytics só é carregado depois que o visitante aceita os cookies. |
+
+O valor fictício presente em `.env.example` mantém o Analytics desativado. Configure o identificador real diretamente no ambiente da hospedagem.
+
+## Desenvolvimento
+
+Inicie o servidor local:
 
 ```bash
 npm run dev
-# ou
-yarn dev
-# ou
-pnpm dev
-# ou
-bun dev
 ```
 
-### 4. Acesse o site
+Abra `http://localhost:3000` no navegador.
 
-Abra o seu navegador e acesse [http://localhost:3000](http://localhost:3000) para ver o resultado. 
-A página se atualiza automaticamente conforme você edita os arquivos na pasta `app` ou em `components`.
+## Validação antes da publicação
 
----
+Execute as verificações na ordem abaixo:
 
-## 📚 Aprenda mais sobre Next.js
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+```
 
-Para aprender mais sobre o Next.js, dê uma olhada nos links abaixo:
+Para conferir a versão de produção localmente:
 
-- [Documentação do Next.js](https://nextjs.org/docs) - aprenda sobre os recursos e APIs.
-- [Aprenda Next.js](https://nextjs.org/learn) - tutorial interativo.
+```bash
+npm run start
+```
+
+Durante essa conferência, valide o formulário, a consulta de CEP, o mapa, os vídeos locais, os links de WhatsApp e o consentimento do Google Analytics. A política de conteúdo está em modo de relatório; violações aparecem no console do navegador sem bloquear recursos.
+
+## Publicação
+
+Em uma hospedagem com servidor Node.js:
+
+1. Use Node.js 20.9.0 ou superior.
+2. Configure `NEXT_PUBLIC_GA_ID` no painel da hospedagem, se o Analytics já estiver disponível.
+3. Execute `npm ci` e `npm run build`.
+4. Inicie a aplicação com `npm run start`.
+5. Aponte `wlimasolucoes.com.br` somente depois de configurar DNS e HTTPS.
+
+A política de conteúdo deve permanecer em modo de relatório até a validação no domínio público. A ativação em modo obrigatório será uma decisão separada, baseada nos relatórios e nos testes em produção.

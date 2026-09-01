@@ -12,20 +12,20 @@ const FAQS = [
   },
   {
     question: "A energia solar zera a minha conta de luz?",
-    answer: "Você pode economizar até 95% do valor da sua conta. Os 5% restantes correspondem à taxa mínima de disponibilidade da rede elétrica (custo de disponibilidade) e iluminação pública."
+    answer: "Não é possível garantir conta zerada. A economia depende do consumo, da geração, do dimensionamento, das regras de compensação e das cobranças que continuam aplicáveis, como disponibilidade da rede e iluminação pública."
   },
   
   {
     question: "Qual é a vida útil de um sistema fotovoltaico?",
-    answer: "Os painéis de alta performance que utilizamos na W Lima Soluções possuem vida útil estimada em mais de 25 anos, com garantias sólidas de fábrica para eficiência de geração ao longo de décadas."
+    answer: "Painéis fotovoltaicos são projetados para operação de longo prazo. Vida útil, garantia de produto e garantia de desempenho variam conforme fabricante e modelo e são informadas na proposta comercial."
   },
   {
     question: "Preciso de manutenção constante?",
-    answer: "A manutenção é mínima. Basicamente envolve a limpeza dos painéis (quando não chove por muito tempo) para tirar a poeira e manter a eficiência, além de uma inspeção elétrica anual."
+    answer: "A necessidade de limpeza e inspeção depende do local, da sujeira acumulada e das recomendações dos fabricantes. O plano adequado é definido para cada instalação."
   },
   {
     question: "O investimento se paga em quanto tempo?",
-    answer: "O retorno do investimento (Payback) no Brasil varia entre 3 a 5 anos na maioria dos casos, dependendo do consumo e da tarifa local. Depois disso, é lucro livre pelos próximos 20 anos!"
+    answer: "O prazo de retorno depende do preço do sistema, forma de pagamento, consumo, tarifa, geração e manutenção. A simulação do site é apenas uma referência inicial; o cenário completo é apresentado depois da análise técnica."
   }
 ];
 

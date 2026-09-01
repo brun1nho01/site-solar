@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Lightning, CheckCircle, ChatCircleDots } from "@phosphor-icons/react";
 import MagneticButton from "@/components/ui/MagneticButton";
+import { createWhatsAppUrl, siteConfig } from "@/lib/site-config";
+import { openCookiePreferences } from "@/lib/analytics-consent";
 
 export default function Footer() {
   const handleSimularClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -13,7 +14,7 @@ export default function Footer() {
     }
   };
 
-  const [year, setYear] = useState<number>(new Date().getFullYear());
+  const year = new Date().getFullYear();
 
   return (
     <footer id="footer" className="relative border-t border-navy-900/10 dark:border-white/10 overflow-hidden bg-white dark:bg-navy-950">
@@ -29,11 +30,11 @@ export default function Footer() {
 
             {/* Headline Gigante de Encerramento */}
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold mb-6 text-balance text-navy-950 dark:text-white leading-[1.1] max-w-4xl">
-              Sua Conta de Luz Pode Ser <span className="text-gold-500 dark:text-gold-400">Quase Zero</span> no Mês Que Vem.
+              Descubra se a Energia Solar <span className="text-gold-500 dark:text-gold-400">Faz Sentido</span> para o Seu Imóvel.
             </h2>
 
             <p className="text-navy-600 dark:text-text-secondary text-base sm:text-xl max-w-2xl mb-8 leading-relaxed">
-              Solicite uma análise de viabilidade técnica gratuita e descubra o quanto você vai economizar antes de gastar um único centavo.
+              Faça uma simulação inicial e converse com a equipe para confirmar viabilidade, dimensionamento e condições do projeto.
             </p>
 
             {/* Botão Magnético de Ação Principal */}
@@ -50,7 +51,7 @@ export default function Footer() {
               </MagneticButton>
 
               <a
-                href="https://wa.me/5522999618883"
+                href={createWhatsAppUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-7 py-4 font-bold text-navy-950 dark:text-white text-base rounded-2xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-navy-900/10 dark:border-white/10 transition-colors"
@@ -68,7 +69,7 @@ export default function Footer() {
                 <CheckCircle weight="fill" className="w-4 h-4 text-emerald-500" /> Sem Compromisso
               </li>
               <li className="flex items-center gap-1.5">
-                <CheckCircle weight="fill" className="w-4 h-4 text-emerald-500" /> Garantia de 25 Anos
+                <CheckCircle weight="fill" className="w-4 h-4 text-emerald-500" /> Garantias Informadas na Proposta
               </li>
             </ul>
 
@@ -82,10 +83,12 @@ export default function Footer() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 text-sm text-navy-600 dark:text-text-muted">
             {/* Coluna 1: Empresa */}
             <div>
-              <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">W Lima Soluções</p>
-              <p>CNPJ: 56.652.464/0001-16</p>
-              <p>Rua Virgílio Franklin, Centro</p>
-              <p>Cambuci — RJ, CEP 28430-000</p>
+              <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">{siteConfig.company.displayName}</p>
+              <p>{siteConfig.company.legalName}</p>
+              <p>CNPJ: {siteConfig.company.taxId}</p>
+              <p>{siteConfig.company.address.street}, {siteConfig.company.address.number}</p>
+              <p>{siteConfig.company.address.district}</p>
+              <p>{siteConfig.company.address.city} — {siteConfig.company.address.state}, CEP {siteConfig.company.address.postalCode}</p>
             </div>
 
             {/* Coluna 2: Links Legais */}
@@ -103,6 +106,11 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
+                  <button type="button" onClick={openCookiePreferences} className="text-left text-navy-400 transition-colors hover:text-gold-500 dark:text-text-muted">
+                    Preferências de cookies
+                  </button>
+                </li>
+                <li>
                   <span className="text-navy-400 dark:text-text-muted cursor-default">
                     Homologação Concessionária
                   </span>
@@ -112,16 +120,16 @@ export default function Footer() {
 
             {/* Coluna 3: Contato */}
             <div>
-              <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">Atendimento Direct</p>
+              <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">Atendimento</p>
               <ul className="space-y-1.5">
                 <li>
-                  <a href="https://wa.me/5522999618883" className="hover:text-gold-500 transition-colors font-mono">
-                    (22) 99961-8883
+                  <a href={createWhatsAppUrl()} className="hover:text-gold-500 transition-colors font-mono">
+                    {siteConfig.company.phone.display}
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:contato@wlimasolucoes.com.br" className="hover:text-gold-500 transition-colors font-mono">
-                    contato@wlimasolucoes.com.br
+                  <a href={`mailto:${siteConfig.company.email}`} className="hover:text-gold-500 transition-colors font-mono">
+                    {siteConfig.company.email}
                   </a>
                 </li>
               </ul>
@@ -130,7 +138,7 @@ export default function Footer() {
 
           {/* Copyright */}
           <div className="mt-10 pt-6 border-t border-navy-900/10 dark:border-white/10 text-center text-xs text-navy-500 dark:text-text-muted flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p>© {year || 2025} W Lima Soluções. Todos os direitos reservados.</p>
+            <p>© {year || 2025} {siteConfig.company.displayName}. Todos os direitos reservados.</p>
             <p className="font-mono text-[11px]">Engenharia Solar de Alto Padrão no Rio de Janeiro</p>
           </div>
         </div>

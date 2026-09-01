@@ -2,14 +2,14 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { useEffect } from "react";
 
-// Lista Real das Cidades que você mapeou
-const ACTIVE_PLANTS = [
-  { id: 1, city: "Cambuci", state: "RJ", type: "Residencial", power: "8.4 kWp", lat: -21.5761, lng: -41.9114 },
-  { id: 2, city: "Itaperuna", state: "RJ", type: "Comercial", power: "24.6 kWp", lat: -21.2064, lng: -41.8872 },
-  { id: 3, city: "Campos dos Goytacazes", state: "RJ", type: "Agronegócio", power: "45.0 kWp", lat: -21.7538, lng: -41.3236 },
-  { id: 4, city: "Palma", state: "MG", type: "Residencial", power: "12.2 kWp", lat: -21.3789, lng: -42.3117 },
-  { id: 5, city: "Macaé", state: "RJ", type: "Comercial", power: "18.5 kWp", lat: -22.3787, lng: -41.7770 },
-  { id: 6, city: "Pádua", state: "RJ", type: "Residencial", power: "7.2 kWp", lat: -21.5367, lng: -42.1814 }
+const ACTIVE_ENERGY_CITIES = [
+  { id: 1, city: "Cambuci", state: "RJ", lat: -21.5762274, lng: -41.9122930 },
+  { id: 2, city: "Itaocara", state: "RJ", lat: -21.672064, lng: -42.077047 },
+  { id: 3, city: "São Fidélis", state: "RJ", lat: -21.646697, lng: -41.748905 },
+  { id: 4, city: "Aperibé", state: "RJ", lat: -21.6211928, lng: -42.1028167 },
+  { id: 5, city: "Pádua", state: "RJ", lat: -21.5390000, lng: -42.1816000 },
+  { id: 6, city: "Rio de Janeiro", state: "RJ", lat: -22.9110137, lng: -43.2093727 },
+  { id: 7, city: "Saquarema", state: "RJ", lat: -22.9257974, lng: -42.5076330 }
 ];
 
 // O custom marker usando HTML puro via DivIcon (estética W.Lima: sem as imgs tradicionais pesadas do Leaflet azulzinho)
@@ -32,49 +32,42 @@ export default function LeafletMapRender() {
   
   useEffect(() => {
     // Solução para bug crônico de icones do Leaflet com Webpack/Next
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
   }, []);
 
   const markerIcon = createCustomIcon();
-
-  // Centro do Triângulo Rio/Leste MG
-  const centerLat = -21.65;
-  const centerLng = -41.80;
+  const mapBounds = L.latLngBounds(
+    ACTIVE_ENERGY_CITIES.map(({ lat, lng }) => [lat, lng] as [number, number])
+  );
 
   return (
     <MapContainer 
-      center={[centerLat, centerLng]} 
-      zoom={8} 
+      bounds={mapBounds}
+      boundsOptions={{ padding: [32, 32] }}
       zoomControl={true}
       scrollWheelZoom={false} // Evita zoar o scroll da página do infeliz
       className="w-full h-full bg-slate-50 dark:bg-[#0a0f1c]"
     >
-      {/* 
-        TileLayer estético "CartoDB Dark Matter" gratuito. 
-        Muda tudo! Fica escuro, minimalista, estilo radar de guerra ou aviação, sem nomes sujos e poluição colorida.
-      */}
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         maxZoom={19}
       />
 
-      {ACTIVE_PLANTS.map((plant) => (
-        <Marker key={plant.id} position={[plant.lat, plant.lng]} icon={markerIcon}>
+      {ACTIVE_ENERGY_CITIES.map((location) => (
+        <Marker key={location.id} position={[location.lat, location.lng]} icon={markerIcon}>
           <Popup 
              className="custom-popup" 
              closeButton={false}
           >
             <div className="bg-[var(--theme-popup-bg)] border border-emerald-500/30 p-3 rounded-lg shadow-xl font-mono min-w-[140px] text-[var(--theme-text)]">
-               <h3 className="font-bold text-sm mb-1 text-[var(--theme-text)]">{plant.city}-{plant.state}</h3>
-               <div className="flex flex-col gap-1 text-[10px]">
-                 <span className="text-emerald-400 uppercase tracking-widest leading-none mt-1 border-t border-white/10 pt-1.5 flex justify-between pr-2">
-                   Tipo <strong className="text-[var(--theme-text)]">{plant.type}</strong>
-                 </span>
-                 <span className="text-gold-400 uppercase tracking-widest leading-none flex justify-between pr-2">
-                   Potência <strong className="text-[var(--theme-text)] bg-gold-400/20 px-1 py-0.5 rounded">{plant.power}</strong>
-                 </span>
-               </div>
+               <h3 className="font-bold text-sm mb-1 text-[var(--theme-text)]">{location.city} — {location.state}</h3>
+               <p className="border-t border-white/10 pt-1.5 text-[10px] font-bold uppercase leading-relaxed tracking-widest text-emerald-400">
+                 Energia solar ativa
+               </p>
+               <p className="mt-1 text-[9px] leading-relaxed text-[var(--theme-text)] opacity-70">
+                 Ponto aproximado no centro do município.
+               </p>
             </div>
           </Popup>
         </Marker>

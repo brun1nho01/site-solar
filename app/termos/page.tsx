@@ -33,7 +33,7 @@ export default function TermsOfUse() {
           </ul>
           <h2>Isenção de Responsabilidade e Limitações</h2>
           <p>
-            Os materiais no site da W Lima Soluções são fornecidos 'como estão'. A W Lima Soluções não oferece garantias de que o site estará livre de interrupções ou erros. Em nenhum caso a W Lima Soluções será responsável por quaisquer danos diretos ou indiretos (incluindo perda de dados ou lucros) decorrentes do uso ou da incapacidade de usar os materiais do nosso site.
+            Os materiais no site da W Lima Soluções são fornecidos “como estão”. A W Lima Soluções não oferece garantias de que o site estará livre de interrupções ou erros. Em nenhum caso a W Lima Soluções será responsável por quaisquer danos diretos ou indiretos (incluindo perda de dados ou lucros) decorrentes do uso ou da incapacidade de usar os materiais do nosso site.
           </p>
           <h2>Precisão dos Materiais</h2>
           <p>
