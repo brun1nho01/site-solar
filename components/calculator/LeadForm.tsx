@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,9 +17,15 @@ import {
   ChatCircle as MessageCircle
 } from "@phosphor-icons/react";
 import { createWhatsAppUrl, siteConfig } from "@/lib/site-config";
+import {
+  calculateSolarEstimate,
+  formatCurrencyBRL,
+  formatDecimalPTBR,
+  type SolarEstimateResult,
+} from "@/lib/solar-calculator";
 
 interface LeadFormProps {
-  billValue: number;
+  estimate: SolarEstimateResult;
 }
 
 type PropertyType = "" | "residencial" | "empresa" | "agronegocio";
@@ -48,7 +54,7 @@ type CepStatus =
 
 interface WhatsAppFallback {
   url: string;
-  billValue: number;
+  estimateKey: string;
 }
 
 const fieldFocusIds: Record<keyof FormData, string> = {
@@ -259,7 +265,7 @@ function CashFlowChart({ data }: { data: { year: number; saldo: number }[] }) {
   );
 }
 
-export default function LeadForm({ billValue }: LeadFormProps) {
+export default function LeadForm({ estimate }: LeadFormProps) {
   const [step, setStep] = useState<1 | 2 | 3>(1); // 3 = Sucesso
   const [formData, setFormData] = useState<FormData>({
     cep: "",
@@ -389,49 +395,44 @@ export default function LeadForm({ billValue }: LeadFormProps) {
     }
   };
 
-  // ── Geração de Dados pro Gráfico (25 anos) ──
-  const yearlySavings = billValue * 12 * 0.95;
-  
-  // Escala de preço baseada no tamanho do sistema (Lei da Oferta - economia de escala)
-  // Valores corrigidos para a realidade de mercado e considerando que grandes contas (comerciais)
-  // possuem taxa de demanda contratada, logo o sistema cresce de forma muito não-linear.
-  let multiplier = 25;
-  if (billValue <= 300) multiplier = 35; // Até ~10.5k
-  else if (billValue <= 600) multiplier = 30; // Até ~18k
-  else if (billValue <= 1000) multiplier = 27; // Até ~27k
-  else if (billValue <= 2000) multiplier = 30; // Até ~60k
-  else if (billValue <= 3500) multiplier = 19; // Até ~66k
-  else multiplier = 14; // Até ~70k (para conta de 5.000)
-
-  const baseSystemCost = billValue * multiplier;
-  
-  // Estimativa: Financiamento adiciona ~35% de juros no Custo Total Efetivo (CET)
   const isFinanced = formData.wantsFinancing === "sim";
-  const systemCost = isFinanced ? baseSystemCost * 1.35 : baseSystemCost;
-
-  let paybackYear = 0;
-
-  const chartData = Array.from({ length: 26 }).map((_, year) => {
-    if (year === 0) return { year, saldo: -systemCost };
-    const savingsToDate = Array.from({ length: year }).reduce((acc: number, _, i) => {
-      // Inflação da energia: ~5% ao ano | Degradação do painel: perda de ~0.5% ao ano na geração
-      const energyInflation = Math.pow(1.05, i);
-      const panelDegradation = Math.pow(0.995, i);
-      return acc + (yearlySavings * energyInflation * panelDegradation);
-    }, 0);
-    const saldo = Math.round(savingsToDate - systemCost);
-    
-    // Identificar quando o saldo cruza a linha do zero (Payback)
-    if (paybackYear === 0 && saldo >= 0) {
-      paybackYear = year;
-    }
-
-    return { year, saldo };
-  });
-
-  const paybackText = paybackYear > 0 
-    ? `Nesta simulação, o retorno estimado ocorre em aproximadamente ${paybackYear} anos${isFinanced ? " (com acréscimo financeiro estimado)" : ""}.`
-    : "Nesta simulação, o retorno ocorre em um horizonte de longo prazo.";
+  const selectedEstimate = useMemo(
+    () =>
+      calculateSolarEstimate({
+        monthlyBill: estimate.monthlyBill,
+        monthlyConsumptionKwh:
+          estimate.consumption.source === "informed"
+            ? estimate.consumption.maximumKwh
+            : null,
+        paymentMethod: isFinanced ? "financing" : "cash",
+        assumptions: estimate.assumptions,
+      }),
+    [estimate, isFinanced],
+  );
+  const estimateKey = `${selectedEstimate.monthlyBill}:${selectedEstimate.consumption.source}:${selectedEstimate.consumption.maximumKwh}:${selectedEstimate.paymentMethod}`;
+  const chartData = selectedEstimate.projection.flatMap((point) =>
+    point.balanceMidpoint === null
+      ? []
+      : [{ year: point.year, saldo: Math.round(point.balanceMidpoint) }],
+  );
+  const economyRange = `${formatCurrencyBRL(selectedEstimate.monthlySavings.minimum)} a ${formatCurrencyBRL(selectedEstimate.monthlySavings.maximum)}`;
+  const annualEconomyRange = `${formatCurrencyBRL(selectedEstimate.annualSavingsFirstYear.minimum)} a ${formatCurrencyBRL(selectedEstimate.annualSavingsFirstYear.maximum)}`;
+  const investmentRange =
+    selectedEstimate.investment.status === "available"
+      ? selectedEstimate.investment.minimum === selectedEstimate.investment.maximum
+        ? `cerca de ${formatCurrencyBRL(selectedEstimate.investment.minimum)}`
+        : `${formatCurrencyBRL(selectedEstimate.investment.minimum)} a ${formatCurrencyBRL(selectedEstimate.investment.maximum)}`
+      : "sob consulta";
+  const paybackText =
+    selectedEstimate.payback.status === "available"
+      ? `Retorno simples estimado entre ${formatDecimalPTBR(selectedEstimate.payback.minimumYears)} e ${formatDecimalPTBR(selectedEstimate.payback.maximumYears)} anos no cenário à vista.`
+      : selectedEstimate.payback.status === "partial"
+        ? `O retorno simples começa em cerca de ${formatDecimalPTBR(selectedEstimate.payback.minimumYears)} anos; o limite conservador supera 25 anos.`
+        : selectedEstimate.payback.status === "financing-proposal"
+          ? "Prazo, entrada, taxa, parcelas e CET serão definidos na proposta de financiamento."
+          : selectedEstimate.payback.status === "outside-horizon"
+            ? "O retorno não ocorre dentro do horizonte de 25 anos desta simulação."
+            : "A equipe precisa confirmar o preço deste porte antes de calcular o retorno.";
 
   // ── Navegação do Wizard ──
   const handleNextStep = () => {
@@ -456,18 +457,29 @@ export default function LeadForm({ billValue }: LeadFormProps) {
     setErrors({});
     whatsappOpenAttemptRef.current = true;
 
-    const economyFormatted = (yearlySavings).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    const consumptionText =
+      selectedEstimate.consumption.source === "informed"
+        ? `${selectedEstimate.consumption.maximumKwh.toLocaleString("pt-BR")} kWh/mês (informado)`
+        : `${selectedEstimate.consumption.minimumKwh.toLocaleString("pt-BR")} a ${selectedEstimate.consumption.maximumKwh.toLocaleString("pt-BR")} kWh/mês (estimado)`;
+    const returnText =
+      !isFinanced && selectedEstimate.payback.status === "available"
+        ? `\n- Retorno simples à vista: ${formatDecimalPTBR(selectedEstimate.payback.minimumYears)} a ${formatDecimalPTBR(selectedEstimate.payback.maximumYears)} anos`
+        : "";
     const message = `Olá! Vim pelo site e quero conversar sobre minha simulação inicial.
 *Dados informados:*
 - Nome: ${formData.name}${formData.email ? `\n- E-mail: ${formData.email}` : ""}
 - CEP: ${formData.cep}${formData.uf ? ` (${formData.uf})` : ""}
 - Imóvel: ${formData.propertyType}
 - Instalação: ${formData.installLocation}${formData.roofType ? ` (${formData.roofType})` : ""}
-- Financiamento: ${formData.wantsFinancing}
-- Conta atual: R$ ${billValue},00/mês
-- *Economia estimada no 1º ano:* ${economyFormatted}
+- Forma de pagamento: ${isFinanced ? "quero avaliar financiamento" : "à vista"}
+- ${selectedEstimate.consumption.source === "informed" ? "Conta equivalente usada" : "Conta informada"}: ${formatCurrencyBRL(selectedEstimate.monthlyBill)}/mês
+- Consumo: ${consumptionText}
+- Geração de referência: ${selectedEstimate.targetGenerationKwh.toLocaleString("pt-BR")} kWh/mês
+- Investimento à vista: ${investmentRange}
+- Economia mensal estimada: ${economyRange}
+- Economia estimada no 1º ano: ${annualEconomyRange}${returnText}
 
-Entendo que os valores do site são ilustrativos e precisam de análise técnica e proposta formal.`;
+Entendo que consumo, geração, investimento, economia e retorno são estimativas e precisam de análise técnica e proposta formal.${isFinanced ? " As condições financeiras dependem de entrada, prazo, taxa e CET." : ""}`;
 
     const whatsappUrl = createWhatsAppUrl(message);
 
@@ -488,7 +500,7 @@ Entendo que os valores do site são ilustrativos e precisam de análise técnica
 
     if (!whatsappWindow) {
       whatsappOpenAttemptRef.current = false;
-      setWhatsappFallback({ url: whatsappUrl, billValue });
+      setWhatsappFallback({ url: whatsappUrl, estimateKey });
       setAnnouncement("O navegador bloqueou a nova aba. Nenhuma mensagem foi enviada.");
       return;
     }
@@ -503,7 +515,10 @@ Entendo que os valores do site são ilustrativos e precisam de análise técnica
     try {
       if (typeof window.gtag === "function") {
         window.gtag("event", "lead_gerado_wizard", {
-          value: yearlySavings,
+          value:
+            (selectedEstimate.annualSavingsFirstYear.minimum +
+              selectedEstimate.annualSavingsFirstYear.maximum) /
+            2,
           currency: "BRL",
           property_type: formData.propertyType,
         });
@@ -557,7 +572,7 @@ Entendo que os valores do site são ilustrativos e precisam de análise técnica
   };
 
   const activeWhatsappFallback =
-    whatsappFallback?.billValue === billValue ? whatsappFallback : null;
+    whatsappFallback?.estimateKey === estimateKey ? whatsappFallback : null;
 
   // ── Renderização dos Passos ──
   return (
@@ -870,27 +885,48 @@ Entendo que os valores do site são ilustrativos e precisam de análise técnica
               </p>
             </div>
 
-            {/* Texto de Payback */}
-            <div className="bg-gold-500/10 border border-gold-500/20 rounded-xl p-3 text-center mb-2">
-              <p className="text-sm font-semibold text-gold-400 flex items-center justify-center gap-1.5">
-                <Sun aria-hidden="true" className="w-4 h-4" />
+            <dl className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <div className="rounded-xl border border-navy-900/10 bg-navy-900/[0.03] p-3 dark:border-white/10 dark:bg-white/[0.03]">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-navy-500 dark:text-text-muted">Geração</dt>
+                <dd className="mt-1 font-mono text-sm font-bold text-navy-950 dark:text-white">
+                  {selectedEstimate.targetGenerationKwh.toLocaleString("pt-BR")} kWh/mês
+                </dd>
+              </div>
+              <div className="rounded-xl border border-navy-900/10 bg-navy-900/[0.03] p-3 dark:border-white/10 dark:bg-white/[0.03]">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-navy-500 dark:text-text-muted">Investimento à vista</dt>
+                <dd className="mt-1 font-mono text-sm font-bold text-navy-950 dark:text-white">{investmentRange}</dd>
+              </div>
+              <div className="rounded-xl border border-navy-900/10 bg-navy-900/[0.03] p-3 dark:border-white/10 dark:bg-white/[0.03]">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-navy-500 dark:text-text-muted">Economia mensal</dt>
+                <dd className="mt-1 font-mono text-sm font-bold text-emerald-600 dark:text-emerald-400">{economyRange}</dd>
+              </div>
+            </dl>
+
+            <div className="rounded-xl border border-gold-500/20 bg-gold-500/10 p-3 text-center">
+              <p className="flex items-center justify-center gap-1.5 text-sm font-semibold text-gold-700 dark:text-gold-300">
+                <Sun aria-hidden="true" className="h-4 w-4 shrink-0" />
                 {paybackText}
               </p>
             </div>
 
-            {/* O Gráfico — SVG custom (zero dependência) */}
-            <div className="h-64 sm:h-72 w-full bg-navy-100/50 dark:bg-navy-950/30 rounded-xl p-4 pt-8 border border-navy-900/10 dark:border-white/5 relative overflow-hidden group mb-4">
-              <div className="absolute top-2 left-4 z-10">
-                <p className="text-xs text-navy-500 dark:text-text-muted font-mono uppercase tracking-wider font-semibold">Retorno Cumulativo do Caixa no Tempo (Deslize)</p>
+            {chartData.length > 0 ? (
+              <div className="group relative mb-4 h-64 w-full overflow-hidden rounded-xl border border-navy-900/10 bg-navy-100/50 p-4 pt-8 dark:border-white/5 dark:bg-navy-950/30 sm:h-72">
+                <div className="absolute left-4 top-2 z-10">
+                  <p className="font-mono text-xs font-semibold uppercase tracking-wider text-navy-500 dark:text-text-muted">Saldo acumulado no cenário central (deslize)</p>
+                </div>
+                <CashFlowChart data={chartData} />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent dark:from-navy-900" />
               </div>
-              <CashFlowChart data={chartData} />
-
-              {/* O Blur Overlay na parte de baixo do gráfico */}
-              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 dark:from-navy-900 to-transparent pointer-events-none" />
-            </div>
+            ) : (
+              <div className="rounded-xl border border-blue-500/20 bg-blue-500/10 p-4 text-sm leading-6 text-navy-700 dark:text-blue-100">
+                {isFinanced
+                  ? "O gráfico financeiro depende das condições de crédito. A equipe calculará entrada, prazo, taxa, parcelas e CET na proposta."
+                  : "O preço desta faixa de geração ainda depende de orçamento. A equipe confirmará investimento e retorno depois da análise."}
+              </div>
+            )}
 
             <p className="text-xs leading-5 text-navy-500 dark:text-text-muted">
-              Projeção ilustrativa, baseada em premissas simplificadas. Valores, geração, economia e prazo de retorno serão confirmados somente após análise técnica e proposta formal.
+              A faixa usa conta residual de {formatCurrencyBRL(selectedEstimate.residualBill.minimum)} a {formatCurrencyBRL(selectedEstimate.residualBill.maximum)}, degradação de 0,5% ao ano e reajuste tarifário de 0%. O cenário central do gráfico usa a média do investimento e da economia. A proposta final depende do imóvel, da tarifa e dos equipamentos.
             </p>
 
             {/* Formulário de Contato */}

@@ -13,13 +13,26 @@ export default function TermsOfUse() {
         </Link>
         <h1 className="text-3xl font-display font-bold text-navy-950 dark:text-white mb-6">Termos de Uso</h1>
         <div className="prose dark:prose-invert prose-navy max-w-none text-navy-700 dark:text-text-secondary">
-          <p>Última atualização: Julho de 2026</p>
+          <p>Última atualização: Agosto de 2026</p>
           <p>
             Bem-vindo ao site da W.Lima Soluções em Energia Solar. Ao acessar o site da W Lima Soluções, você concorda em cumprir estes Termos de Uso, todas as leis e regulamentos aplicáveis e concorda que é responsável pelo cumprimento de todas as leis locais. Se você não concordar com algum desses termos, está proibido de usar ou acessar este site.
           </p>
           <h2>Simulações, Orçamentos e Estimativas</h2>
           <p>
-            A W Lima Soluções atua no setor de energia solar. Quaisquer dados, simulações de economia, dimensionamento de sistemas ou valores apresentados no site possuem caráter meramente estimativo e informativo. Eles não constituem uma proposta comercial vinculativa ou garantia de geração de energia. Propostas formais e definitivas só serão válidas após análise técnica presencial ou envio de documento oficial pela nossa equipe comercial.
+            A W Lima Soluções usa os dados informados pelo visitante para apresentar uma referência inicial de consumo, geração, investimento, economia e retorno simples. A simulação não constitui proposta comercial, orçamento, dimensionamento técnico ou garantia de geração e economia. A equipe confirmará o cenário após analisar a fatura, o imóvel, a localização, os equipamentos e as regras aplicáveis à unidade consumidora.
+          </p>
+          <h2>Premissas do Simulador Solar</h2>
+          <p>
+            O visitante pode informar o valor mensal da conta ou o consumo médio em kWh. No primeiro modo, o simulador estima uma faixa de consumo usando a referência comercial de que R$ 500 por mês correspondem a cerca de 390 a 490 kWh por mês. No modo por consumo, o simulador estima uma conta equivalente pela mesma referência tarifária. O simulador usa uma entrada por vez, acrescenta uma margem de 15% e ajusta a geração para o próximo bloco de 100 kWh por mês.
+          </p>
+          <p>
+            A faixa de investimento usa os preços comerciais fornecidos pela empresa para gerações entre 600 e 1.000 kWh por mês. Portes fora dessa faixa exigem orçamento. A potência do sistema em kWp depende da irradiação, orientação, inclinação, sombreamento, perdas e demais condições do projeto.
+          </p>
+          <p>
+            A economia considera uma conta residual típica entre R$ 50 e R$ 100 por mês, degradação de 0,5% ao ano, horizonte de 25 anos e reajuste tarifário de 0%. Iluminação pública, disponibilidade da rede, impostos, demanda contratada, manutenção, seguro, troca de equipamentos e outras cobranças podem alterar o resultado.
+          </p>
+          <p>
+            O retorno exibido representa um payback simples para pagamento à vista. O site não calcula financiamento sem entrada, prazo, taxa, parcelas e Custo Efetivo Total (CET) definidos em proposta.
           </p>
           <h2>Propriedade Intelectual e Uso do Site</h2>
           <p>

@@ -46,6 +46,7 @@ Abra `http://localhost:3000` no navegador.
 Execute as verificações na ordem abaixo:
 
 ```bash
+npm run test:unit
 npm run lint
 npx tsc --noEmit
 npm run build

@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:unit": "vitest run",
     "prepare": "husky"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "lint-staged": "^16.4.0",
     "playwright": "^1.62.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.11"
   }
 }
