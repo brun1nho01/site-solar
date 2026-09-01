@@ -1,43 +1,45 @@
 "use client";
 
-import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
-import { Calculator, MapPin, FileText, Wrench, Lightning } from "@phosphor-icons/react";
 import { useRef } from "react";
+import { motion, type MotionValue, useScroll, useTransform } from "framer-motion";
+import { Calculator, FileText, Lightning, MapPin, Wrench } from "@phosphor-icons/react";
 
 const STEPS = [
   {
     title: "Análise de Viabilidade",
     description: "Levantamento da fatura, do perfil de consumo e das condições do telhado ou do solo para orientar o dimensionamento inicial.",
-    icon: <Calculator weight="duotone" className="w-12 h-12 text-gold-500" />
+    icon: Calculator,
   },
   {
     title: "Projeto e Homologação",
     description: "Definição técnica do sistema e condução das etapas aplicáveis junto à concessionária, conforme o escopo formal da proposta.",
-    icon: <FileText weight="duotone" className="w-12 h-12 text-gold-500" />
+    icon: FileText,
   },
   {
     title: "Instalação Conforme o Projeto",
     description: "Montagem dos equipamentos e da infraestrutura conforme as condições verificadas no local e o cronograma definido para cada obra.",
-    icon: <Wrench weight="duotone" className="w-12 h-12 text-gold-500" />
+    icon: Wrench,
   },
   {
     title: "Vistoria e Conexão",
     description: "Acompanhamento das etapas de vistoria, troca ou configuração do medidor e liberação, nos prazos e procedimentos da concessionária.",
-    icon: <MapPin weight="duotone" className="w-12 h-12 text-gold-500" />
+    icon: MapPin,
   },
   {
     title: "Geração e Compensação",
     description: "Depois da liberação, o sistema começa a gerar energia. Créditos, economia e cobranças remanescentes variam conforme geração, consumo e regras da concessionária.",
-    icon: <Lightning weight="duotone" className="w-12 h-12 text-gold-500" />
-  }
+    icon: Lightning,
+  },
 ];
+
+type ProcessStep = (typeof STEPS)[number];
 
 function StepText({
   step,
   index,
   scrollYProgress,
 }: {
-  step: typeof STEPS[0];
+  step: ProcessStep;
   index: number;
   scrollYProgress: MotionValue<number>;
 }) {
@@ -50,7 +52,6 @@ function StepText({
   let opacityRange: number[];
   let yRange: number[];
 
-  // Definindo todos os pontos de [0 a 1] para eliminar qualquer bug de interpolação do framer-motion
   if (index === 0) {
     rangeX = [0, fadeOutStart, end, 1];
     opacityRange = [1, 1, 0, 0];
@@ -71,15 +72,15 @@ function StepText({
   return (
     <motion.div
       style={{ opacity, y, zIndex: 10 - index }}
-      className="absolute inset-0 flex flex-col pointer-events-none"
+      className="pointer-events-none absolute inset-0 flex flex-col"
     >
-      <div className="flex items-center gap-3 mb-2 sm:mb-4">
-        <span className="font-mono font-extrabold text-gold-500 text-xl sm:text-2xl">0{index + 1}.</span>
-        <h3 className="text-2xl sm:text-4xl font-display font-bold text-navy-950 dark:text-white">
+      <div className="mb-4 flex items-center gap-3">
+        <span className="font-mono text-2xl font-extrabold text-gold-500">0{index + 1}.</span>
+        <h3 className="font-display text-4xl font-bold text-navy-950 dark:text-white">
           {step.title}
         </h3>
       </div>
-      <p className="text-navy-700 dark:text-navy-300 text-base sm:text-xl leading-relaxed max-w-lg">
+      <p className="max-w-lg text-xl leading-relaxed text-navy-700 dark:text-navy-300">
         {step.description}
       </p>
     </motion.div>
@@ -91,7 +92,7 @@ function StepIcon({
   index,
   scrollYProgress,
 }: {
-  step: typeof STEPS[0];
+  step: ProcessStep;
   index: number;
   scrollYProgress: MotionValue<number>;
 }) {
@@ -120,64 +121,97 @@ function StepIcon({
 
   const opacity = useTransform(scrollYProgress, rangeX, opacityRange);
   const scale = useTransform(scrollYProgress, rangeX, scaleRange);
+  const Icon = step.icon;
 
   return (
     <motion.div
       style={{ opacity, scale }}
-      className="absolute inset-0 flex items-center justify-center pointer-events-none"
+      className="pointer-events-none absolute inset-0 flex items-center justify-center"
     >
-      <div className="w-24 h-24 sm:w-32 sm:h-32 lg:w-48 lg:h-48 rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-navy-900/10 dark:border-white/10 flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-[0_0_50px_rgba(242,205,66,0.15)]">
-        {step.icon}
+      <div className="flex h-48 w-48 items-center justify-center rounded-full border border-navy-900/10 bg-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_0_50px_rgba(242,205,66,0.15)]">
+        <Icon aria-hidden="true" weight="duotone" className="h-12 w-12 text-gold-500" />
       </div>
     </motion.div>
   );
 }
 
 export default function ProcessSection() {
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"]
+    offset: ["start start", "end end"],
   });
 
   return (
-    <section ref={containerRef} id="processo" className="relative h-[350vh] bg-navy-50 dark:bg-navy-950 transition-colors duration-500">
-      <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-        
-        {/* Background adaptativo */}
-        <div className="absolute inset-0 bg-navy-50 dark:bg-navy-950 pointer-events-none transition-colors duration-500" />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gold-500/8 dark:bg-gold-500/3 rounded-full blur-[120px] pointer-events-none" />
+    <section id="processo" className="relative bg-navy-50 transition-colors duration-500 dark:bg-navy-950">
+      <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:hidden motion-reduce:!block">
+        <h2 className="mb-12 font-display text-3xl font-bold leading-tight text-navy-950 dark:text-white sm:text-4xl">
+          Do Projeto à <span className="text-gold-500 dark:text-gold-400">Economia</span>
+        </h2>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col lg:flex-row items-center gap-6 sm:gap-12 lg:gap-20">
-          
-          <div className="w-full lg:w-1/2">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-3 sm:mb-6 text-navy-950 dark:text-white leading-tight">
-              Do Projeto à <br className="sm:hidden" /><span className="text-gold-500 dark:text-gold-400">Economia</span>
-            </h2>
-            
-            {/* Linha de conexão / Progresso */}
-            <div className="w-full h-1 bg-navy-900/10 dark:bg-white/10 rounded-full mb-6 sm:mb-10 overflow-hidden">
-              <motion.div 
-                className="h-full bg-gold-500 rounded-full"
-                style={{ scaleX: scrollYProgress, transformOrigin: "left" }}
-              />
+        <ol aria-label="Etapas do projeto de energia solar" className="space-y-0">
+          {STEPS.map((step, index) => {
+            const Icon = step.icon;
+
+            return (
+              <li key={step.title} className="group relative grid grid-cols-[2.75rem_1fr] gap-4 pb-10 last:pb-0">
+                <span
+                  aria-hidden="true"
+                  className="absolute left-[1.35rem] top-11 h-[calc(100%-2.75rem)] w-px bg-navy-900/15 group-last:hidden dark:bg-white/15"
+                />
+                <div className="relative z-10 flex h-11 w-11 items-center justify-center rounded-full border border-gold-500/30 bg-gold-500/10 text-gold-600 dark:text-gold-400">
+                  <Icon aria-hidden="true" weight="duotone" className="h-5 w-5" />
+                </div>
+                <div className="pt-0.5">
+                  <p className="font-mono text-xs font-bold text-gold-600 dark:text-gold-400">
+                    Etapa {index + 1} de {STEPS.length}
+                  </p>
+                  <h3 className="mt-1 font-display text-xl font-bold text-navy-950 dark:text-white">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-base leading-7 text-navy-700 dark:text-navy-300">
+                    {step.description}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+
+      <div ref={containerRef} className="relative hidden h-[350vh] lg:block motion-reduce:!hidden">
+        <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-navy-50 transition-colors duration-500 dark:bg-navy-950" />
+          <div aria-hidden="true" className="pointer-events-none absolute right-0 top-0 h-[400px] w-[400px] rounded-full bg-gold-500/8 blur-[120px] dark:bg-gold-500/3" />
+
+          <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center gap-20 px-8">
+            <div className="w-1/2">
+              <h2 className="mb-6 font-display text-5xl font-bold leading-tight text-navy-950 dark:text-white">
+                Do Projeto à <span className="text-gold-500 dark:text-gold-400">Economia</span>
+              </h2>
+
+              <div aria-hidden="true" className="mb-10 h-1 w-full overflow-hidden rounded-full bg-navy-900/10 dark:bg-white/10">
+                <motion.div
+                  className="h-full rounded-full bg-gold-500"
+                  style={{ scaleX: scrollYProgress, transformOrigin: "left" }}
+                />
+              </div>
+
+              <div className="relative h-[200px] w-full">
+                {STEPS.map((step, index) => (
+                  <StepText key={step.title} step={step} index={index} scrollYProgress={scrollYProgress} />
+                ))}
+              </div>
             </div>
 
-            <div className="relative h-[160px] sm:h-[200px] w-full">
-              {STEPS.map((step, index) => (
-                <StepText key={`text-${index}`} step={step} index={index} scrollYProgress={scrollYProgress} />
-              ))}
+            <div className="flex h-[400px] w-1/2 items-center justify-center">
+              <div className="relative h-full w-full max-w-md">
+                {STEPS.map((step, index) => (
+                  <StepIcon key={step.title} step={step} index={index} scrollYProgress={scrollYProgress} />
+                ))}
+              </div>
             </div>
           </div>
-
-          <div className="w-full lg:w-1/2 flex justify-center items-center h-[200px] sm:h-[300px] lg:h-[400px]">
-             <div className="relative w-full h-full max-w-[200px] sm:max-w-md">
-               {STEPS.map((step, index) => (
-                 <StepIcon key={`icon-${index}`} step={step} index={index} scrollYProgress={scrollYProgress} />
-               ))}
-             </div>
-          </div>
-
         </div>
       </div>
     </section>

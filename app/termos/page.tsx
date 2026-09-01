@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function TermsOfUse() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-navy-950 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <main id="conteudo-principal" tabIndex={-1} className="min-h-screen scroll-mt-24 bg-slate-50 px-4 pb-12 pt-24 outline-none dark:bg-navy-950 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto glass p-8 sm:p-12 rounded-3xl border border-navy-900/10 dark:border-white/10">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-gold-500 font-bold hover:underline mb-8">
           Voltar para a Home
@@ -66,6 +66,6 @@ export default function TermsOfUse() {
           </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

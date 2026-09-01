@@ -96,17 +96,17 @@ export default function Footer() {
               <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">Legal</p>
               <ul className="space-y-1.5">
                 <li>
-                  <a href="/privacidade" className="text-navy-400 dark:text-text-muted hover:text-gold-500 transition-colors">
+                  <a href="/privacidade" className="inline-flex min-h-11 items-center text-navy-400 transition-colors hover:text-gold-500 dark:text-text-muted">
                     Política de Privacidade
                   </a>
                 </li>
                 <li>
-                  <a href="/termos" className="text-navy-400 dark:text-text-muted hover:text-gold-500 transition-colors">
+                  <a href="/termos" className="inline-flex min-h-11 items-center text-navy-400 transition-colors hover:text-gold-500 dark:text-text-muted">
                     Termos de Uso
                   </a>
                 </li>
                 <li>
-                  <button type="button" onClick={openCookiePreferences} className="text-left text-navy-400 transition-colors hover:text-gold-500 dark:text-text-muted">
+                  <button type="button" onClick={openCookiePreferences} className="inline-flex min-h-11 items-center text-left text-navy-400 transition-colors hover:text-gold-500 dark:text-text-muted">
                     Preferências de cookies
                   </button>
                 </li>
@@ -123,12 +123,12 @@ export default function Footer() {
               <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">Atendimento</p>
               <ul className="space-y-1.5">
                 <li>
-                  <a href={createWhatsAppUrl()} className="hover:text-gold-500 transition-colors font-mono">
+                  <a href={createWhatsAppUrl()} className="inline-flex min-h-11 items-center font-mono transition-colors hover:text-gold-500">
                     {siteConfig.company.phone.display}
                   </a>
                 </li>
                 <li>
-                  <a href={`mailto:${siteConfig.company.email}`} className="hover:text-gold-500 transition-colors font-mono">
+                  <a href={`mailto:${siteConfig.company.email}`} className="inline-flex min-h-11 items-center font-mono transition-colors hover:text-gold-500">
                     {siteConfig.company.email}
                   </a>
                 </li>

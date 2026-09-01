@@ -114,6 +114,12 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col relative text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-navy-950 transition-colors duration-300">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <a
+            href="#conteudo-principal"
+            className="fixed left-4 top-4 z-[200] -translate-y-24 rounded-lg bg-gold-400 px-4 py-3 text-sm font-bold text-navy-950 shadow-xl transition-transform focus:translate-y-0 motion-reduce:transition-none"
+          >
+            Pular para o conteúdo
+          </a>
           <NoiseOverlay />
           <GridBackground />
           <FloatingWhatsApp />

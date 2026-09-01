@@ -129,8 +129,8 @@ export default function EconomyCalculator() {
               />
             </div>
 
-            <div className="group relative my-6 flex h-4 cursor-pointer items-center">
-              <div className="absolute h-3 w-full overflow-hidden rounded-full bg-navy-900/10 dark:bg-white/10">
+            <div className="group relative my-3 flex h-11 cursor-pointer items-center">
+              <div className="absolute top-1/2 h-3 w-full -translate-y-1/2 overflow-hidden rounded-full bg-navy-900/10 dark:bg-white/10">
                 <div
                   className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-gold-500 via-amber-400 to-emerald-400"
                   style={{ width: `${percentage}%` }}
@@ -294,14 +294,14 @@ export default function EconomyCalculator() {
         </MagneticButton>
       ) : (
         <div className="relative z-10 animate-fade-in-up border-t border-navy-900/10 pt-4 dark:border-white/10">
-          <div className="mb-4 flex items-start justify-between gap-4">
+          <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:gap-4">
             <p className="text-sm font-semibold text-navy-950 dark:text-white">
               Preencha seus dados para receber a análise deste cenário.
             </p>
             <button
               type="button"
               onClick={handleHideForm}
-              className="ml-4 whitespace-nowrap text-sm font-medium text-navy-600 underline underline-offset-2 transition-colors hover:text-gold-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 dark:text-text-secondary dark:hover:text-gold-400"
+              className="inline-flex min-h-11 items-center rounded-md px-1 text-sm font-medium text-navy-600 underline underline-offset-2 transition-colors hover:text-gold-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 dark:text-text-secondary dark:hover:text-gold-400 sm:ml-4"
             >
               ← Voltar ao cálculo
             </button>

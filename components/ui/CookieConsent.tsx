@@ -72,11 +72,11 @@ export function CookieConsent({ gaId }: CookieConsentProps) {
             <div className="flex shrink-0 flex-wrap gap-3">
               {analyticsConfigured ? (
                 <>
-                  <button type="button" onClick={() => chooseConsent("denied")} className="rounded-full border border-navy-900/15 px-5 py-2.5 text-sm font-bold text-navy-800 transition-colors hover:bg-navy-100 dark:border-white/15 dark:text-white dark:hover:bg-white/10">Recusar</button>
-                  <button type="button" onClick={() => chooseConsent("granted")} className="rounded-full bg-gold-500 px-5 py-2.5 text-sm font-bold text-navy-950 shadow-lg transition-colors hover:bg-gold-400">Aceitar analíticos</button>
+                  <button type="button" onClick={() => chooseConsent("denied")} className="min-h-11 rounded-full border border-navy-900/15 px-5 py-2.5 text-sm font-bold text-navy-800 transition-colors hover:bg-navy-100 dark:border-white/15 dark:text-white dark:hover:bg-white/10">Recusar</button>
+                  <button type="button" onClick={() => chooseConsent("granted")} className="min-h-11 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-bold text-navy-950 shadow-lg transition-colors hover:bg-gold-400">Aceitar analíticos</button>
                 </>
               ) : (
-                <button type="button" onClick={() => setPreferencesOpen(false)} className="rounded-full bg-gold-500 px-5 py-2.5 text-sm font-bold text-navy-950 transition-colors hover:bg-gold-400">Fechar</button>
+                <button type="button" onClick={() => setPreferencesOpen(false)} className="min-h-11 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-bold text-navy-950 transition-colors hover:bg-gold-400">Fechar</button>
               )}
             </div>
           </div>

@@ -77,7 +77,7 @@ export default function SocialProofSection() {
                 <button type="button"
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`relative px-5 py-2.5 rounded-full font-mono text-xs font-bold transition-all duration-300 flex items-center gap-2 cursor-pointer ${isActive
+                  className={`relative flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-5 py-2.5 font-mono text-xs font-bold transition-all duration-300 ${isActive
                       ? "text-navy-950 bg-gradient-to-r from-gold-400 to-amber-400 shadow-[0_0_20px_rgba(242,205,66,0.3)]"
                       : "text-navy-600 dark:text-text-muted bg-white/60 dark:bg-navy-900/50 hover:bg-white dark:hover:bg-navy-900 border border-navy-900/10 dark:border-white/10"
                     }`}

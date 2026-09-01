@@ -87,7 +87,7 @@ export default function LeafletMapRender() {
       
         /* Estilização Customizada dos Botões de Zoom do Leaflet (+/-) para não parecerem feios/genéricos */
         .leaflet-bar { box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 0.5rem !important; overflow: hidden; }
-        .leaflet-bar a { background-color: #0a0f1c !important; color: #10b981 !important; border-bottom: 1px solid rgba(255,255,255,0.05) !important; width: 34px !important; height: 34px !important; line-height: 34px !important; transition: all 0.2s; }
+        .leaflet-bar a { background-color: #0a0f1c !important; color: #10b981 !important; border-bottom: 1px solid rgba(255,255,255,0.05) !important; width: 44px !important; height: 44px !important; line-height: 44px !important; transition: all 0.2s; }
         .leaflet-bar a:hover { background-color: #121b2b !important; color: #fff !important; }
         .leaflet-bar a.leaflet-disabled { background-color: #0a0f1c !important; color: rgba(255,255,255,0.2) !important; }
       `}} />

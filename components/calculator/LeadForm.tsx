@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { z } from "zod";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   House as Home,
   Buildings as Building2,
@@ -105,6 +105,7 @@ const step2Schema = z.object({
 /* ── Gráfico SVG artesanal — 0KB de dependência extra ── */
 function CashFlowChart({ data }: { data: { year: number; saldo: number }[] }) {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const shouldReduceMotion = useReducedMotion();
   
   const W = 560;
   const H = 240;
@@ -240,10 +241,10 @@ function CashFlowChart({ data }: { data: { year: number; saldo: number }[] }) {
       <AnimatePresence>
         {activeData && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.15 }}
             className="absolute z-20 pointer-events-none"
             style={{
                left: `max(60px, min(calc(100% - 70px), ${(x(activeData.year) / W) * 100}%))`,
@@ -267,6 +268,7 @@ function CashFlowChart({ data }: { data: { year: number; saldo: number }[] }) {
 
 export default function LeadForm({ estimate }: LeadFormProps) {
   const [step, setStep] = useState<1 | 2 | 3>(1); // 3 = Sucesso
+  const shouldReduceMotion = useReducedMotion();
   const [formData, setFormData] = useState<FormData>({
     cep: "",
     uf: "",
@@ -592,9 +594,10 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
         {step === 1 && (
           <motion.div
             key="step1"
-            initial={{ opacity: 0, x: -20 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -20 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             onAnimationComplete={focusCurrentStepTitle}
             className="space-y-6"
           >
@@ -701,7 +704,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
             </fieldset>
 
             {/* Local de Instalação (Cards) */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-4">
               <fieldset aria-describedby={errors.installLocation ? "lead-install-error" : undefined}>
                 <legend className="text-sm text-text-secondary mb-1.5">Onde instalar?</legend>
                 <div className="grid grid-cols-2 gap-2">
@@ -819,7 +822,12 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
 
             {/* Condicional Telhado */}
             {formData.installLocation === "telhado" && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
+              <motion.div
+                initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+                className="overflow-hidden"
+              >
                 <label htmlFor="lead-roof-type" className="text-sm text-text-secondary mb-1.5 block">
                   Qual o tipo de telhado?
                 </label>
@@ -849,10 +857,10 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
 
             <button
               type="submit"
-              className="w-full py-4 mt-4 rounded-xl font-bold text-navy-950 bg-gold-400 hover:bg-gold-300 transition-all duration-300 flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(250,204,21,0.3)] hover:shadow-[0_0_30px_rgba(250,204,21,0.5)]"
+              className="group mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-gold-400 py-4 font-bold text-navy-950 shadow-[0_0_20px_rgba(250,204,21,0.3)] transition-all duration-300 hover:bg-gold-300 hover:shadow-[0_0_30px_rgba(250,204,21,0.5)] focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-navy-900"
             >
               Gerar Simulação Inicial
-              <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ChevronRight aria-hidden="true" className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </motion.div>
         )}
@@ -861,9 +869,10 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
         {step === 2 && (
           <motion.div
             key="step2"
-            initial={{ opacity: 0, x: 20 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -20 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             onAnimationComplete={focusCurrentStepTitle}
             className="space-y-5"
           >
@@ -979,7 +988,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                   )}
                 </div>
 
-                <div className="flex items-start gap-3 mt-2">
+                <div className="mt-2 flex min-h-11 items-start gap-3">
                   <input
                     id="lead-consent"
                     name="lgpdConsent"
@@ -989,7 +998,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                     onChange={(e) => updateField("lgpdConsent", e.target.checked)}
                     aria-invalid={Boolean(errors.lgpdConsent)}
                     aria-describedby={errors.lgpdConsent ? "lead-consent-error" : undefined}
-                    className="mt-1 w-4 h-4 rounded border-white/20 bg-white/5 text-gold-500 focus:ring-gold-400 cursor-pointer"
+                    className="mt-1 h-5 w-5 shrink-0 cursor-pointer rounded border-white/20 bg-white/5 text-gold-500 focus:ring-gold-400"
                   />
                   <p className="text-xs text-text-muted leading-tight">
                     <label htmlFor="lead-consent" className="hover:text-text-secondary transition-colors cursor-pointer">
@@ -1014,7 +1023,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
 
                 <button
                   type="submit"
-                  className="w-full py-4 mt-2 rounded-xl font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group"
+                  className="group mt-2 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl py-4 font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-navy-900"
                   style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-button)" }}
                 >
                   <MessageCircle aria-hidden="true" className="w-5 h-5" />
@@ -1060,7 +1069,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                 <button 
                   type="button" 
                   onClick={handleBackToStepOne}
-                  className="w-full text-center text-xs text-navy-400 dark:text-text-muted hover:text-navy-950 dark:hover:text-white mt-4 transition-colors"
+                  className="mt-4 min-h-11 w-full rounded-lg text-center text-xs text-navy-500 transition-colors hover:text-navy-950 focus-visible:ring-2 focus-visible:ring-gold-400 dark:text-text-muted dark:hover:text-white"
                 >
                   Voltar e alterar dados
                 </button>
@@ -1073,8 +1082,9 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
         {step === 3 && (
           <motion.div
             key="step3"
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             onAnimationComplete={focusCurrentStepTitle}
             className="text-center py-8 space-y-4"
           >

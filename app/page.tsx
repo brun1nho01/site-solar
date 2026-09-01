@@ -5,6 +5,7 @@
    ═══════════════════════════════════════════════════ */
 
 import HeroSection from "@/components/sections/HeroSection";
+import TaximetroDor from "@/components/sections/TaximetroDor";
 import QualitySection from "@/components/sections/QualitySection";
 import ProcessSection from "@/components/sections/ProcessSection";
 import EconomyCalculator from "@/components/calculator/EconomyCalculator";
@@ -19,8 +20,10 @@ const Footer = dynamic(() => import("@/components/sections/Footer"));
 
 export default function Home() {
   return (
-    <main className="relative">
+    <main id="conteudo-principal" tabIndex={-1} className="relative scroll-mt-24 outline-none">
       <HeroSection />
+
+      <TaximetroDor />
 
       {/* Container Integrado do Simulador */}
       <section id="simulador" className="relative z-10 pb-32 pt-4 px-4 overflow-hidden">

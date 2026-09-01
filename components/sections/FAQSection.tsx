@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CaretDown as ChevronDown } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +31,7 @@ const FAQS = [
 
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const shouldReduceMotion = useReducedMotion();
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -67,11 +68,12 @@ export default function FAQSection() {
                   )}
                 >
                   <button
+                    type="button"
                     id={`faq-trigger-${index}`}
                     onClick={() => toggleFAQ(index)}
                     aria-expanded={isOpen}
                     aria-controls={`faq-content-${index}`}
-                    className="w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none"
+                    className="flex min-h-11 w-full items-center justify-between gap-4 px-5 py-5 text-left focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold-400 sm:px-6"
                   >
                     <span className={cn(
                       "font-bold text-lg transition-colors",
@@ -79,8 +81,8 @@ export default function FAQSection() {
                     )}>
                       {faq.question}
                     </span>
-                    <div className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
+                    <div aria-hidden="true" className={cn(
+                      "flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all duration-300",
                       isOpen ? "bg-gold-500/20 text-gold-500 dark:text-gold-400 rotate-180" : "bg-black/5 dark:bg-white/10 text-navy-600 dark:text-text-secondary"
                     )}>
                       <ChevronDown className="w-5 h-5" />
@@ -89,10 +91,10 @@ export default function FAQSection() {
                   <AnimatePresence>
                     {isOpen && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
+                        initial={shouldReduceMotion ? false : { height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
                         <div

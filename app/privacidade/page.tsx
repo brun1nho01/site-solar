@@ -12,7 +12,7 @@ const paragraphClass = "mt-3 leading-7 text-navy-700 dark:text-text-secondary";
 
 export default function PrivacyPolicy() {
   return (
-    <main className="min-h-screen bg-slate-50 px-4 pb-16 pt-28 dark:bg-navy-950 sm:px-6">
+    <main id="conteudo-principal" tabIndex={-1} className="min-h-screen scroll-mt-24 bg-slate-50 px-4 pb-16 pt-28 outline-none dark:bg-navy-950 sm:px-6">
       <article className="glass mx-auto max-w-3xl rounded-3xl border border-navy-900/10 p-7 dark:border-white/10 sm:p-12">
         <Link href="/" className="inline-flex text-sm font-bold text-gold-600 hover:underline dark:text-gold-400">
           Voltar para o início
