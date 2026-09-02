@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import GridBackground from "@/components/ui/GridBackground";
@@ -9,6 +8,8 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { siteConfig } from "@/lib/site-config";
+import { ACTIVE_ENERGY_CITIES } from "@/lib/active-energy-cities";
+import { sharedOpenGraphImage } from "@/lib/seo";
 
 /* ── Fontes self-hosted via next/font (eliminando requests externos) ── */
 const satoshi = localFont({
@@ -19,13 +20,6 @@ const satoshi = localFont({
     { path: "./fonts/Satoshi-Black.woff2", weight: "900", style: "normal" },
   ],
   variable: "--font-satoshi",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["500", "700"],
-  variable: "--font-jetbrains",
   display: "swap",
 });
 
@@ -56,14 +50,7 @@ export const metadata: Metadata = {
     description:
       "Faça uma estimativa inicial para seu imóvel e fale com a equipe da W. Lima Soluções.",
     siteName: siteConfig.company.displayName,
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: `${siteConfig.company.displayName} — Energia Solar de Alto Padrão no Rio de Janeiro`,
-      },
-    ],
+    images: [sharedOpenGraphImage],
   },
   twitter: {
     card: "summary_large_image",
@@ -85,6 +72,7 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    "@id": `${siteConfig.siteUrl}/#empresa`,
     "name": siteConfig.company.displayName,
     "legalName": siteConfig.company.legalName,
     "taxID": siteConfig.company.taxId,
@@ -103,14 +91,18 @@ export default function RootLayout({
     },
     "sameAs": [
       siteConfig.instagramUrl
-    ]
+    ],
+    "areaServed": ACTIVE_ENERGY_CITIES.map(({ city, state }) => ({
+      "@type": "City",
+      "name": `${city}, ${state}`,
+    })),
   };
 
   return (
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`h-full antialiased ${satoshi.variable} ${jetbrainsMono.variable}`}
+      className={`h-full antialiased ${satoshi.variable}`}
     >
       <body className="min-h-full flex flex-col relative text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-navy-950 transition-colors duration-300">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

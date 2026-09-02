@@ -25,7 +25,7 @@ const GALLERY_ITEMS: InstagramPost[] = [
   {
     id: 1,
     image: "/images/video_bateria.mp4",
-    poster: "/images/video_bateria.mp4#t=0.001",
+    poster: "/images/video-bateria-poster.webp",
     alt: "Vídeo mostrando a bateria instalada",
     isVideo: true,
     link: "https://www.instagram.com/p/DUWLdXkEShG/",
@@ -40,7 +40,7 @@ const GALLERY_ITEMS: InstagramPost[] = [
   {
     id: 3,
     image: "/images/video_instalacao.mp4",
-    poster: "/images/video_instalacao.mp4#t=0.001",
+    poster: "/images/video-instalacao-poster.webp",
     alt: "Instalação da estrutura de painéis solares",
     isVideo: true,
     link: "https://www.instagram.com/p/DUsvUCEkWfE/",

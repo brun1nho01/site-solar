@@ -1,8 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Termos de Uso | W.Lima Soluções",
-};
+export const metadata: Metadata = createPageMetadata({
+  title: "Termos de Uso",
+  description: "Consulte as condições de uso do site, os limites das simulações de energia solar e as responsabilidades aplicáveis ao visitante e à W. Lima Soluções.",
+  path: "/termos",
+});
 
 export default function TermsOfUse() {
   return (

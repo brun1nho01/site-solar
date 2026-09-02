@@ -1,7 +1,5 @@
-"use client";
-
 import { MouseGlowCard } from "@/components/ui/MouseGlowCard";
-import { ShieldCheck, Lightning, Users, DeviceMobile, Certificate } from "@phosphor-icons/react";
+import { ShieldCheck, Lightning, Users, DeviceMobile, Certificate } from "@phosphor-icons/react/ssr";
 
 export default function QualitySection() {
   return (

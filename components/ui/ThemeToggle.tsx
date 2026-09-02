@@ -3,12 +3,10 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "@phosphor-icons/react";
-import { motion, useReducedMotion } from "framer-motion";
 
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(() => false);
   const { resolvedTheme, setTheme } = useTheme();
-  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     // Retrasa para a stack de microtask e evita cascading sync call
@@ -27,31 +25,19 @@ export function ThemeToggle() {
       className="relative flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-black/5 transition-colors hover:bg-black/10 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-white/10 dark:bg-navy-900/50 dark:hover:bg-white/5 dark:focus-visible:ring-offset-navy-950"
       aria-label={isDark ? "Ativar tema claro" : "Ativar tema escuro"}
     >
-      <motion.div
-        initial={false}
-        animate={{
-          rotate: isDark ? 180 : 0,
-          scale: isDark ? 0 : 1,
-          opacity: isDark ? 0 : 1,
-        }}
-        transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: "easeInOut" }}
-        className="absolute"
+      <span
+        aria-hidden="true"
+        className={`absolute transition-all duration-300 motion-reduce:transition-none ${isDark ? "scale-0 rotate-180 opacity-0" : "scale-100 rotate-0 opacity-100"}`}
       >
         <Sun size={20} weight="fill" className="text-yellow-400" />
-      </motion.div>
+      </span>
 
-      <motion.div
-        initial={false}
-        animate={{
-          rotate: isDark ? 0 : -180,
-          scale: isDark ? 1 : 0,
-          opacity: isDark ? 1 : 0,
-        }}
-        transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: "easeInOut" }}
-        className="absolute"
+      <span
+        aria-hidden="true"
+        className={`absolute transition-all duration-300 motion-reduce:transition-none ${isDark ? "scale-100 rotate-0 opacity-100" : "scale-0 -rotate-180 opacity-0"}`}
       >
         <Moon size={20} weight="fill" className="text-blue-100" />
-      </motion.div>
+      </span>
     </button>
   );
 }

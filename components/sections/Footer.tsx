@@ -1,19 +1,9 @@
-"use client";
-
-import { Lightning, CheckCircle, ChatCircleDots } from "@phosphor-icons/react";
+import { Lightning, CheckCircle, ChatCircleDots } from "@phosphor-icons/react/ssr";
 import MagneticButton from "@/components/ui/MagneticButton";
 import { createWhatsAppUrl, siteConfig } from "@/lib/site-config";
-import { openCookiePreferences } from "@/lib/analytics-consent";
+import { CookiePreferencesButton } from "@/components/ui/CookiePreferencesButton";
 
 export default function Footer() {
-  const handleSimularClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const el = document.getElementById("simulador");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   const year = new Date().getFullYear();
 
   return (
@@ -42,7 +32,6 @@ export default function Footer() {
               <MagneticButton>
                 <a
                   href="#simulador"
-                  onClick={handleSimularClick}
                   className="flex items-center justify-center gap-3 px-9 py-4 font-bold text-navy-950 text-base sm:text-lg rounded-2xl bg-gradient-to-r from-gold-400 via-amber-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 shadow-[0_10px_30px_rgba(242,205,66,0.3)] transition-all duration-300 group cursor-pointer"
                 >
                   <Lightning weight="fill" className="w-5 h-5 text-navy-950" />
@@ -106,9 +95,7 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <button type="button" onClick={openCookiePreferences} className="inline-flex min-h-11 items-center text-left text-navy-400 transition-colors hover:text-gold-500 dark:text-text-muted">
-                    Preferências de cookies
-                  </button>
+                  <CookiePreferencesButton />
                 </li>
                 <li>
                   <span className="text-navy-400 dark:text-text-muted cursor-default">

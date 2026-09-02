@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Política de Privacidade",
   description: "Saiba como a W. Lima Soluções trata os dados usados no simulador e nos canais de atendimento.",
-};
+  path: "/privacidade",
+});
 
 const sectionClass = "mt-8 text-xl font-bold text-navy-950 dark:text-white";
 const paragraphClass = "mt-3 leading-7 text-navy-700 dark:text-text-secondary";

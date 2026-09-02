@@ -114,7 +114,7 @@
   --color-border-subtle: var(--border-subtle);
 
   --font-sans: var(--font-satoshi), system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), monospace;
+  --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --font-display: var(--font-satoshi), system-ui, sans-serif;
 }
 
@@ -259,6 +259,22 @@ textarea:focus-visible {
   outline: 2px solid var(--gold-500);
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(242, 205, 66, 0.15);
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translateY(-6px); }
+  50% { transform: translateY(6px); }
+}
+
+.animate-hero-float {
+  animation: hero-float 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-float {
+    animation: none;
+  }
 }
 
 :where(a, button, summary, [role="button"]):focus-visible {

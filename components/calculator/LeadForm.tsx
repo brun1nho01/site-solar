@@ -291,7 +291,12 @@ export default function LeadForm({ estimate }: LeadFormProps) {
   const whatsappOpenAttemptRef = useRef(false);
 
   useEffect(() => {
-    return () => cepRequestRef.current?.abort();
+    const frame = window.requestAnimationFrame(() => stepTitleRef.current?.focus());
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      cepRequestRef.current?.abort();
+    };
   }, []);
 
   const clearFieldError = (field: keyof FormData) => {

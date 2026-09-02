@@ -21,6 +21,9 @@ const contentSecurityPolicy = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  experimental: {
+    inlineCss: true,
+  },
   /* ── Formatos modernos de imagem (AVIF + WebP) ── */
   images: {
     formats: ["image/avif", "image/webp"],

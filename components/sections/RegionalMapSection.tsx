@@ -1,13 +1,4 @@
-"use client";
-
-import dynamic from "next/dynamic";
-import "leaflet/dist/leaflet.css";
-
-// O Mapa Leaflet usa a API "window" nativa, portanto não pode renderizar no servidor (SSR).
-const LeafletMapRender = dynamic(
-  () => import("@/components/ui/LeafletMapRender"),
-  { ssr: false, loading: () => <div className="w-full h-full bg-[#0a0f1c] animate-pulse flex items-center justify-center text-emerald-500/50 font-mono text-sm uppercase tracking-widest">Carregando mapa de projetos ativos...</div> }
-);
+import { LazyLeafletMap } from "@/components/ui/LazyLeafletMap";
 
 export default function RegionalMapSection() {
   return (
@@ -29,7 +20,7 @@ export default function RegionalMapSection() {
         {/* Container do Mapa Real */}
         <div className="relative w-full max-w-5xl mx-auto aspect-square sm:aspect-[4/3] md:aspect-[21/9] rounded-3xl overflow-hidden glass border border-emerald-500/20 bg-slate-100 dark:bg-[#0a0f1c] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
           <div className="absolute inset-0 z-0 map-filter-dark">
-            <LeafletMapRender />
+            <LazyLeafletMap />
           </div>
 
 

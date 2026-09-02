@@ -4,18 +4,24 @@
    Renderizado no servidor para SEO máximo
    ═══════════════════════════════════════════════════ */
 
+import type { Metadata } from "next";
 import HeroSection from "@/components/sections/HeroSection";
-import TaximetroDor from "@/components/sections/TaximetroDor";
 import QualitySection from "@/components/sections/QualitySection";
-import ProcessSection from "@/components/sections/ProcessSection";
-import EconomyCalculator from "@/components/calculator/EconomyCalculator";
-import dynamic from "next/dynamic";
+import RegionalMapSection from "@/components/sections/RegionalMapSection";
+import FAQSection from "@/components/sections/FAQSection";
+import Footer from "@/components/sections/Footer";
+import LazyCalculatorSection from "@/components/sections/deferred/LazyCalculatorSection";
+import LazyInstagramSection from "@/components/sections/deferred/LazyInstagramSection";
+import LazyProcessSection from "@/components/sections/deferred/LazyProcessSection";
+import LazySocialProofSection from "@/components/sections/deferred/LazySocialProofSection";
+import LazyTaximeterSection from "@/components/sections/deferred/LazyTaximeterSection";
+import { siteConfig } from "@/lib/site-config";
 
-const SocialProofSection = dynamic(() => import("@/components/sections/SocialProofSection"));
-const RegionalMapSection = dynamic(() => import("@/components/sections/RegionalMapSection"));
-const InstagramSection = dynamic(() => import("@/components/sections/InstagramSection"));
-const FAQSection = dynamic(() => import("@/components/sections/FAQSection"));
-const Footer = dynamic(() => import("@/components/sections/Footer"));
+export const metadata: Metadata = {
+  alternates: {
+    canonical: `${siteConfig.siteUrl}/`,
+  },
+};
 
 
 export default function Home() {
@@ -23,12 +29,12 @@ export default function Home() {
     <main id="conteudo-principal" tabIndex={-1} className="relative scroll-mt-24 outline-none">
       <HeroSection />
 
-      <TaximetroDor />
+      <LazyTaximeterSection />
 
       {/* Container Integrado do Simulador */}
       <section id="simulador" className="relative z-10 pb-32 pt-4 px-4 overflow-hidden">
         <div className="max-w-3xl mx-auto">
-          <EconomyCalculator />
+          <LazyCalculatorSection />
         </div>
         
         {/* SVG Wave Divider transitioning to QualitySection */}
@@ -43,16 +49,16 @@ export default function Home() {
       <QualitySection />
 
       {/* 4. Processo com Sticky Scroll */}
-      <ProcessSection />
+      <LazyProcessSection />
 
       {/* 5. Prova Social */}
-      <SocialProofSection />
+      <LazySocialProofSection />
 
       {/* 5.5 Mapa Regional Geográfico */}
       <RegionalMapSection />
 
       {/* 6. Instagram Wall */}
-      <InstagramSection />
+      <LazyInstagramSection />
 
       {/* 7. FAQ (Dúvidas Frequentes) */}
       <FAQSection />

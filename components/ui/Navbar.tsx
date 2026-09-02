@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import { List as Menu, X, CaretRight as ChevronRight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
-import MagneticButton from "@/components/ui/MagneticButton";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 const NAV_LINKS = [
   { name: "Solução", href: "#qualidade" },
@@ -17,22 +16,21 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const shouldReduceMotion = useReducedMotion();
-
-  // Barra de progresso do scroll da página
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  const shouldReduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40);
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+      if (progressBarRef.current) {
+        progressBarRef.current.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
+      }
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -129,16 +127,14 @@ export default function Navbar() {
   return (
     <>
       {/* Barra de Progresso de Leitura no Topo */}
-      <motion.div
-        style={{ scaleX, transformOrigin: "0%" }}
+      <div
+        ref={progressBarRef}
+        style={{ transform: "scaleX(0)", transformOrigin: "0%" }}
         className="pointer-events-none fixed left-0 right-0 top-0 z-[100] h-[2.5px] bg-gradient-to-r from-gold-500 via-amber-400 to-emerald-400 motion-reduce:hidden"
       />
 
       {/* Desktop & Mobile Header - Floating Pill Architecture */}
-      <motion.header
-        initial={shouldReduceMotion ? false : { y: -100 }}
-        animate={{ y: 0 }}
-        transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 100, damping: 20 }}
+      <header
         className={cn(
           "fixed left-0 right-0 z-50 transition-all duration-500 ease-out flex justify-center px-4",
           isScrolled ? "top-3 sm:top-4" : "top-0"
@@ -155,7 +151,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between">
 
             {/* Logo */}
-            <button type="button" aria-label="Voltar ao topo" className="flex min-h-11 flex-shrink-0 cursor-pointer items-center rounded-lg bg-transparent p-1" onClick={() => window.scrollTo({ top: 0, behavior: shouldReduceMotion ? "auto" : "smooth" })}>
+            <button type="button" aria-label="W Lima Soluções — voltar ao topo" className="flex min-h-11 flex-shrink-0 cursor-pointer items-center rounded-lg bg-transparent p-1" onClick={() => window.scrollTo({ top: 0, behavior: shouldReduceMotion ? "auto" : "smooth" })}>
               <span className="text-xl sm:text-2xl font-display font-bold text-navy-950 dark:text-white tracking-tight flex items-center gap-1">
                 W<span className="text-gold-500 dark:text-gold-400">Lima</span> Soluções
               </span>
@@ -175,18 +171,16 @@ export default function Navbar() {
 
               <ThemeToggle />
 
-              <MagneticButton strength={10}>
-                <a
-                  href="#simulador"
-                  onClick={handleSimularClick}
-                  className="group relative inline-flex min-h-11 items-center justify-center overflow-hidden rounded-full bg-gradient-to-b from-[#f2cd42] to-[#c9a016] px-5 py-2 text-sm font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50 transition-all duration-300 hover:from-[#fbe275] hover:to-[#dfaf18]"
-                >
-                  <span className="relative flex items-center gap-1.5">
-                    Simular Economia
-                    <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-                  </span>
-                </a>
-              </MagneticButton>
+              <a
+                href="#simulador"
+                onClick={handleSimularClick}
+                className="group relative inline-flex min-h-11 items-center justify-center overflow-hidden rounded-full bg-gradient-to-b from-[#f2cd42] to-[#c9a016] px-5 py-2 text-sm font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#fbe275] hover:to-[#dfaf18]"
+              >
+                <span className="relative flex items-center gap-1.5">
+                  Simular Economia
+                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </a>
             </nav>
 
             {/* Mobile Actions */}
@@ -210,55 +204,43 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       {/* Mobile Menu Fullscreen Reveal */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
+      {isMobileMenuOpen && (
+          <div
             ref={mobileMenuRef}
             id="mobile-menu"
             role="dialog"
             aria-modal="true"
             aria-label="Menu de navegação"
-            initial={shouldReduceMotion ? false : { opacity: 0, clipPath: "circle(0% at top right)" }}
-            animate={{ opacity: 1, clipPath: "circle(150% at top right)" }}
-            exit={{ opacity: 0, clipPath: "circle(0% at top right)" }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 flex items-center justify-center bg-white/95 dark:bg-navy-950/95 backdrop-blur-xl"
+            className="fixed inset-0 z-40 flex animate-fade-in items-center justify-center bg-white/95 backdrop-blur-xl dark:bg-navy-950/95"
           >
             <div aria-hidden="true" className="absolute left-1/4 top-1/4 h-64 w-64 rounded-full bg-gold-500/10 blur-[100px]" />
             <div aria-hidden="true" className="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-blue-500/10 blur-[100px]" />
 
             <nav aria-label="Navegação principal" className="relative z-10 flex w-full flex-col items-center space-y-8 px-6">
-              {NAV_LINKS.map((link, index) => (
-                <motion.a
+              {NAV_LINKS.map((link) => (
+                <a
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: shouldReduceMotion ? 0 : 0.1 + index * 0.08, duration: shouldReduceMotion ? 0 : 0.4 }}
                   className="inline-flex min-h-11 items-center rounded-lg px-3 text-3xl font-display font-bold text-navy-950 transition-colors hover:text-gold-500 dark:text-white dark:hover:text-gold-400"
                 >
                   {link.name}
-                </motion.a>
+                </a>
               ))}
 
-              <motion.a
+              <a
                 href="#simulador"
                 onClick={handleSimularClick}
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: shouldReduceMotion ? 0 : 0.1 + NAV_LINKS.length * 0.08, duration: shouldReduceMotion ? 0 : 0.4 }}
                 className="mt-6 flex min-h-11 w-full max-w-xs items-center justify-center rounded-full bg-gradient-to-b from-[#f2cd42] to-[#c9a016] px-8 py-3.5 text-base font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50 hover:from-[#fbe275] hover:to-[#dfaf18]"
               >
                 Simular Economia
-              </motion.a>
+              </a>
             </nav>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </>
   );
 }

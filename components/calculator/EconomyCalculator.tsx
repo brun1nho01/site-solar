@@ -1,8 +1,8 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CaretRight, Clock, Lightning, TrendUp } from "@phosphor-icons/react";
-import LeadForm from "@/components/calculator/LeadForm";
 import { OdometerValue } from "@/components/ui/OdometerValue";
 import MagneticButton from "@/components/ui/MagneticButton";
 import {
@@ -11,6 +11,17 @@ import {
   formatCurrencyBRL,
   formatDecimalPTBR,
 } from "@/lib/solar-calculator";
+
+const LeadForm = dynamic(() => import("@/components/calculator/LeadForm"), {
+  loading: () => (
+    <div
+      role="status"
+      className="rounded-xl border border-navy-900/10 bg-navy-900/[0.03] px-4 py-5 text-center text-sm text-navy-600 dark:border-white/10 dark:bg-white/[0.03] dark:text-text-secondary"
+    >
+      Preparando a análise…
+    </div>
+  ),
+});
 
 type CalculatorInputMode = "bill" | "consumption";
 
@@ -43,9 +54,7 @@ export default function EconomyCalculator() {
     if (!formWasToggledRef.current) return;
 
     const frame = window.requestAnimationFrame(() => {
-      if (showForm) {
-        document.getElementById("lead-step-1-title")?.focus();
-      } else {
+      if (!showForm) {
         continueButtonRef.current?.focus();
       }
     });
