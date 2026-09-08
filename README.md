@@ -1,10 +1,10 @@
-# W. Lima Soluções
+# W. Lima Soluções — Site Solar
 
-Site institucional da W. Lima Soluções, desenvolvido com Next.js.
+Site institucional em Next.js para apresentação da empresa, simulação inicial de energia solar e abertura de atendimento no WhatsApp.
 
 ## Requisitos
 
-- Node.js 20.9.0 ou superior
+- Node.js 20.9.0 ou superior; o CI usa Node.js 22
 - npm, incluído na instalação do Node.js
 
 ## Instalação local
@@ -41,33 +41,30 @@ npm run dev
 
 Abra `http://localhost:3000` no navegador.
 
-## Validação antes da publicação
-
-Execute as verificações na ordem abaixo:
+## Validação local
 
 ```bash
-npm run test:unit
 npm run lint
-npx tsc --noEmit
+npm run typecheck
+npm test
 npm run build
 ```
 
-Para conferir a versão de produção localmente:
+Os testes funcionais usam Chromium em 375 × 812, 768 × 1024 e 1440 × 900. Na primeira execução, instale o navegador do Playwright. O próprio comando recompila o site e testa a versão de produção:
 
 ```bash
-npm run start
+npx playwright install chromium
+npm run test:e2e
 ```
 
-Durante essa conferência, valide o formulário, a consulta de CEP, o mapa, os vídeos locais, os links de WhatsApp e o consentimento do Google Analytics. A política de conteúdo está em modo de relatório; violações aparecem no console do navegador sem bloquear recursos.
+Para acompanhar a execução em uma janela visível, use `npm run test:e2e:headed`.
 
-## Publicação
+Os cenários automatizados substituem ViaCEP, OpenStreetMap e Google Analytics por respostas locais e bloqueiam qualquer outro destino externo. O popup do WhatsApp também é simulado, portanto a suíte não abre conversas nem envia dados reais.
 
-Em uma hospedagem com servidor Node.js:
+## Integração contínua e publicação
 
-1. Use Node.js 20.9.0 ou superior.
-2. Configure `NEXT_PUBLIC_GA_ID` no painel da hospedagem, se o Analytics já estiver disponível.
-3. Execute `npm ci` e `npm run build`.
-4. Inicie a aplicação com `npm run start`.
-5. Aponte `wlimasolucoes.com.br` somente depois de configurar DNS e HTTPS.
+O workflow **Qualidade** executa instalação limpa, lint, verificação de tipos, testes unitários, build e testes funcionais. Uma falha impede a aprovação técnica do pull request quando essa verificação for definida como obrigatória nas regras da branch `main`.
 
-A política de conteúdo deve permanecer em modo de relatório até a validação no domínio público. A ativação em modo obrigatório será uma decisão separada, baseada nos relatórios e nos testes em produção.
+O workflow **Lighthouse do preview** aceita uma URL HTTPS manualmente e também reage a previews publicados pela hospedagem. O relatório bloqueia regressões abaixo de 85 em desempenho e 95 em acessibilidade, boas práticas ou SEO; a meta de desempenho móvel do projeto continua sendo 90 ou mais.
+
+O domínio canônico configurado é `https://wlimasolucoes.com.br`. O roteiro completo de preview, produção, registro do commit e rollback está em [docs/RELEASE.md](docs/RELEASE.md). A política de conteúdo deve permanecer em modo de relatório até a validação no domínio público.

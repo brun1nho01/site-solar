@@ -10,8 +10,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:unit": "vitest run",
-    "prepare": "husky"
+    "typecheck": "tsc --noEmit",
+    "test": "npm run test:unit",
+    "test:unit": "vitest run lib",
+    "test:e2e": "node scripts/run-e2e.mjs",
+    "test:e2e:ci": "node scripts/run-e2e.mjs --skip-build",
+    "test:e2e:headed": "node scripts/run-e2e.mjs --headed",
+    "lighthouse:ci": "npx --yes @lhci/cli@0.15.1 autorun"
   },
   "dependencies": {
     "@next/third-parties": "^16.3.3",
@@ -29,15 +34,13 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "playwright": "^1.62.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.11"

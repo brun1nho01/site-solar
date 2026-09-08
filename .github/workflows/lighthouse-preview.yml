@@ -1,0 +1,49 @@
+name: Lighthouse do preview
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: URL HTTPS do preview a ser auditado
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LIGHTHOUSE_URL: ${{ inputs.url || github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v6
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalação limpa
+        run: npm ci
+
+      - name: Validar URL recebida
+        run: node -e "const url = new URL(process.env.LIGHTHOUSE_URL); if (url.protocol !== 'https:') throw new Error('O preview precisa usar HTTPS.')"
+
+      - name: Auditar preview
+        run: npm run lighthouse:ci -- --collect.url="$LIGHTHOUSE_URL"
+
+      - name: Guardar relatórios
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-preview
+          path: .lighthouseci/
+          if-no-files-found: ignore
+          retention-days: 14

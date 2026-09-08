@@ -19,6 +19,7 @@ export default function Navbar() {
   const progressBarRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const pendingMobileTargetRef = useRef<string | null>(null);
   const shouldReduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   useEffect(() => {
@@ -45,14 +46,57 @@ export default function Navbar() {
     return () => desktopQuery.removeEventListener("change", handleDesktopChange);
   }, []);
 
-  const handleSimularClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const el = document.getElementById("simulador");
+  const scrollToSection = (href: string) => {
+    const el = document.getElementById(href.replace(/^#/, ""));
     if (el) {
       el.scrollIntoView({ behavior: shouldReduceMotion ? "auto" : "smooth" });
     }
+  };
+
+  const handleSimularClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    if (isMobileMenuOpen) {
+      pendingMobileTargetRef.current = "#simulador";
+      setIsMobileMenuOpen(false);
+      return;
+    }
+
+    scrollToSection("#simulador");
+  };
+
+  const handleMobileNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    pendingMobileTargetRef.current = href;
     setIsMobileMenuOpen(false);
   };
+
+  useEffect(() => {
+    if (isMobileMenuOpen || !pendingMobileTargetRef.current) return;
+
+    const target = pendingMobileTargetRef.current;
+    pendingMobileTargetRef.current = null;
+    let layoutObserver: ResizeObserver | null = null;
+    let observerTimeout: number | undefined;
+    const frame = window.requestAnimationFrame(() => {
+      window.history.pushState(null, "", target);
+      const element = document.getElementById(target.replace(/^#/, ""));
+      if (!element) return;
+
+      const keepTargetAligned = () => element.scrollIntoView({ behavior: "auto" });
+      keepTargetAligned();
+
+      layoutObserver = new ResizeObserver(keepTargetAligned);
+      layoutObserver.observe(document.body);
+      observerTimeout = window.setTimeout(() => layoutObserver?.disconnect(), 1_500);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      layoutObserver?.disconnect();
+      if (observerTimeout) window.clearTimeout(observerTimeout);
+    };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
@@ -224,7 +268,7 @@ export default function Navbar() {
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(event) => handleMobileNavClick(event, link.href)}
                   className="inline-flex min-h-11 items-center rounded-lg px-3 text-3xl font-display font-bold text-navy-950 transition-colors hover:text-gold-500 dark:text-white dark:hover:text-gold-400"
                 >
                   {link.name}

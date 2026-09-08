@@ -17,6 +17,9 @@ CLAUDE.md
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
+/.lighthouseci/
 
 # next.js
 /.next/
