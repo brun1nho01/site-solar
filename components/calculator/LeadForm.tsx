@@ -97,8 +97,8 @@ const step1Schema = z.object({
 });
 
 const step2Schema = z.object({
-  name: z.string().min(3, "Informe seu nome completo."),
-  email: z.string().email("Informe um e-mail válido.").or(z.literal("")),
+  name: z.string().trim().min(3, "Informe seu nome completo.").max(100, "Use no máximo 100 caracteres no nome."),
+  email: z.string().trim().max(254, "Use no máximo 254 caracteres no e-mail.").email("Informe um e-mail válido.").or(z.literal("")),
   lgpdConsent: z.literal(true, { message: "Aceite os termos para continuar." }),
 });
 
@@ -253,7 +253,7 @@ function CashFlowChart({ data }: { data: { year: number; saldo: number }[] }) {
             }}
           >
              <div className="bg-navy-950/90 dark:bg-black/90 backdrop-blur-md border border-gold-400/30 shadow-[0_4px_15px_rgba(0,0,0,0.5)] rounded-lg px-3 py-1.5 flex flex-col items-center">
-              <span className="text-[10px] uppercase text-navy-400 dark:text-text-muted font-mono tracking-widest leading-none mb-1">Ano {activeData.year}</span>
+              <span className="text-[10px] uppercase text-white/75 font-mono tracking-widest leading-none mb-1">Ano {activeData.year}</span>
               <span className={`font-mono font-bold text-sm leading-none whitespace-nowrap ${activeData.saldo >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                 R$ {activeData.saldo.toLocaleString("pt-BR")}
               </span>
@@ -435,11 +435,9 @@ export default function LeadForm({ estimate }: LeadFormProps) {
       ? `Retorno simples estimado entre ${formatDecimalPTBR(selectedEstimate.payback.minimumYears)} e ${formatDecimalPTBR(selectedEstimate.payback.maximumYears)} anos no cenário à vista.`
       : selectedEstimate.payback.status === "partial"
         ? `O retorno simples começa em cerca de ${formatDecimalPTBR(selectedEstimate.payback.minimumYears)} anos; o limite conservador supera 25 anos.`
-        : selectedEstimate.payback.status === "financing-proposal"
-          ? "Prazo, entrada, taxa, parcelas e CET serão definidos na proposta de financiamento."
-          : selectedEstimate.payback.status === "outside-horizon"
-            ? "O retorno não ocorre dentro do horizonte de 25 anos desta simulação."
-            : "A equipe precisa confirmar o preço deste porte antes de calcular o retorno.";
+        : selectedEstimate.payback.status === "outside-horizon"
+          ? "O retorno não ocorre dentro do horizonte de 25 anos desta simulação."
+          : "A equipe precisa confirmar o preço deste porte antes de calcular o retorno.";
 
   // ── Navegação do Wizard ──
   const handleNextStep = () => {
@@ -607,7 +605,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
             className="space-y-6"
           >
             <div className="text-center mb-2">
-              <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-gold-500 dark:text-gold-400">
+              <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-accent-copy">
                 Etapa 1 de 2
               </p>
               <h3
@@ -626,7 +624,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                 CEP da instalação
               </label>
               <div className="relative">
-                <MapPin aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+                <MapPin aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-subtle-copy" />
                 <input
                   id="lead-cep"
                   name="cep"
@@ -643,7 +641,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                     cepStatus.message ? "lead-cep-status" : "",
                     errors.cep ? "lead-cep-error" : "",
                   ].filter(Boolean).join(" ") || undefined}
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-navy-400 dark:placeholder:text-text-muted focus:border-gold-400 focus:outline-none focus:ring-2 focus:ring-gold-400/30 transition-colors"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-subtle-copy focus:border-focus-ring focus:outline-none focus:ring-2 focus:ring-focus-ring/40 transition-colors"
                 />
                 {cepStatus.type === "loading" && (
                   <div aria-hidden="true" className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -655,7 +653,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                 <p
                   id="lead-cep-status"
                   aria-live="polite"
-                  className={`text-xs mt-1 ${cepStatus.type === "error" ? "text-amber-600 dark:text-amber-300" : "text-gold-600 dark:text-gold-400"}`}
+                  className={`text-xs mt-1 ${cepStatus.type === "error" ? "text-amber-600 dark:text-amber-300" : "text-accent-copy"}`}
                 >
                   {cepStatus.message}
                 </p>
@@ -697,7 +695,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                       className="sr-only"
                     />
                     <item.icon aria-hidden="true" className="w-5 h-5 mb-1.5" />
-                    <span className="text-xs font-medium">{item.label}</span>
+                    <span className="text-xs font-semibold">{item.label}</span>
                   </label>
                 ))}
               </div>
@@ -733,7 +731,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                       className="sr-only"
                     />
                     <Home aria-hidden="true" className="w-5 h-5 mb-1" />
-                    <span className="text-xs font-medium">Telhado</span>
+                    <span className="text-xs font-semibold">Telhado</span>
                   </label>
                   <label
                     htmlFor="lead-install-solo"
@@ -758,7 +756,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                       className="sr-only"
                     />
                     <Sun aria-hidden="true" className="w-5 h-5 mb-1" />
-                    <span className="text-xs font-medium">Solo</span>
+                    <span className="text-xs font-semibold">Solo</span>
                   </label>
                 </div>
                 {errors.installLocation && (
@@ -792,7 +790,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                       className="sr-only"
                     />
                     <Landmark aria-hidden="true" className="w-5 h-5 mb-1" />
-                    <span className="text-xs font-medium">Sim</span>
+                    <span className="text-xs font-semibold">Sim</span>
                   </label>
                   <label
                     htmlFor="lead-financing-nao"
@@ -814,7 +812,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                       className="sr-only"
                     />
                     <Banknote aria-hidden="true" className="w-5 h-5 mb-1" />
-                    <span className="text-xs font-medium">Não</span>
+                    <span className="text-xs font-semibold">Não</span>
                   </label>
                 </div>
                 {errors.wantsFinancing && (
@@ -844,7 +842,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                   onChange={(e) => updateField("roofType", e.target.value as RoofType)}
                   aria-invalid={Boolean(errors.roofType)}
                   aria-describedby={errors.roofType ? "lead-roof-error" : undefined}
-                  className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white focus:border-gold-400 focus:outline-none focus:ring-2 focus:ring-gold-400/30"
+                  className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white focus:border-focus-ring focus:outline-none focus:ring-2 focus:ring-focus-ring/40"
                 >
                   <option value="" disabled className="bg-white dark:bg-navy-900 text-navy-950 dark:text-white">Selecione o telhado</option>
                   <option value="metalico" className="bg-white dark:bg-navy-900 text-navy-950 dark:text-white">Metálico</option>
@@ -882,7 +880,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
             className="space-y-5"
           >
             <div className="text-center mb-2">
-              <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-gold-500 dark:text-gold-400">
+              <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-accent-copy">
                 Etapa 2 de 2
               </p>
               <h3
@@ -901,51 +899,63 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
 
             <dl className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <div className="rounded-xl border border-navy-900/10 bg-navy-900/[0.03] p-3 dark:border-white/10 dark:bg-white/[0.03]">
-                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-navy-500 dark:text-text-muted">Geração</dt>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle-copy">Geração</dt>
                 <dd className="mt-1 font-mono text-sm font-bold text-navy-950 dark:text-white">
                   {selectedEstimate.targetGenerationKwh.toLocaleString("pt-BR")} kWh/mês
                 </dd>
               </div>
               <div className="rounded-xl border border-navy-900/10 bg-navy-900/[0.03] p-3 dark:border-white/10 dark:bg-white/[0.03]">
-                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-navy-500 dark:text-text-muted">Investimento à vista</dt>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle-copy">Investimento à vista</dt>
                 <dd className="mt-1 font-mono text-sm font-bold text-navy-950 dark:text-white">{investmentRange}</dd>
               </div>
               <div className="rounded-xl border border-navy-900/10 bg-navy-900/[0.03] p-3 dark:border-white/10 dark:bg-white/[0.03]">
-                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-navy-500 dark:text-text-muted">Economia mensal</dt>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle-copy">Economia mensal</dt>
                 <dd className="mt-1 font-mono text-sm font-bold text-emerald-600 dark:text-emerald-400">{economyRange}</dd>
               </div>
             </dl>
 
-            <div className="rounded-xl border border-gold-500/20 bg-gold-500/10 p-3 text-center">
-              <p className="flex items-center justify-center gap-1.5 text-sm font-semibold text-gold-700 dark:text-gold-300">
-                <Sun aria-hidden="true" className="h-4 w-4 shrink-0" />
-                {paybackText}
-              </p>
-            </div>
-
             {chartData.length > 0 ? (
-              <div className="group relative mb-4 h-64 w-full overflow-hidden rounded-xl border border-navy-900/10 bg-navy-100/50 p-4 pt-8 dark:border-white/5 dark:bg-navy-950/30 sm:h-72">
-                <div className="absolute left-4 top-2 z-10">
-                  <p className="font-mono text-xs font-semibold uppercase tracking-wider text-navy-500 dark:text-text-muted">Saldo acumulado no cenário central (deslize)</p>
+              <>
+                <div className="rounded-xl border border-gold-500/20 bg-gold-500/10 p-3 text-center">
+                  <p className="flex items-center justify-center gap-1.5 text-sm font-semibold text-gold-700 dark:text-gold-300">
+                    <Sun aria-hidden="true" className="h-4 w-4 shrink-0" />
+                    {paybackText}
+                  </p>
                 </div>
-                <CashFlowChart data={chartData} />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent dark:from-navy-900" />
-              </div>
+
+                <div className="group relative mb-4 h-64 w-full overflow-hidden rounded-xl border border-navy-900/10 bg-navy-100/50 p-4 pt-8 dark:border-white/5 dark:bg-navy-950/30 sm:h-72">
+                  <div className="absolute left-4 top-2 z-10">
+                    <p className="font-mono text-xs font-semibold uppercase tracking-wider text-subtle-copy">Saldo acumulado no cenário central (deslize)</p>
+                  </div>
+                  <CashFlowChart data={chartData} />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-50 to-transparent dark:from-navy-900" />
+                </div>
+              </>
             ) : (
               <div className="rounded-xl border border-blue-500/20 bg-blue-500/10 p-4 text-sm leading-6 text-navy-700 dark:text-blue-100">
-                {isFinanced
-                  ? "O gráfico financeiro depende das condições de crédito. A equipe calculará entrada, prazo, taxa, parcelas e CET na proposta."
-                  : "O preço desta faixa de geração ainda depende de orçamento. A equipe confirmará investimento e retorno depois da análise."}
+                <p className="font-semibold text-navy-950 dark:text-white">
+                  {isFinanced ? "Condições do financiamento" : "Investimento sob consulta"}
+                </p>
+                <p className="mt-1">
+                  {isFinanced
+                    ? "Entrada, prazo, taxa, parcelas e CET serão definidos após a análise de crédito e apresentados na proposta. Por isso, o gráfico de retorno não é exibido nesta etapa."
+                    : "O preço desta faixa de geração depende de orçamento. A equipe confirmará o investimento e o retorno depois da análise."}
+                </p>
               </div>
             )}
 
-            <p className="text-xs leading-5 text-navy-500 dark:text-text-muted">
-              A faixa usa conta residual de {formatCurrencyBRL(selectedEstimate.residualBill.minimum)} a {formatCurrencyBRL(selectedEstimate.residualBill.maximum)}, degradação de 0,5% ao ano e reajuste tarifário de 0%. O cenário central do gráfico usa a média do investimento e da economia. A proposta final depende do imóvel, da tarifa e dos equipamentos.
-            </p>
+            <details className="group rounded-xl border border-navy-900/10 px-4 py-3 text-sm dark:border-white/10">
+              <summary className="min-h-11 cursor-pointer content-center font-semibold text-navy-700 marker:text-gold-500 hover:text-navy-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring dark:text-text-secondary dark:hover:text-white">
+                Premissas e limites da estimativa
+              </summary>
+              <p className="pb-1 pt-2 text-xs leading-5 text-subtle-copy">
+                Esta é uma referência inicial, não uma proposta comercial. A faixa usa conta residual de {formatCurrencyBRL(selectedEstimate.residualBill.minimum)} a {formatCurrencyBRL(selectedEstimate.residualBill.maximum)}, degradação de 0,5% ao ano e reajuste tarifário de 0%. Quando há gráfico, o cenário central usa a média do investimento e da economia. A proposta final depende do imóvel, da tarifa e dos equipamentos.
+              </p>
+            </details>
 
             {/* Formulário de Contato */}
             <div className="pt-2 border-t border-navy-900/10 dark:border-white/10">
-              <p className="text-sm text-navy-950 dark:text-white font-medium mb-3">Quer confirmar este cenário? Abra uma conversa com a equipe pelo WhatsApp:</p>
+              <p className="text-sm text-navy-950 dark:text-white font-semibold mb-3">Quer confirmar este cenário? Abra uma conversa com a equipe pelo WhatsApp:</p>
               <div className="space-y-3">
                 <div>
                   <label htmlFor="lead-name" className="text-sm text-text-secondary mb-1.5 block">
@@ -957,12 +967,13 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                     type="text"
                     autoComplete="name"
                     placeholder="Seu nome completo"
+                    maxLength={100}
                     required
                     value={formData.name}
                     onChange={(e) => updateField("name", e.target.value)}
                     aria-invalid={Boolean(errors.name)}
                     aria-describedby={errors.name ? "lead-name-error" : undefined}
-                    className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-navy-400 dark:placeholder:text-text-muted text-sm focus:border-gold-400 focus:outline-none focus:ring-2 focus:ring-gold-400/30 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-subtle-copy text-sm focus:border-focus-ring focus:outline-none focus:ring-2 focus:ring-focus-ring/40 transition-colors"
                   />
                   {errors.name && (
                     <p id="lead-name-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
@@ -972,7 +983,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                 </div>
                 <div>
                   <label htmlFor="lead-email" className="text-sm text-text-secondary mb-1.5 block">
-                    E-mail <span className="text-text-muted">(opcional)</span>
+                    E-mail <span className="text-subtle-copy">(opcional)</span>
                   </label>
                   <input
                     id="lead-email"
@@ -980,11 +991,12 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                     type="email"
                     autoComplete="email"
                     placeholder="voce@exemplo.com"
+                    maxLength={254}
                     value={formData.email}
                     onChange={(e) => updateField("email", e.target.value)}
                     aria-invalid={Boolean(errors.email)}
                     aria-describedby={errors.email ? "lead-email-error" : undefined}
-                    className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-navy-400 dark:placeholder:text-text-muted text-sm focus:border-gold-400 focus:outline-none focus:ring-2 focus:ring-gold-400/30 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-navy-900/5 dark:bg-white/5 border border-navy-900/10 dark:border-white/10 text-navy-950 dark:text-white placeholder:text-subtle-copy text-sm focus:border-focus-ring focus:outline-none focus:ring-2 focus:ring-focus-ring/40 transition-colors"
                   />
                   {errors.email && (
                     <p id="lead-email-error" className="text-red-500 dark:text-red-400 text-xs mt-1">
@@ -1003,9 +1015,9 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                     onChange={(e) => updateField("lgpdConsent", e.target.checked)}
                     aria-invalid={Boolean(errors.lgpdConsent)}
                     aria-describedby={errors.lgpdConsent ? "lead-consent-error" : undefined}
-                    className="mt-1 h-5 w-5 shrink-0 cursor-pointer rounded border-white/20 bg-white/5 text-gold-500 focus:ring-gold-400"
+                    className="mt-1 h-5 w-5 shrink-0 cursor-pointer rounded border-white/20 bg-white/5 text-gold-500 focus:ring-focus-ring"
                   />
-                  <p className="text-xs text-text-muted leading-tight">
+                  <p className="text-xs text-subtle-copy leading-tight">
                     <label htmlFor="lead-consent" className="hover:text-text-secondary transition-colors cursor-pointer">
                       Autorizo o uso dos dados informados para preparar este atendimento e eventual contato comercial por WhatsApp ou e-mail. Li a{" "}
                     </label>
@@ -1013,7 +1025,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                       href="/privacidade"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-gold-500 hover:underline"
+                      className="font-semibold text-accent-copy hover:underline"
                     >
                       Política de Privacidade
                     </Link>
@@ -1059,7 +1071,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                     </div>
                     <a
                       href={`tel:${siteConfig.company.phone.e164}`}
-                      className="mt-3 block select-all text-center font-mono font-semibold text-gold-600 dark:text-gold-300 underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+                      className="mt-3 block select-all text-center font-mono font-semibold text-accent-copy underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
                     >
                       {siteConfig.company.phone.international}
                     </a>
@@ -1074,7 +1086,7 @@ Entendo que consumo, geração, investimento, economia e retorno são estimativa
                 <button 
                   type="button" 
                   onClick={handleBackToStepOne}
-                  className="mt-4 min-h-11 w-full rounded-lg text-center text-xs text-navy-500 transition-colors hover:text-navy-950 focus-visible:ring-2 focus-visible:ring-gold-400 dark:text-text-muted dark:hover:text-white"
+                  className="mt-4 min-h-11 w-full rounded-lg text-center text-xs text-subtle-copy transition-colors hover:text-navy-950 focus-visible:ring-2 focus-visible:ring-focus-ring dark:hover:text-white"
                 >
                   Voltar e alterar dados
                 </button>

@@ -47,12 +47,16 @@ export function DeferredSectionPlaceholder({
 }) {
   if (kind === "taximeter") {
     return (
-      <section ref={placeholderRef} className="relative z-10 min-h-[760px] overflow-hidden px-4 py-24 lg:min-h-[650px]">
+      <section
+        ref={placeholderRef}
+        className="relative z-10 min-h-[560px] overflow-hidden px-4 py-20 sm:py-24 lg:min-h-[540px]"
+      >
         <div className="mx-auto max-w-5xl text-center">
-          <SkeletonBar className="mx-auto mb-5 h-4 w-40" />
-          <SkeletonBar className="mx-auto mb-9 h-9 w-full max-w-2xl" />
-          <div className="mx-auto min-h-44 max-w-4xl rounded-3xl border border-navy-900/10 bg-white/60 p-10 dark:border-white/10 dark:bg-white/[0.03]">
-            <SkeletonBar className="mx-auto h-12 w-64 max-w-full" />
+          <SkeletonBar className="mx-auto h-9 w-full max-w-xl" />
+          <SkeletonBar className="mx-auto mt-5 h-4 w-full max-w-lg" />
+          <div className="mx-auto mt-10 min-h-64 max-w-4xl rounded-2xl bg-navy-950 p-8 text-left">
+            <SkeletonBar className="h-4 w-48 bg-white/10" />
+            <SkeletonBar className="mt-8 h-14 w-72 max-w-full bg-white/10" />
           </div>
         </div>
       </section>

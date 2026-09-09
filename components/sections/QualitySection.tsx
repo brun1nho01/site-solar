@@ -4,13 +4,13 @@ import { ShieldCheck, Lightning, Users, DeviceMobile, Certificate } from "@phosp
 export default function QualitySection() {
   return (
     <section id="qualidade" className="relative py-20 lg:py-28 overflow-hidden bg-slate-50 dark:bg-navy-950">
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="safe-inline relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── Header da seção ── */}
         <div className="mb-12 md:mb-16">
           <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-balance text-navy-950 dark:text-white">
             Por que escolher a{" "}
-            <span> W <span className="text-gold-500 dark:text-gold-400">Lima </span> Soluções?</span>
+            <span> W <span className="text-accent-copy">Lima </span> Soluções?</span>
           </h2>
           <p className="text-navy-600 dark:text-text-secondary text-lg max-w-2xl">
             Entregamos projetos de energia solar com excelência, desde o dimensionamento até a instalação, focando na sua tranquilidade e economia real.
@@ -44,7 +44,7 @@ export default function QualitySection() {
                 <Certificate weight="fill" className="w-8 h-8 text-gold-500 dark:text-gold-400 shrink-0" />
                 <div>
                   <p className="font-display font-bold text-navy-950 dark:text-white text-sm uppercase tracking-wider">Equipamentos regularizados</p>
-                  <p className="text-xs text-navy-500 dark:text-text-muted">Especificações e registros aplicáveis conferidos antes da contratação</p>
+                  <p className="text-xs text-subtle-copy">Especificações e registros aplicáveis conferidos antes da contratação</p>
                 </div>
               </div>
 

@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   calculateSolarEstimate,
-  estimateMonthlyBillFromConsumption,
   estimateInvestmentForGeneration,
   formatCurrencyBRL,
 } from "./solar-calculator";
@@ -32,28 +31,27 @@ describe("calculateSolarEstimate", () => {
     }
   });
 
-  it("prioriza o consumo informado pelo visitante", () => {
-    const monthlyBill = estimateMonthlyBillFromConsumption(500);
+  it("preserva conta e consumo informados sem converter um no outro", () => {
     const result = calculateSolarEstimate({
-      monthlyBill,
-      monthlyConsumptionKwh: 500,
+      monthlyBill: 229.21,
+      monthlyConsumptionKwh: 142,
     });
 
-    expect(monthlyBill).toBeCloseTo(568.18, 2);
+    expect(result.monthlyBill).toBe(229.21);
     expect(result.consumption).toEqual({
       source: "informed",
-      minimumKwh: 500,
-      maximumKwh: 500,
+      minimumKwh: 142,
+      maximumKwh: 142,
     });
-    expect(result.targetGenerationKwh).toBe(600);
+    expect(result.targetGenerationKwh).toBe(200);
+    expect(result.investment).toMatchObject({
+      status: "quote-required",
+      reason: "below-priced-range",
+    });
     expect(result.monthlySavings).toEqual({
-      minimum: 468.18,
-      maximum: 518.18,
+      minimum: 129.21,
+      maximum: 179.21,
     });
-  });
-
-  it("mantém a referência de R$ 500 para o ponto médio de 440 kWh", () => {
-    expect(estimateMonthlyBillFromConsumption(440)).toBe(500);
   });
 
   it("aplica a degradação a partir do segundo ano", () => {

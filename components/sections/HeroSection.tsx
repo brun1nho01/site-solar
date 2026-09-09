@@ -40,32 +40,32 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
+      className="hero-section relative flex items-center justify-center overflow-hidden"
     >
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-20">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+      <div className="hero-container safe-inline relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-20">
+        <div className="hero-grid grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           
           {/* ── Coluna esquerda: Copy ── */}
-          <div className="z-20 text-center lg:text-left">
-            <div className="text-gold-500 font-bold tracking-widest uppercase text-sm mb-6">
+          <div className="hero-copy z-20 text-center lg:text-left">
+            <div className="hero-kicker text-accent-copy font-bold tracking-widest uppercase text-sm mb-6">
               Alta Tecnologia Solar
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-display font-bold leading-tight text-balance mb-6 text-navy-950 dark:text-white">
+            <h1 className="hero-title text-4xl sm:text-5xl lg:text-7xl font-display font-bold leading-tight text-balance mb-6 text-navy-950 dark:text-white">
               Não alugue sua energia.{" "}
-              <span className="text-gold-500 dark:text-gold-400">
+              <span className="text-accent-copy">
                 Seja dono dela.
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-navy-700 dark:text-text-secondary max-w-xl mx-auto lg:mx-0 mb-10">
+            <p className="hero-description text-lg sm:text-xl text-navy-700 dark:text-text-secondary max-w-xl mx-auto lg:mx-0 mb-10">
               Descubra o potencial de economia do seu imóvel com um projeto solar dimensionado para o seu consumo e para as condições do local.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <div className="hero-actions flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <button
                 onClick={scrollToSimulador}
-                className="group relative flex min-h-11 items-center gap-3 overflow-hidden rounded-full bg-gradient-to-b from-[#f2cd42] to-[#c9a016] px-8 py-4 font-bold text-navy-950 shadow-[0_10px_30px_rgba(242,205,66,0.3),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-400/50 transition-all duration-300 hover:from-[#fbe275] hover:to-[#dfaf18] focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-navy-950"
+                className="hero-primary-action solar-cta group relative flex min-h-11 items-center gap-3 overflow-hidden rounded-full px-8 py-4 font-bold text-navy-950 shadow-[0_10px_30px_rgba(242,205,66,0.3),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-400/50 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-navy-950"
               >
                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 <span className="relative z-10">Simular Economia</span>
@@ -75,7 +75,7 @@ export default function HeroSection() {
           </div>
 
           {/* ── Coluna direita: Imagem Premium com Interatividade ── */}
-          <div className="group relative flex h-[400px] w-full items-center justify-center overflow-visible lg:h-[600px] lg:translate-x-6 xl:translate-x-12">
+          <div className="hero-visual group relative flex h-[400px] w-full items-center justify-center overflow-visible lg:h-[600px] lg:translate-x-6 xl:translate-x-12">
             {/* Glow effect atrás da imagem */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] lg:w-[400px] h-[250px] lg:h-[400px] bg-gold-500/10 blur-[100px] rounded-full pointer-events-none" />
 
@@ -85,9 +85,9 @@ export default function HeroSection() {
                 alt="Infográfico 3D da Anatomia do Sistema Solar"
                 width={800}
                 height={600}
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="w-full h-full object-contain object-center scale-110 lg:scale-125 xl:scale-150 select-none pointer-events-none"
+                preload
+                sizes="(max-width: 639px) 100vw, (max-width: 1023px) 42vw, 50vw"
+                className="hero-image w-full h-full object-contain object-center scale-110 lg:scale-125 xl:scale-150 select-none pointer-events-none"
               />
 
               

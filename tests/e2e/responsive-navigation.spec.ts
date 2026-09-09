@@ -76,3 +76,24 @@ test("preferência por movimento reduzido remove a flutuação do hero", async (
     /animate-hero-float/,
   );
 });
+
+test("taxímetro explica a referência e conduz ao simulador", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-1440x900", "Fluxo validado uma vez no desktop.");
+  await openHome(page);
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight));
+
+  const taximeter = page.getByRole("region", {
+    name: "A conta de energia continua correndo.",
+  });
+  await taximeter.scrollIntoViewIfNeeded();
+
+  await expect(taximeter).toContainText(/176\.628 GWh/);
+  await expect(taximeter).toContainText(/R\$ 122,3 bilhões por ano/);
+  await expect(taximeter).toContainText(
+    "O valor não representa desperdício nem economia garantida com energia solar.",
+  );
+
+  await taximeter.getByRole("link", { name: "Simular com a minha conta" }).click();
+  await expect(page).toHaveURL(/#simulador$/);
+  await expect(page.locator("#simulador")).toBeInViewport();
+});

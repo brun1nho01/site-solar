@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import NoiseOverlay from "@/components/ui/NoiseOverlay";
@@ -15,9 +15,7 @@ import { sharedOpenGraphImage } from "@/lib/seo";
 const satoshi = localFont({
   src: [
     { path: "./fonts/Satoshi-Regular.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/Satoshi-Medium.woff2", weight: "500", style: "normal" },
     { path: "./fonts/Satoshi-Bold.woff2", weight: "700", style: "normal" },
-    { path: "./fonts/Satoshi-Black.woff2", weight: "900", style: "normal" },
   ],
   variable: "--font-satoshi",
   display: "swap",
@@ -64,6 +62,16 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#040911" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -108,7 +116,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <a
             href="#conteudo-principal"
-            className="fixed left-4 top-4 z-[200] -translate-y-24 rounded-lg bg-gold-400 px-4 py-3 text-sm font-bold text-navy-950 shadow-xl transition-transform focus:translate-y-0 motion-reduce:transition-none"
+            className="skip-link fixed left-4 top-4 z-[200] -translate-y-24 rounded-lg bg-gold-400 px-4 py-3 text-sm font-bold text-navy-950 shadow-xl transition-transform focus:translate-y-0 motion-reduce:transition-none"
           >
             Pular para o conteúdo
           </a>

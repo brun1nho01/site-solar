@@ -23,17 +23,26 @@ export default function Navbar() {
   const shouldReduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   useEffect(() => {
+    let scrollFrame: number | null = null;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
-      if (progressBarRef.current) {
-        progressBarRef.current.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
-      }
+      if (scrollFrame !== null) return;
+      scrollFrame = window.requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 40);
+        const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+        if (progressBarRef.current) {
+          progressBarRef.current.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
+        }
+        scrollFrame = null;
+      });
     };
     handleScroll();
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollFrame !== null) window.cancelAnimationFrame(scrollFrame);
+    };
   }, []);
 
   useEffect(() => {
@@ -174,14 +183,14 @@ export default function Navbar() {
       <div
         ref={progressBarRef}
         style={{ transform: "scaleX(0)", transformOrigin: "0%" }}
-        className="pointer-events-none fixed left-0 right-0 top-0 z-[100] h-[2.5px] bg-gradient-to-r from-gold-500 via-amber-400 to-emerald-400 motion-reduce:hidden"
+        className="reading-progress pointer-events-none fixed left-0 right-0 top-0 z-[100] h-[2.5px] bg-gradient-to-r from-gold-500 via-amber-400 to-emerald-400 motion-reduce:hidden"
       />
 
       {/* Desktop & Mobile Header - Floating Pill Architecture */}
       <header
         className={cn(
-          "fixed left-0 right-0 z-50 transition-all duration-500 ease-out flex justify-center px-4",
-          isScrolled ? "top-3 sm:top-4" : "top-0"
+          "site-header fixed left-0 right-0 z-50 flex justify-center px-4 transition-all duration-500 ease-out",
+          isScrolled ? "site-header--scrolled" : ""
         )}
       >
         <div
@@ -197,7 +206,7 @@ export default function Navbar() {
             {/* Logo */}
             <button type="button" aria-label="W Lima Soluções — voltar ao topo" className="flex min-h-11 flex-shrink-0 cursor-pointer items-center rounded-lg bg-transparent p-1" onClick={() => window.scrollTo({ top: 0, behavior: shouldReduceMotion ? "auto" : "smooth" })}>
               <span className="text-xl sm:text-2xl font-display font-bold text-navy-950 dark:text-white tracking-tight flex items-center gap-1">
-                W<span className="text-gold-500 dark:text-gold-400">Lima</span> Soluções
+                W<span className="text-accent-copy">Lima</span> Soluções
               </span>
             </button>
 
@@ -207,7 +216,7 @@ export default function Navbar() {
                 <a
                   key={link.name}
                   href={link.href}
-                  className="inline-flex min-h-11 items-center rounded-md px-1 text-sm font-medium text-navy-600 transition-colors hover:text-navy-950 dark:text-text-secondary dark:hover:text-white"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md px-1 text-sm font-semibold text-navy-600 transition-colors hover:text-navy-950 dark:text-text-secondary dark:hover:text-white"
                 >
                   {link.name}
                 </a>
@@ -218,7 +227,7 @@ export default function Navbar() {
               <a
                 href="#simulador"
                 onClick={handleSimularClick}
-                className="group relative inline-flex min-h-11 items-center justify-center overflow-hidden rounded-full bg-gradient-to-b from-[#f2cd42] to-[#c9a016] px-5 py-2 text-sm font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#fbe275] hover:to-[#dfaf18]"
+                className="solar-cta group relative inline-flex min-h-11 items-center justify-center overflow-hidden rounded-full px-5 py-2 text-sm font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50 transition-all duration-300 hover:-translate-y-0.5"
               >
                 <span className="relative flex items-center gap-1.5">
                   Simular Economia
@@ -258,18 +267,18 @@ export default function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Menu de navegação"
-            className="fixed inset-0 z-40 flex animate-fade-in items-center justify-center bg-white/95 backdrop-blur-xl dark:bg-navy-950/95"
+            className="mobile-menu fixed inset-0 z-40 flex animate-fade-in items-center justify-center overflow-y-auto bg-white/95 backdrop-blur-xl dark:bg-navy-950/95"
           >
             <div aria-hidden="true" className="absolute left-1/4 top-1/4 h-64 w-64 rounded-full bg-gold-500/10 blur-[100px]" />
             <div aria-hidden="true" className="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-blue-500/10 blur-[100px]" />
 
-            <nav aria-label="Navegação principal" className="relative z-10 flex w-full flex-col items-center space-y-8 px-6">
+            <nav aria-label="Navegação principal" className="mobile-menu-nav relative z-10 flex w-full flex-col items-center gap-8 px-6">
               {NAV_LINKS.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
                   onClick={(event) => handleMobileNavClick(event, link.href)}
-                  className="inline-flex min-h-11 items-center rounded-lg px-3 text-3xl font-display font-bold text-navy-950 transition-colors hover:text-gold-500 dark:text-white dark:hover:text-gold-400"
+                  className="mobile-menu-link inline-flex min-h-11 items-center rounded-lg px-3 text-3xl font-display font-bold text-navy-950 transition-colors hover:text-accent-copy dark:text-white"
                 >
                   {link.name}
                 </a>
@@ -278,7 +287,7 @@ export default function Navbar() {
               <a
                 href="#simulador"
                 onClick={handleSimularClick}
-                className="mt-6 flex min-h-11 w-full max-w-xs items-center justify-center rounded-full bg-gradient-to-b from-[#f2cd42] to-[#c9a016] px-8 py-3.5 text-base font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50 hover:from-[#fbe275] hover:to-[#dfaf18]"
+                className="mobile-menu-cta solar-cta mt-6 flex min-h-11 w-full max-w-xs items-center justify-center rounded-full px-8 py-3.5 text-base font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50"
               >
                 Simular Economia
               </a>

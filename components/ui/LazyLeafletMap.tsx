@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import "leaflet/dist/leaflet.css";
 
 const LeafletMapRender = dynamic(
   () => import("@/components/ui/LeafletMapRender"),
@@ -56,7 +55,7 @@ export function LazyLeafletMap() {
       {shouldLoad ? (
         <LeafletMapRender />
       ) : (
-        <div className="flex h-full w-full items-center justify-center px-6 text-center font-mono text-xs font-bold uppercase tracking-widest text-emerald-600/70 dark:text-emerald-400/60">
+        <div className="flex h-full w-full items-center justify-center px-6 text-center font-mono text-xs font-bold uppercase tracking-widest text-success-copy">
           Mapa disponível ao se aproximar desta seção
         </div>
       )}

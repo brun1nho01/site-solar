@@ -37,6 +37,28 @@ test("mapa renderiza as sete cidades sem consultar tiles reais", async ({ page }
   await expect(page.locator(".leaflet-marker-icon")).toHaveCount(7, { timeout: 15_000 });
 });
 
+test("mapa explica falha dos tiles e permite tentar novamente", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-1440x900", "Estado de falha independe do viewport.");
+  let tileRequests = 0;
+  await page.route("https://tile.openstreetmap.org/**", async (route) => {
+    tileRequests += 1;
+    await route.abort("failed");
+  });
+
+  await openHome(page);
+  const mapHeading = page.getByRole("heading", { name: /Energia solar ativa em várias cidades/i });
+  await mapHeading.scrollIntoViewIfNeeded();
+
+  const mapStatus = page.getByRole("status");
+  await expect(mapStatus).toContainText("Mapa base indisponível", { timeout: 15_000 });
+  await expect(mapStatus).toContainText("Os pontos continuam indicando o centro aproximado");
+  await expect(page.locator(".leaflet-marker-icon")).toHaveCount(7);
+
+  const requestsBeforeRetry = tileRequests;
+  await mapStatus.getByRole("button", { name: "Tentar novamente" }).click();
+  await expect.poll(() => tileRequests).toBeGreaterThan(requestsBeforeRetry);
+});
+
 test("galeria abre pelo teclado, fecha com Escape e devolve o foco", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-1440x900", "Fluxo completo de teclado coberto uma vez.");
   await openHome(page);

@@ -7,10 +7,9 @@ export function CookiePreferencesButton() {
     <button
       type="button"
       onClick={openCookiePreferences}
-      className="inline-flex min-h-11 items-center text-left text-navy-400 transition-colors hover:text-gold-500 dark:text-text-muted"
+      className="inline-flex min-h-11 items-center text-left text-subtle-copy transition-colors hover:text-accent-copy"
     >
       Preferências de cookies
     </button>
   );
 }
-

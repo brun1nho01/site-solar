@@ -32,7 +32,7 @@ export default function Home() {
       <LazyTaximeterSection />
 
       {/* Container Integrado do Simulador */}
-      <section id="simulador" className="relative z-10 pb-32 pt-4 px-4 overflow-hidden">
+      <section id="simulador" className="safe-inline relative z-10 overflow-hidden px-4 pb-32 pt-4">
         <div className="max-w-3xl mx-auto">
           <LazyCalculatorSection />
         </div>

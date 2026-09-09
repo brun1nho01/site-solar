@@ -75,7 +75,7 @@ function StepText({
       className="pointer-events-none absolute inset-0 flex flex-col"
     >
       <div className="mb-4 flex items-center gap-3">
-        <span className="font-mono text-2xl font-extrabold text-gold-500">0{index + 1}.</span>
+        <span className="font-mono text-2xl font-bold text-accent-copy">0{index + 1}.</span>
         <h3 className="font-display text-4xl font-bold text-navy-950 dark:text-white">
           {step.title}
         </h3>
@@ -144,9 +144,9 @@ export default function ProcessSection() {
 
   return (
     <section id="processo" className="relative bg-navy-50 transition-colors duration-500 dark:bg-navy-950">
-      <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:hidden motion-reduce:!block">
+      <div className="safe-inline mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:hidden motion-reduce:!block">
         <h2 className="mb-12 font-display text-3xl font-bold leading-tight text-navy-950 dark:text-white sm:text-4xl">
-          Do Projeto à <span className="text-gold-500 dark:text-gold-400">Economia</span>
+          Do Projeto à <span className="text-accent-copy">Economia</span>
         </h2>
 
         <ol aria-label="Etapas do projeto de energia solar" className="space-y-0">
@@ -163,7 +163,7 @@ export default function ProcessSection() {
                   <Icon aria-hidden="true" weight="duotone" className="h-5 w-5" />
                 </div>
                 <div className="pt-0.5">
-                  <p className="font-mono text-xs font-bold text-gold-600 dark:text-gold-400">
+                  <p className="font-mono text-xs font-bold text-accent-copy">
                     Etapa {index + 1} de {STEPS.length}
                   </p>
                   <h3 className="mt-1 font-display text-xl font-bold text-navy-950 dark:text-white">
@@ -184,10 +184,10 @@ export default function ProcessSection() {
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-navy-50 transition-colors duration-500 dark:bg-navy-950" />
           <div aria-hidden="true" className="pointer-events-none absolute right-0 top-0 h-[400px] w-[400px] rounded-full bg-gold-500/8 blur-[120px] dark:bg-gold-500/3" />
 
-          <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center gap-20 px-8">
+          <div className="safe-inline relative z-10 mx-auto flex w-full max-w-7xl items-center gap-20 px-8">
             <div className="w-1/2">
               <h2 className="mb-6 font-display text-5xl font-bold leading-tight text-navy-950 dark:text-white">
-                Do Projeto à <span className="text-gold-500 dark:text-gold-400">Economia</span>
+                Do Projeto à <span className="text-accent-copy">Economia</span>
               </h2>
 
               <div aria-hidden="true" className="mb-10 h-1 w-full overflow-hidden rounded-full bg-navy-900/10 dark:bg-white/10">

@@ -53,16 +53,16 @@ export default function SocialProofSection() {
 
   return (
     <section id="autoridade" className="relative py-20 lg:py-28 overflow-hidden bg-slate-50 dark:bg-navy-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="safe-inline max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── Título e Filtros (Layout Assimétrico) ── */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
           <div className="max-w-2xl">
-            <span className="font-mono text-xs font-bold text-gold-500 uppercase tracking-widest block mb-3">
+            <span className="font-mono text-xs font-bold text-accent-copy uppercase tracking-widest block mb-3">
               Cenários Ilustrativos
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-4 text-balance text-navy-950 dark:text-white">
-              Referências para <span className="text-gold-500 dark:text-gold-400">Diferentes Perfis</span>
+              Referências para <span className="text-accent-copy">Diferentes Perfis</span>
             </h2>
             <p className="text-navy-600 dark:text-text-secondary text-base sm:text-lg">
               Exemplos de simulação para ajudar a visualizar diferenças entre projetos residenciais, comerciais e rurais.
@@ -79,7 +79,7 @@ export default function SocialProofSection() {
                   onClick={() => setActiveCategory(cat.id)}
                   className={`relative flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-5 py-2.5 font-mono text-xs font-bold transition-all duration-300 ${isActive
                       ? "text-navy-950 bg-gradient-to-r from-gold-400 to-amber-400 shadow-[0_0_20px_rgba(242,205,66,0.3)]"
-                      : "text-navy-600 dark:text-text-muted bg-white/60 dark:bg-navy-900/50 hover:bg-white dark:hover:bg-navy-900 border border-navy-900/10 dark:border-white/10"
+                      : "text-subtle-copy bg-white/60 dark:bg-navy-900/50 hover:bg-white dark:hover:bg-navy-900 border border-navy-900/10 dark:border-white/10"
                     }`}
                 >
                   <Icon weight="bold" className="w-4 h-4" />
@@ -108,21 +108,17 @@ export default function SocialProofSection() {
                       : index === 0 ? "md:col-span-12 lg:col-span-6" : "md:col-span-6 lg:col-span-3"
                   }`}
               >
-                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity font-mono font-extrabold text-4xl text-gold-400">
-                  0{project.id}
-                </div>
-
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 rounded-full bg-gold-500/10 text-gold-500 dark:text-gold-400 text-xs font-mono font-bold border border-gold-500/20">
+                  <div className="mb-5 flex min-h-14 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 lg:flex-col lg:items-start xl:flex-row xl:items-center">
+                    <span className="px-3 py-1 rounded-full bg-gold-500/10 text-accent-copy text-xs font-mono font-bold border border-gold-500/20">
                       {project.category}
                     </span>
-                    <span className="text-xs text-navy-500 dark:text-text-muted font-mono">{project.location}</span>
+                    <span className="font-mono text-xs text-subtle-copy sm:text-right lg:text-left xl:text-right">{project.location}</span>
                   </div>
 
                   <div className="mb-6">
-                    <p className="text-xs text-navy-500 dark:text-text-muted font-mono uppercase mb-1">Potência do Sistema</p>
-                    <p className="font-mono font-extrabold text-3xl text-navy-950 dark:text-white">{project.systemSize}</p>
+                    <p className="text-xs text-subtle-copy font-mono uppercase mb-1">Potência do Sistema</p>
+                    <p className="font-mono font-bold text-3xl text-navy-950 dark:text-white">{project.systemSize}</p>
                   </div>
 
                   <p className="text-sm text-navy-600 dark:text-text-secondary leading-relaxed mb-6">
@@ -132,15 +128,15 @@ export default function SocialProofSection() {
 
                 <div className="pt-6 border-t border-navy-900/10 dark:border-white/10 space-y-3 font-mono text-xs">
                   <div className="flex justify-between items-center">
-                    <span className="text-navy-500 dark:text-text-muted">Economia Mensal:</span>
-                    <span className="font-bold text-emerald-500">{project.monthlySavings}</span>
+                    <span className="text-subtle-copy">Economia Mensal:</span>
+                    <span className="font-bold text-success-copy">{project.monthlySavings}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-navy-500 dark:text-text-muted">Economia Anual:</span>
-                    <span className="font-bold text-gold-500 dark:text-gold-400">{project.yearlySavings}</span>
+                    <span className="text-subtle-copy">Economia Anual:</span>
+                    <span className="font-bold text-accent-copy">{project.yearlySavings}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-navy-500 dark:text-text-muted">Retorno (Payback):</span>
+                    <span className="text-subtle-copy">Retorno (Payback):</span>
                     <span className="font-bold text-navy-950 dark:text-white">{project.returnTime}</span>
                   </div>
                 </div>
@@ -149,7 +145,7 @@ export default function SocialProofSection() {
           </AnimatePresence>
         </motion.div>
 
-        <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-5 text-navy-500 dark:text-text-muted">
+        <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-5 text-subtle-copy">
           Valores meramente ilustrativos. Potência, investimento, economia e prazo de retorno dependem da tarifa, do consumo, da irradiação, do local, dos equipamentos e da forma de pagamento.
         </p>
 

@@ -174,7 +174,7 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost; onClose: () => voi
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-xl sm:p-0"
+      className="media-overlay fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-xl"
       onClick={onClose}
     >
       <motion.div
@@ -188,7 +188,7 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost; onClose: () => voi
         exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.94, y: shouldReduceMotion ? 0 : 20 }}
         transition={{ duration: shouldReduceMotion ? 0 : 0.24 }}
         onClick={(event) => event.stopPropagation()}
-        className="group relative aspect-[9/16] w-full max-w-[400px] overflow-hidden rounded-2xl border border-white/10 bg-navy-950 shadow-2xl outline-none sm:rounded-3xl"
+        className="media-dialog group relative aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-navy-950 shadow-2xl outline-none sm:rounded-3xl"
       >
         <button
           ref={closeBtnRef}
@@ -294,13 +294,13 @@ export default function InstagramSection() {
 
   return (
     <section className="relative py-24 overflow-hidden border-t border-border-subtle">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="safe-inline max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Central de Telemetria Híbrida Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-8">
           <div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-navy-950 dark:text-white mb-4">
-              Projetos e bastidores da <span className="text-gold-500 dark:text-gold-400">W. Lima.</span>
+              Projetos e bastidores da <span className="text-accent-copy">W. Lima.</span>
             </h2>
             <p className="text-navy-600 dark:text-text-secondary mt-3 max-w-xl text-lg">
               Acompanhe conteúdos sobre energia solar, equipamentos, etapas de instalação e o dia a dia da equipe.
@@ -342,7 +342,7 @@ export default function InstagramSection() {
         </div>
 
         {/* Grid de Posts */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
           {GALLERY_ITEMS.map((post) => (
             <button
               key={post.id}
@@ -356,7 +356,7 @@ export default function InstagramSection() {
                   handleOpenPost(post, event.currentTarget);
                 }
               }}
-              className="group relative aspect-square cursor-pointer overflow-hidden rounded-2xl text-left shadow-sm outline-none ring-offset-4 ring-offset-white focus-visible:ring-2 focus-visible:ring-gold-500 dark:ring-offset-navy-950"
+              className="group relative aspect-square cursor-pointer overflow-hidden rounded-2xl text-left shadow-sm outline-none ring-offset-4 ring-offset-white transition-transform active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-focus-ring dark:ring-offset-navy-950"
             >
               {/* Imagem ou Vídeo de Fundo */}
               {post.isVideo ? (
@@ -366,7 +366,7 @@ export default function InstagramSection() {
                   src={post.image}
                   alt={post.alt}
                   fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
+                  sizes="(max-width: 1023px) 50vw, 25vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               )}

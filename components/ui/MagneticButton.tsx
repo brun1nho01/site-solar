@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState, ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { type PointerEvent, type ReactNode, useEffect, useRef } from "react";
 
 interface MagneticButtonProps {
   children: ReactNode;
@@ -11,39 +10,52 @@ interface MagneticButtonProps {
 
 export default function MagneticButton({ children, className = "", strength = 15 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const shouldReduceMotion = useReducedMotion();
+  const boundsRef = useRef<DOMRect | null>(null);
+  const frameRef = useRef<number | null>(null);
 
-  const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (shouldReduceMotion) return;
-    const { clientX, clientY } = e;
-    if (!ref.current) return;
-    const { height, width, left, top } = ref.current.getBoundingClientRect();
-    
-    // Calcula o centro do elemento
-    const middleX = clientX - (left + width / 2);
-    const middleY = clientY - (top + height / 2);
-    
-    setPosition({ 
-      x: middleX * (strength / 100), 
-      y: middleY * (strength / 100) 
+  useEffect(
+    () => () => {
+      if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
+    },
+    [],
+  );
+
+  const handlePointerEnter = () => {
+    boundsRef.current = ref.current?.getBoundingClientRect() ?? null;
+  };
+
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const element = ref.current;
+    const bounds = boundsRef.current;
+    if (!element || !bounds || event.pointerType !== "mouse") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const x = (event.clientX - (bounds.left + bounds.width / 2)) * (strength / 100);
+    const y = (event.clientY - (bounds.top + bounds.height / 2)) * (strength / 100);
+
+    if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
+    frameRef.current = window.requestAnimationFrame(() => {
+      element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      frameRef.current = null;
     });
   };
 
   const reset = () => {
-    setPosition({ x: 0, y: 0 });
+    boundsRef.current = null;
+    if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
+    frameRef.current = null;
+    if (ref.current) ref.current.style.transform = "translate3d(0, 0, 0)";
   };
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      onMouseMove={handleMouse}
-      onMouseLeave={reset}
-      animate={shouldReduceMotion ? { x: 0, y: 0 } : { x: position.x, y: position.y }}
-      transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-      className={`inline-block ${className}`}
+      onPointerEnter={handlePointerEnter}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={reset}
+      className={`inline-block will-change-transform transition-transform duration-200 ease-out motion-reduce:transform-none motion-reduce:transition-none ${className}`}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

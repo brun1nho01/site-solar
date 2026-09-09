@@ -3,14 +3,14 @@ import { LazyLeafletMap } from "@/components/ui/LazyLeafletMap";
 export default function RegionalMapSection() {
   return (
     <section id="mapa-regional" className="relative py-24 overflow-hidden bg-slate-50 dark:bg-navy-950 border-t border-navy-900/5 dark:border-white/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="safe-inline max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="text-center mb-16 max-w-2xl mx-auto">
-          <span className="font-mono text-xs font-bold text-emerald-500 uppercase tracking-widest block mb-3">
+          <span className="font-mono text-xs font-bold text-success-copy uppercase tracking-widest block mb-3">
             Energia em Operação
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-navy-950 dark:text-white mb-6 text-balance">
-            Energia solar ativa em <span className="text-emerald-500">várias cidades do Rio de Janeiro.</span>
+            Energia solar ativa em <span className="text-success-copy">várias cidades do Rio de Janeiro.</span>
           </h2>
           <p className="text-navy-600 dark:text-text-secondary text-lg">
             Cambuci, Itaocara, São Fidélis, Aperibé, Pádua, Rio de Janeiro e Saquarema. Os pontos ficam no centro aproximado de cada município para preservar o endereço exato dos clientes.

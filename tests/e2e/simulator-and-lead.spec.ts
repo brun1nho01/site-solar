@@ -14,24 +14,45 @@ test("simulador respeita o teto de R$ 3.000", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-1440x900", "Cálculo idêntico nos três viewports.");
   await openCalculator(page);
 
-  const slider = page.getByRole("slider", { name: "Valor da conta de luz mensal" });
+  const slider = page.getByRole("slider", { name: "Ajustar valor da conta de luz" });
   await slider.fill("3000");
   await expect(slider).toHaveValue("3000");
   await expect(page.getByText("R$ 3.000/mês", { exact: true })).toBeVisible();
   await expect(page.getByText("Sob consulta", { exact: true })).toBeVisible();
 });
 
-test("modo em kWh usa somente o consumo informado", async ({ page }, testInfo) => {
+test("consumo em kWh refina a conta sem substituir o valor informado", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-1440x900", "Cálculo idêntico nos três viewports.");
   await openCalculator(page);
 
-  await page.getByRole("button", { name: "Prefiro informar o consumo em kWh" }).click();
+  const bill = page.getByRole("textbox", { name: "Valor médio da conta de luz" });
+  await bill.fill("229,21");
+  await bill.blur();
+  await page.getByRole("button", { name: "Tenho o consumo em kWh" }).click();
   const consumption = page.getByRole("textbox", { name: "Consumo médio mensal" });
-  await consumption.fill("500");
+  await consumption.fill("142");
 
-  await expect(consumption).toHaveValue("500");
-  await expect(page.getByText(/Para 500 kWh\/mês, usamos uma conta equivalente/)).toBeVisible();
-  await expect(page.getByRole("slider", { name: "Valor da conta de luz mensal" })).toHaveCount(0);
+  await expect(bill).toHaveValue("229,21");
+  await expect(consumption).toHaveValue("142");
+  await expect(page.getByText(/Consumo informado: usamos 142 kWh\/mês/)).toBeVisible();
+  await expect(page.getByText(/conta equivalente/i)).toHaveCount(0);
+  await expect(page.getByText("Sob consulta", { exact: true })).toBeVisible();
+});
+
+test("financiamento mostra uma única explicação e omite o gráfico", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-1440x900", "Estado financeiro validado em um viewport.");
+  await openCalculator(page);
+  await page.getByRole("button", { name: "Continuar para a Análise Inicial" }).click();
+  await page.getByLabel("CEP da instalação").fill("28430586");
+  await page.locator('label[for="lead-property-residencial"]').click();
+  await page.locator('label[for="lead-install-solo"]').click();
+  await page.locator('label[for="lead-financing-sim"]').click();
+  await page.getByRole("button", { name: "Gerar Simulação Inicial" }).click();
+
+  await expect(page.getByText("Condições do financiamento", { exact: true })).toHaveCount(1);
+  await expect(page.getByText(/Entrada, prazo, taxa, parcelas e CET/)).toHaveCount(1);
+  await expect(page.getByText(/Saldo acumulado no cenário central/)).toHaveCount(0);
+  await expect(page.getByText("Premissas e limites da estimativa", { exact: true })).toBeVisible();
 });
 
 test("falha do ViaCEP não impede a análise", async ({ page }, testInfo) => {
@@ -69,9 +90,15 @@ test("formulário valida foco e trata popup bloqueado sem abrir o WhatsApp", asy
   await expect(page.getByRole("heading", { name: "Projeção Estimada" })).toBeVisible();
 
   await page.getByRole("button", { name: "Abrir Conversa no WhatsApp" }).click();
-  await expect(page.getByLabel("Nome completo")).toBeFocused();
-  await page.getByLabel("Nome completo").fill("Cliente de Teste");
-  await page.getByLabel(/E-mail/).fill("cliente@example.com");
+  const nameField = page.getByLabel("Nome completo");
+  const emailField = page.getByLabel(/E-mail/);
+  await expect(nameField).toBeFocused();
+  await expect(nameField).toHaveAttribute("maxlength", "100");
+  await expect(emailField).toHaveAttribute("maxlength", "254");
+  await nameField.fill(`Cliente 🧑‍🔧 ${"Nome muito longo ".repeat(12)}`);
+  await expect(nameField).toHaveValue(/^.{1,100}$/u);
+  await nameField.fill("Cliente de Teste");
+  await emailField.fill("cliente@example.com");
   await page.locator('label[for="lead-consent"]').click();
   await page.getByRole("button", { name: "Abrir Conversa no WhatsApp" }).click();
 

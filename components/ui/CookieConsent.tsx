@@ -54,10 +54,10 @@ export function CookieConsent({ gaId }: CookieConsentProps) {
       ) : null}
 
       {isOpen ? (
-        <div className="fixed inset-x-4 bottom-4 z-[120] mx-auto max-w-3xl rounded-2xl border border-navy-900/10 bg-white/95 p-5 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-navy-950/95 sm:p-6" role="dialog" aria-labelledby="cookie-consent-title">
+        <div className="cookie-consent fixed inset-x-4 bottom-4 z-[120] mx-auto max-w-3xl rounded-2xl border border-navy-900/10 bg-white/95 p-5 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-navy-950/95 sm:p-6" role="dialog" aria-labelledby="cookie-consent-title">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-xl">
-              <p className="mb-2 font-mono text-xs font-bold uppercase tracking-[0.18em] text-gold-600 dark:text-gold-400">Privacidade</p>
+              <p className="mb-2 font-mono text-xs font-bold uppercase tracking-[0.18em] text-accent-copy">Privacidade</p>
               <h2 id="cookie-consent-title" className="text-lg font-bold text-navy-950 dark:text-white">
                 {analyticsConfigured ? "Você decide sobre os dados de navegação" : "Cookies analíticos estão desativados"}
               </h2>
@@ -65,7 +65,7 @@ export function CookieConsent({ gaId }: CookieConsentProps) {
                 {analyticsConfigured
                   ? "Usamos o Google Analytics somente com sua autorização para entender o uso do site. A recusa não afeta o simulador nem o contato pelo WhatsApp."
                   : "Este site não está carregando o Google Analytics no momento. Apenas a sua preferência de privacidade pode ser salva neste navegador."}{" "}
-                <Link href="/privacidade" className="font-semibold text-gold-600 underline-offset-4 hover:underline dark:text-gold-400">Leia a política de privacidade.</Link>
+                <Link href="/privacidade" className="font-semibold text-accent-copy underline-offset-4 hover:underline">Leia a política de privacidade.</Link>
               </p>
             </div>
 

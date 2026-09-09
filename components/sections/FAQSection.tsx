@@ -26,12 +26,12 @@ const FAQS = [
 export default function FAQSection() {
   return (
     <section id="faq" className="relative overflow-hidden border-t border-navy-900/10 py-24 dark:border-white/10">
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="safe-inline relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-24">
           <div className="w-full lg:w-1/3">
             <div className="sticky top-24">
               <h2 className="mb-4 text-balance font-display text-3xl font-bold text-navy-950 dark:text-white sm:text-4xl">
-                Dúvidas <span className="text-gold-500 dark:text-gold-400">Frequentes</span>
+          Dúvidas <span className="text-accent-copy">Frequentes</span>
               </h2>
               <p className="mb-8 text-lg text-navy-600 dark:text-text-secondary">
                 Tudo o que você precisa saber antes de investir no seu futuro, explicado de forma clara.
@@ -48,10 +48,10 @@ export default function FAQSection() {
                 className="group overflow-hidden rounded-2xl border border-navy-900/5 bg-white/60 transition-colors open:border-gold-500/30 open:bg-white/80 open:shadow-[0_0_20px_rgba(242,205,66,0.1)] hover:border-gold-500/20 dark:border-white/5 dark:bg-white/[0.03] dark:open:bg-navy-900/60"
               >
                 <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 text-left focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold-400 sm:px-6 [&::-webkit-details-marker]:hidden">
-                  <span className="text-lg font-bold text-navy-950 transition-colors group-open:text-gold-500 dark:text-white dark:group-open:text-gold-400">
+                <span className="text-lg font-bold text-navy-950 transition-colors group-open:text-accent-copy dark:text-white">
                     {faq.question}
                   </span>
-                  <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/5 text-navy-600 transition-all duration-300 group-open:rotate-180 group-open:bg-gold-500/20 group-open:text-gold-500 dark:bg-white/10 dark:text-text-secondary dark:group-open:text-gold-400">
+                <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/5 text-navy-600 transition-all duration-300 group-open:rotate-180 group-open:bg-gold-500/20 group-open:text-accent-copy dark:bg-white/10 dark:text-text-secondary">
                     <ChevronDown className="h-5 w-5" />
                   </span>
                 </summary>

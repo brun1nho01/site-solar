@@ -10,7 +10,7 @@ export const metadata: Metadata = createPageMetadata({
 
 export default function TermsOfUse() {
   return (
-    <main id="conteudo-principal" tabIndex={-1} className="min-h-screen scroll-mt-24 bg-slate-50 px-4 pb-12 pt-24 outline-none dark:bg-navy-950 sm:px-6 lg:px-8">
+    <main id="conteudo-principal" tabIndex={-1} className="safe-inline min-h-screen scroll-mt-24 bg-slate-50 px-4 pb-12 pt-24 outline-none dark:bg-navy-950 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto glass p-8 sm:p-12 rounded-3xl border border-navy-900/10 dark:border-white/10">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-gold-500 font-bold hover:underline mb-8">
           Voltar para a Home
@@ -27,7 +27,7 @@ export default function TermsOfUse() {
           </p>
           <h2>Premissas do Simulador Solar</h2>
           <p>
-            O visitante pode informar o valor mensal da conta ou o consumo médio em kWh. No primeiro modo, o simulador estima uma faixa de consumo usando a referência comercial de que R$ 500 por mês correspondem a cerca de 390 a 490 kWh por mês. No modo por consumo, o simulador estima uma conta equivalente pela mesma referência tarifária. O simulador usa uma entrada por vez, acrescenta uma margem de 15% e ajusta a geração para o próximo bloco de 100 kWh por mês.
+            O visitante informa o valor mensal da conta e pode adicionar o consumo médio em kWh para melhorar a precisão. Quando o consumo não é informado, o simulador estima uma faixa usando a referência comercial de que R$ 500 por mês correspondem a cerca de 390 a 490 kWh por mês. Quando os dois dados são informados, o consumo orienta a geração e o valor da conta orienta a economia, sem converter um no outro. O simulador acrescenta uma margem de 15% e ajusta a geração para o próximo bloco de 100 kWh por mês.
           </p>
           <p>
             A faixa de investimento usa os preços comerciais fornecidos pela empresa para gerações entre 600 e 1.000 kWh por mês. Portes fora dessa faixa exigem orçamento. A potência do sistema em kWp depende da irradiação, orientação, inclinação, sombreamento, perdas e demais condições do projeto.
