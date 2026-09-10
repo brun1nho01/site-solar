@@ -39,33 +39,33 @@ export interface SolarProjectionPoint {
 
 export type SolarInvestmentEstimate =
   | {
-      status: "available";
-      minimum: number;
-      maximum: number;
-    }
+    status: "available";
+    minimum: number;
+    maximum: number;
+  }
   | {
-      status: "quote-required";
-      reason: "below-priced-range" | "above-priced-range";
-      minimum: null;
-      maximum: null;
-    };
+    status: "quote-required";
+    reason: "below-priced-range" | "above-priced-range";
+    minimum: null;
+    maximum: null;
+  };
 
 export type SolarPaybackEstimate =
   | {
-      status: "available";
-      minimumYears: number;
-      maximumYears: number;
-    }
+    status: "available";
+    minimumYears: number;
+    maximumYears: number;
+  }
   | {
-      status: "partial";
-      minimumYears: number;
-      maximumYears: null;
-    }
+    status: "partial";
+    minimumYears: number;
+    maximumYears: null;
+  }
   | {
-      status: "outside-horizon" | "quote-required" | "financing-proposal";
-      minimumYears: null;
-      maximumYears: null;
-    };
+    status: "outside-horizon" | "quote-required" | "financing-proposal";
+    minimumYears: null;
+    maximumYears: null;
+  };
 
 export interface SolarEstimateResult {
   monthlyBill: number;
@@ -111,14 +111,24 @@ export const DEFAULT_SOLAR_ASSUMPTIONS: SolarEstimateAssumptions = {
   projectionYears: 25,
   priceAnchors: [
     {
-      generationKwhPerMonth: 600,
+      generationKwhPerMonth: 300,
+      minimumInvestment: 7_000,
+      maximumInvestment: 8_000,
+    },
+    {
+      generationKwhPerMonth: 500,
       minimumInvestment: 11_000,
       maximumInvestment: 12_000,
     },
     {
+      generationKwhPerMonth: 600,
+      minimumInvestment: 12_000,
+      maximumInvestment: 13_000,
+    },
+    {
       generationKwhPerMonth: 1_000,
-      minimumInvestment: 15_500,
-      maximumInvestment: 15_500,
+      minimumInvestment: 19_000,
+      maximumInvestment: 20_000,
     },
   ],
 };
@@ -264,11 +274,11 @@ export function estimateInvestmentForGeneration(
     status: "available",
     minimum: roundMoney(
       leftAnchor.minimumInvestment +
-        (rightAnchor.minimumInvestment - leftAnchor.minimumInvestment) * position,
+      (rightAnchor.minimumInvestment - leftAnchor.minimumInvestment) * position,
     ),
     maximum: roundMoney(
       leftAnchor.maximumInvestment +
-        (rightAnchor.maximumInvestment - leftAnchor.maximumInvestment) * position,
+      (rightAnchor.maximumInvestment - leftAnchor.maximumInvestment) * position,
     ),
   };
 }
@@ -317,21 +327,27 @@ export function calculateSolarEstimate(input: SolarEstimateInput): SolarEstimate
   const informedConsumption = input.monthlyConsumptionKwh ?? null;
   const consumption = informedConsumption
     ? {
-        source: "informed" as const,
-        minimumKwh: Math.round(informedConsumption),
-        maximumKwh: Math.round(informedConsumption),
-      }
+      source: "informed" as const,
+      minimumKwh: Math.round(informedConsumption),
+      maximumKwh: Math.round(informedConsumption),
+    }
     : {
-        source: "estimated" as const,
-        minimumKwh: Math.round(input.monthlyBill / assumptions.maximumEffectiveTariff),
-        maximumKwh: Math.round(input.monthlyBill / assumptions.minimumEffectiveTariff),
-      };
+      source: "estimated" as const,
+      minimumKwh: Math.round(input.monthlyBill / assumptions.maximumEffectiveTariff),
+      maximumKwh: Math.round(input.monthlyBill / assumptions.minimumEffectiveTariff),
+    };
 
-  const targetGenerationKwh =
+  const calculatedTargetGenerationKwh =
     Math.ceil(
       (consumption.maximumKwh * (1 + assumptions.sizingMarginRate)) /
-        assumptions.generationStepKwh,
+      assumptions.generationStepKwh,
     ) * assumptions.generationStepKwh;
+  const minimumPricedGenerationKwh =
+    assumptions.priceAnchors[0]?.generationKwhPerMonth ?? calculatedTargetGenerationKwh;
+  const targetGenerationKwh = Math.max(
+    calculatedTargetGenerationKwh,
+    minimumPricedGenerationKwh,
+  );
   const investment = estimateInvestmentForGeneration(
     targetGenerationKwh,
     assumptions.priceAnchors,

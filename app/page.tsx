@@ -13,8 +13,6 @@ import Footer from "@/components/sections/Footer";
 import LazyCalculatorSection from "@/components/sections/deferred/LazyCalculatorSection";
 import LazyInstagramSection from "@/components/sections/deferred/LazyInstagramSection";
 import LazyProcessSection from "@/components/sections/deferred/LazyProcessSection";
-import LazySocialProofSection from "@/components/sections/deferred/LazySocialProofSection";
-import LazyTaximeterSection from "@/components/sections/deferred/LazyTaximeterSection";
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
@@ -28,8 +26,6 @@ export default function Home() {
   return (
     <main id="conteudo-principal" tabIndex={-1} className="relative scroll-mt-24 outline-none">
       <HeroSection />
-
-      <LazyTaximeterSection />
 
       {/* Container Integrado do Simulador */}
       <section id="simulador" className="safe-inline relative z-10 overflow-hidden px-4 pb-32 pt-4">
@@ -48,19 +44,16 @@ export default function Home() {
       {/* 2. Qualidade e Performance (Problema/Solução) e Diferenciais */}
       <QualitySection />
 
+      {/* 3. Instagram Wall */}
+      <LazyInstagramSection />
+
       {/* 4. Processo com Sticky Scroll */}
       <LazyProcessSection />
-
-      {/* 5. Prova Social */}
-      <LazySocialProofSection />
 
       {/* 5.5 Mapa Regional Geográfico */}
       <RegionalMapSection />
 
-      {/* 6. Instagram Wall */}
-      <LazyInstagramSection />
-
-      {/* 7. FAQ (Dúvidas Frequentes) */}
+      {/* 6. FAQ (Dúvidas Frequentes) */}
       <FAQSection />
 
       {/* 7. Footer CTA */}

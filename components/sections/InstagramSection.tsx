@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import {
@@ -11,46 +12,59 @@ import {
   X,
 } from "@phosphor-icons/react";
 import Image from "next/image";
+import type { StaticImageData } from "next/image";
 
-interface InstagramPost {
+import post1Image from "@/public/images/post_1.webp";
+import post2Image from "@/public/images/post_2.jpg";
+import post3Image from "@/public/images/post_3.webp";
+import post4Image from "@/public/images/post_4.webp";
+import post5Image from "@/public/images/post_5.webp";
+
+interface InstagramPostBase {
   id: number;
-  image: string;
   alt: string;
-  isVideo: boolean;
   link: string;
-  poster?: string;
 }
+
+type InstagramPost =
+  | (InstagramPostBase & {
+    image: string;
+    isVideo: true;
+    poster: string;
+  })
+  | (InstagramPostBase & {
+    image: StaticImageData;
+    isVideo: false;
+  });
 
 const GALLERY_ITEMS: InstagramPost[] = [
   {
     id: 1,
-    image: "/images/video_bateria.mp4",
-    poster: "/images/video-bateria-poster.webp",
-    alt: "Vídeo mostrando a bateria instalada",
-    isVideo: true,
-    link: "https://www.instagram.com/p/DUWLdXkEShG/",
+    image: post5Image,
+    alt: "Instalação de painéis solares na escola Sonho de Criança",
+    isVideo: false,
+    link: "https://www.instagram.com/p/DRem5w4DpJu/?img_index=1",
   },
   {
     id: 2,
-    image: "/images/post_2.jpg",
-    alt: "Painel solar instalado com vista do telhado",
+    image: post3Image,
+    alt: "Painéis solares no FAC Floresta",
     isVideo: false,
-    link: "https://www.instagram.com/p/DWplIfXDCFc/?img_index=1",
+    link: "https://www.instagram.com/p/DVQzB8GjpO5/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==",
   },
   {
     id: 3,
-    image: "/images/video_instalacao.mp4",
-    poster: "/images/video-instalacao-poster.webp",
-    alt: "Instalação da estrutura de painéis solares",
-    isVideo: true,
-    link: "https://www.instagram.com/p/DUsvUCEkWfE/",
+    image: post2Image,
+    alt: "Limpeza de painéis solares",
+    isVideo: false,
+    link: "https://www.instagram.com/p/DbGo-TsTo42/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==",
   },
   {
     id: 4,
-    image: "/images/post_1.jpg",
-    alt: "Cliente feliz com seu novo sistema solar",
+    image: post4Image,
+    alt: "Instalação de painéis solares",
     isVideo: false,
-    link: "https://www.instagram.com/p/DSBjov0jOzs/?img_index=1",
+    link: "https://www.instagram.com/p/DU6WYi-EpZy/?img_index=1",
   },
 ];
 
@@ -168,6 +182,15 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost; onClose: () => voi
     }
   };
 
+  const mediaAspectRatio = post.isVideo ? 9 / 16 : post.image.width / post.image.height;
+  const dialogStyle: CSSProperties & {
+    "--media-aspect-ratio": number;
+    "--media-source-width": string;
+  } = {
+    "--media-aspect-ratio": mediaAspectRatio,
+    "--media-source-width": post.isVideo ? "25rem" : `${post.image.width}px`,
+  };
+
   return (
     <motion.div
       initial={shouldReduceMotion ? false : { opacity: 0 }}
@@ -188,7 +211,9 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost; onClose: () => voi
         exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.94, y: shouldReduceMotion ? 0 : 20 }}
         transition={{ duration: shouldReduceMotion ? 0 : 0.24 }}
         onClick={(event) => event.stopPropagation()}
-        className="media-dialog group relative aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-navy-950 shadow-2xl outline-none sm:rounded-3xl"
+        data-media-kind={post.isVideo ? "video" : "image"}
+        style={dialogStyle}
+        className="media-dialog group relative overflow-hidden rounded-2xl border border-white/10 bg-navy-950 shadow-2xl outline-none sm:rounded-3xl"
       >
         <button
           ref={closeBtnRef}
@@ -214,7 +239,14 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost; onClose: () => voi
             className="h-full w-full object-cover"
           />
         ) : (
-          <Image src={post.image} alt={post.alt} fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover" />
+          <Image
+            src={post.image}
+            alt={post.alt}
+            fill
+            unoptimized
+            sizes="(max-width: 768px) calc(100vw - 2rem), 70rem"
+            className="object-contain"
+          />
         )}
 
         {post.isVideo && (
@@ -250,8 +282,10 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost; onClose: () => voi
           <div className="pointer-events-auto flex items-end justify-between gap-4">
             <div className="pr-4 text-white">
               <div className="mb-3 flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-gold-400 bg-navy-800">
-                  <div className="h-full w-full bg-gradient-to-br from-gold-400 to-gold-600" />
+                <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-gold-400 bg-white dark:bg-navy-950">
+                  <span className="font-display font-bold text-navy-950 dark:text-white text-base leading-none tracking-tight">
+                    W<span className="text-accent-copy">L</span>
+                  </span>
                 </div>
                 <span className="text-sm font-bold tracking-wide">@wlimasolucoes</span>
               </div>
@@ -261,9 +295,12 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost; onClose: () => voi
               href={post.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-bold text-white backdrop-blur-md transition-colors hover:bg-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+              className="group inline-flex min-h-11 items-center justify-center rounded-full bg-white/15 px-3 py-2 text-xs font-bold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/25 hover:px-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
             >
-              Ver publicação <ArrowSquareOut aria-hidden="true" className="h-4 w-4" />
+              <span className="grid transition-all duration-300 grid-rows-[1fr] max-w-0 overflow-hidden opacity-0 group-hover:max-w-[120px] group-hover:opacity-100">
+                <span className="whitespace-nowrap pr-2">Ver publicação</span>
+              </span>
+              <ArrowSquareOut aria-hidden="true" className="h-5 w-5 shrink-0" />
             </a>
           </div>
         </div>

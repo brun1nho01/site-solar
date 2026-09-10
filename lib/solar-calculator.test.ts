@@ -17,8 +17,8 @@ describe("calculateSolarEstimate", () => {
     expect(result.targetGenerationKwh).toBe(600);
     expect(result.investment).toEqual({
       status: "available",
-      minimum: 11_000,
-      maximum: 12_000,
+      minimum: 12_000,
+      maximum: 13_000,
     });
     expect(result.residualBill).toEqual({ minimum: 50, maximum: 100 });
     expect(result.monthlySavings).toEqual({ minimum: 400, maximum: 450 });
@@ -26,8 +26,8 @@ describe("calculateSolarEstimate", () => {
     expect(result.payback.status).toBe("available");
 
     if (result.payback.status === "available") {
-      expect(result.payback.minimumYears).toBeCloseTo(2.04, 2);
-      expect(result.payback.maximumYears).toBeCloseTo(2.51, 2);
+      expect(result.payback.minimumYears).toBeCloseTo(2.23, 2);
+      expect(result.payback.maximumYears).toBeCloseTo(2.72, 2);
     }
   });
 
@@ -43,10 +43,11 @@ describe("calculateSolarEstimate", () => {
       minimumKwh: 142,
       maximumKwh: 142,
     });
-    expect(result.targetGenerationKwh).toBe(200);
-    expect(result.investment).toMatchObject({
-      status: "quote-required",
-      reason: "below-priced-range",
+    expect(result.targetGenerationKwh).toBe(300);
+    expect(result.investment).toEqual({
+      status: "available",
+      minimum: 7_000,
+      maximum: 8_000,
     });
     expect(result.monthlySavings).toEqual({
       minimum: 129.21,
@@ -60,8 +61,8 @@ describe("calculateSolarEstimate", () => {
     expect(result.projection).toHaveLength(26);
     expect(result.projection[1].annualSavingsMinimum).toBe(4_800);
     expect(result.projection[2].annualSavingsMinimum).toBe(4_776);
-    expect(result.projection[0].balanceMinimum).toBe(-12_000);
-    expect(result.projection[0].balanceMaximum).toBe(-11_000);
+    expect(result.projection[0].balanceMinimum).toBe(-13_000);
+    expect(result.projection[0].balanceMaximum).toBe(-12_000);
   });
 
   it("mantém a economia energética, mas não calcula payback financiado", () => {
@@ -75,25 +76,30 @@ describe("calculateSolarEstimate", () => {
     expect(result.projection.every((point) => point.balanceMidpoint === null)).toBe(true);
   });
 
-  it("pede orçamento fora da faixa de preços conhecida", () => {
-    const belowRange = calculateSolarEstimate({
+  it("usa o menor sistema precificado para consumos baixos", () => {
+    const belowFirstAnchor = calculateSolarEstimate({
       monthlyBill: 150,
-      monthlyConsumptionKwh: 200,
+      monthlyConsumptionKwh: 100,
     });
+
+    expect(belowFirstAnchor.targetGenerationKwh).toBe(300);
+    expect(belowFirstAnchor.investment).toEqual({
+      status: "available",
+      minimum: 7_000,
+      maximum: 8_000,
+    });
+  });
+
+  it("pede orçamento acima da faixa de preços conhecida", () => {
     const aboveRange = calculateSolarEstimate({
       monthlyBill: 1_000,
       monthlyConsumptionKwh: 1_000,
     });
 
-    expect(belowRange.investment).toMatchObject({
-      status: "quote-required",
-      reason: "below-priced-range",
-    });
     expect(aboveRange.investment).toMatchObject({
       status: "quote-required",
       reason: "above-priced-range",
     });
-    expect(belowRange.payback.status).toBe("quote-required");
     expect(aboveRange.payback.status).toBe("quote-required");
   });
 
@@ -135,21 +141,38 @@ describe("calculateSolarEstimate", () => {
 });
 
 describe("estimateInvestmentForGeneration", () => {
-  it("usa os dois preços informados pela empresa", () => {
-    expect(estimateInvestmentForGeneration(600)).toEqual({
+  it("usa os preços informados pela empresa", () => {
+    expect(estimateInvestmentForGeneration(300)).toEqual({
+      status: "available",
+      minimum: 7_000,
+      maximum: 8_000,
+    });
+    expect(estimateInvestmentForGeneration(500)).toEqual({
       status: "available",
       minimum: 11_000,
       maximum: 12_000,
     });
+    expect(estimateInvestmentForGeneration(600)).toEqual({
+      status: "available",
+      minimum: 12_000,
+      maximum: 13_000,
+    });
     expect(estimateInvestmentForGeneration(1_000)).toEqual({
       status: "available",
-      minimum: 15_500,
-      maximum: 15_500,
+      minimum: 19_000,
+      maximum: 20_000,
     });
   });
 
-  it("interpola sem criar quedas entre 600 e 1.000 kWh", () => {
-    const estimates = [600, 700, 800, 900, 1_000].map((generation) =>
+  it("mantém a consulta direta abaixo do menor sistema precificado", () => {
+    expect(estimateInvestmentForGeneration(200)).toMatchObject({
+      status: "quote-required",
+      reason: "below-priced-range",
+    });
+  });
+
+  it("interpola sem criar quedas entre 300 e 1.000 kWh", () => {
+    const estimates = [300, 500, 600, 800, 1_000].map((generation) =>
       estimateInvestmentForGeneration(generation),
     );
     const minimumValues = estimates.map((estimate) =>
@@ -161,8 +184,8 @@ describe("estimateInvestmentForGeneration", () => {
 
     expect(estimateInvestmentForGeneration(800)).toEqual({
       status: "available",
-      minimum: 13_250,
-      maximum: 13_750,
+      minimum: 15_500,
+      maximum: 16_500,
     });
     expect(minimumValues).toEqual([...minimumValues].sort((a, b) => a - b));
     expect(maximumValues).toEqual([...maximumValues].sort((a, b) => a - b));

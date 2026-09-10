@@ -7,8 +7,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 const NAV_LINKS = [
-  { name: "Solução", href: "#qualidade" },
-  { name: "Por que nós", href: "#autoridade" },
+  { name: "Por que nós", href: "#qualidade" },
   { name: "Processo", href: "#processo" },
   { name: "FAQ", href: "#faq" },
 ];
@@ -261,39 +260,39 @@ export default function Navbar() {
 
       {/* Mobile Menu Fullscreen Reveal */}
       {isMobileMenuOpen && (
-          <div
-            ref={mobileMenuRef}
-            id="mobile-menu"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menu de navegação"
-            className="mobile-menu fixed inset-0 z-40 flex animate-fade-in items-center justify-center overflow-y-auto bg-white/95 backdrop-blur-xl dark:bg-navy-950/95"
-          >
-            <div aria-hidden="true" className="absolute left-1/4 top-1/4 h-64 w-64 rounded-full bg-gold-500/10 blur-[100px]" />
-            <div aria-hidden="true" className="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-blue-500/10 blur-[100px]" />
+        <div
+          ref={mobileMenuRef}
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu de navegação"
+          className="mobile-menu fixed inset-0 z-40 flex animate-fade-in items-center justify-center overflow-y-auto bg-white/95 backdrop-blur-xl dark:bg-navy-950/95"
+        >
+          <div aria-hidden="true" className="absolute left-1/4 top-1/4 h-64 w-64 rounded-full bg-gold-500/10 blur-[100px]" />
+          <div aria-hidden="true" className="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-blue-500/10 blur-[100px]" />
 
-            <nav aria-label="Navegação principal" className="mobile-menu-nav relative z-10 flex w-full flex-col items-center gap-8 px-6">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={(event) => handleMobileNavClick(event, link.href)}
-                  className="mobile-menu-link inline-flex min-h-11 items-center rounded-lg px-3 text-3xl font-display font-bold text-navy-950 transition-colors hover:text-accent-copy dark:text-white"
-                >
-                  {link.name}
-                </a>
-              ))}
-
+          <nav aria-label="Navegação principal" className="mobile-menu-nav relative z-10 flex w-full flex-col items-center gap-8 px-6">
+            {NAV_LINKS.map((link) => (
               <a
-                href="#simulador"
-                onClick={handleSimularClick}
-                className="mobile-menu-cta solar-cta mt-6 flex min-h-11 w-full max-w-xs items-center justify-center rounded-full px-8 py-3.5 text-base font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50"
+                key={link.name}
+                href={link.href}
+                onClick={(event) => handleMobileNavClick(event, link.href)}
+                className="mobile-menu-link inline-flex min-h-11 items-center rounded-lg px-3 text-3xl font-display font-bold text-navy-950 transition-colors hover:text-accent-copy dark:text-white"
               >
-                Simular Economia
+                {link.name}
               </a>
-            </nav>
-          </div>
-        )}
+            ))}
+
+            <a
+              href="#simulador"
+              onClick={handleSimularClick}
+              className="mobile-menu-cta solar-cta mt-6 flex min-h-11 w-full max-w-xs items-center justify-center rounded-full px-8 py-3.5 text-base font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50"
+            >
+              Simular Economia
+            </a>
+          </nav>
+        </div>
+      )}
     </>
   );
 }
