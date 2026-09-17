@@ -5,7 +5,7 @@ import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Política de Privacidade",
-  description: "Saiba como a W. Lima Soluções trata os dados usados no simulador e nos canais de atendimento.",
+  description: "Saiba como a W. Lima Soluções trata os dados do formulário e dos canais de atendimento.",
   path: "/privacidade",
 });
 
@@ -35,19 +35,18 @@ export default function PrivacyPolicy() {
           <a href={`mailto:${siteConfig.company.email}`} className="font-semibold text-gold-600 hover:underline dark:text-gold-400">{siteConfig.company.email}</a>.
         </p>
 
-        <h2 className={sectionClass}>2. Dados usados no simulador</h2>
+        <h2 className={sectionClass}>2. Dados usados no formulário</h2>
         <p className={paragraphClass}>
-          O simulador pode usar valor da conta de energia, CEP, estado, tipo de imóvel, local de instalação, tipo de telhado, interesse em financiamento, nome e e-mail. O cálculo inicial acontece no próprio navegador e o site não grava esse formulário em um banco de dados próprio.
+          O formulário pode usar nome, valor da conta de energia, consumo em kWh quando informado, CEP, tipo de imóvel, local de instalação, tipo de telhado e interesse em financiamento. O site não calcula nem exibe orçamento automático e não grava esse formulário em um banco de dados próprio.
         </p>
 
         <h2 className={sectionClass}>3. Contato pelo WhatsApp</h2>
         <p className={paragraphClass}>
-          Ao concluir a simulação, o site prepara uma mensagem e abre o WhatsApp. Os dados aparecem no endereço de compartilhamento e só são recebidos pela W. Lima Soluções depois que você revisa e envia a mensagem. A partir desse envio, o tratamento também segue os termos e a política da Meta/WhatsApp.
+          Ao enviar o formulário, o site prepara uma mensagem e abre o WhatsApp. Os dados aparecem no endereço de compartilhamento e só são recebidos pela W. Lima Soluções depois que você revisa e envia a mensagem. A partir desse envio, o tratamento também segue os termos e a política da Meta/WhatsApp.
         </p>
 
         <h2 className={sectionClass}>4. Serviços necessários ao funcionamento</h2>
         <ul className="mt-3 list-disc space-y-3 pl-6 leading-7 text-navy-700 dark:text-text-secondary">
-          <li><strong>ViaCEP:</strong> recebe o CEP consultado para retornar dados de localidade.</li>
           <li><strong>OpenStreetMap:</strong> fornece os blocos visuais do mapa e pode receber dados técnicos da conexão, como endereço IP e informações do navegador.</li>
           <li><strong>Links externos:</strong> Instagram e WhatsApp passam a tratar dados quando seus respectivos links são abertos.</li>
         </ul>
@@ -59,7 +58,7 @@ export default function PrivacyPolicy() {
 
         <h2 className={sectionClass}>6. Finalidades e bases legais</h2>
         <p className={paragraphClass}>
-          Os dados enviados são usados para responder ao pedido, preparar uma proposta e realizar procedimentos preliminares à eventual contratação. A medição analítica depende do seu consentimento. Nenhuma simulação exibida no site constitui proposta comercial definitiva.
+          Os dados enviados são usados para responder ao pedido, preparar uma proposta e realizar procedimentos preliminares à eventual contratação. A medição analítica depende do seu consentimento. O formulário não constitui proposta comercial, orçamento ou dimensionamento técnico.
         </p>
 
         <h2 className={sectionClass}>7. Retenção, compartilhamento e segurança</h2>

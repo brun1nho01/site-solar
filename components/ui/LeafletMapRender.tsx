@@ -13,8 +13,8 @@ const createCustomIcon = () => {
     className: "custom-leaflet-marker",
     html: `
       <div style="width: 30px; height: 30px; position: relative; display: flex; align-items: center; justify-content: center; margin-left: -15px; margin-top: -15px;">
-        <div style="position: absolute; width: 30px; height: 30px; background-color: rgba(16, 185, 129, 0.2); border-radius: 50%; border: 1px solid rgba(16, 185, 129, 0.3); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-        <div style="position: absolute; width: 12px; height: 12px; background-color: #10b981; border: 2px solid #060b14; border-radius: 50%; box-shadow: 0 0 15px rgba(16,185,129,0.8); z-index: 10;"></div>
+        <div style="position: absolute; width: 30px; height: 30px; background-color: color-mix(in srgb, var(--theme-marker-color) 20%, transparent); border-radius: 50%; border: 1px solid color-mix(in srgb, var(--theme-marker-color) 35%, transparent); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+        <div style="position: absolute; width: 12px; height: 12px; background-color: var(--theme-marker-color); border: 2px solid var(--theme-marker-ring); border-radius: 50%; box-shadow: var(--theme-marker-shadow); z-index: 10;"></div>
       </div>
     `,
     iconSize: [0, 0], // Trick: 0,0 forces the wrapper constraint to null, letting negative margins handle the explicit center.
@@ -85,11 +85,8 @@ export default function LeafletMapRender() {
               className="custom-popup"
               closeButton={false}
             >
-              <div className="min-w-[140px] rounded-lg border border-emerald-500/30 bg-[var(--theme-popup-bg)] p-3 font-mono text-[var(--theme-text)] shadow-xl">
+              <div className="min-w-[140px] rounded-lg border border-accent-copy/30 bg-[var(--theme-popup-bg)] p-3 font-mono text-[var(--theme-text)] shadow-xl">
                 <h3 className="mb-1 text-sm font-bold text-[var(--theme-text)]">{location.city} — {location.state}</h3>
-                <p className="border-t border-white/10 pt-1.5 text-[10px] font-bold uppercase leading-relaxed tracking-widest text-emerald-400">
-                  Energia solar ativa
-                </p>
                 <p className="mt-1 text-[9px] leading-relaxed text-[var(--theme-text)] opacity-70">
                   Ponto aproximado no centro do município.
                 </p>
@@ -97,19 +94,62 @@ export default function LeafletMapRender() {
             </Popup>
           </Marker>
         ))}
-      
-        <style dangerouslySetInnerHTML={{__html: `
+
+        <style dangerouslySetInnerHTML={{
+          __html: `
           .leaflet-popup-content-wrapper { background: transparent; padding: 0; box-shadow: none; border-radius: 0.5rem; }
           .leaflet-popup-content { margin: 0; }
           .leaflet-popup-tip-container { display: none; }
           html.dark .leaflet-tile-pane { filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(85%) sepia(20%) hue-rotate(190deg); }
-          html:not(.dark) .leaflet-tile-pane { filter: grayscale(100%) brightness(105%) contrast(85%); }
-          html:not(.dark) { --theme-popup-bg: #ffffff; --theme-text: #060b14; }
-          html.dark { --theme-popup-bg: #0a0f1c; --theme-text: #ffffff; }
-          .leaflet-bar { box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 0.5rem !important; overflow: hidden; }
-          .leaflet-bar a { background-color: #0a0f1c !important; color: #10b981 !important; border-bottom: 1px solid rgba(255,255,255,0.05) !important; width: 44px !important; height: 44px !important; line-height: 44px !important; transition: all 0.2s; }
-          .leaflet-bar a:hover { background-color: #121b2b !important; color: #fff !important; }
-          .leaflet-bar a.leaflet-disabled { background-color: #0a0f1c !important; color: rgba(255,255,255,0.2) !important; }
+          html:not(.dark) .leaflet-tile-pane { filter: saturate(78%) brightness(104%) contrast(94%); }
+          html:not(.dark) {
+            --theme-popup-bg: #ffffff;
+            --theme-text: #060b14;
+            --theme-marker-color: #0575b6;
+            --theme-marker-ring: #ffffff;
+            --theme-marker-shadow: 0 3px 12px rgba(5, 117, 182, 0.38);
+          }
+          html.dark {
+            --theme-popup-bg: #0a0f1c;
+            --theme-text: #ffffff;
+            --theme-marker-color: var(--accent-copy);
+            --theme-marker-ring: #060b14;
+            --theme-marker-shadow: 0 0 15px color-mix(in srgb, var(--accent-copy) 80%, transparent);
+          }
+          .leaflet-bar { border-radius: 0.5rem !important; overflow: hidden; }
+          .leaflet-bar a { width: 44px !important; height: 44px !important; line-height: 44px !important; transition: background-color 0.2s, color 0.2s; }
+          html:not(.dark) .leaflet-bar {
+            border: 1px solid rgba(26, 38, 55, 0.14) !important;
+            box-shadow: 0 8px 24px rgba(6, 11, 20, 0.14) !important;
+          }
+          html:not(.dark) .leaflet-bar a {
+            background-color: rgba(255, 255, 255, 0.96) !important;
+            color: #966000 !important;
+            border-bottom: 1px solid #e2ecf5 !important;
+          }
+          html:not(.dark) .leaflet-bar a:hover {
+            background-color: #f2f6fb !important;
+            color: #060b14 !important;
+          }
+          html:not(.dark) .leaflet-bar a.leaflet-disabled {
+            background-color: #f2f6fb !important;
+            color: #a7c3dd !important;
+          }
+          html:not(.dark) .leaflet-control-attribution {
+            background: rgba(255, 255, 255, 0.9) !important;
+            color: #496a92 !important;
+          }
+          html.dark .leaflet-bar {
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+          }
+          html.dark .leaflet-bar a {
+            background-color: #0a0f1c !important;
+            color: var(--accent-copy) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+          }
+          html.dark .leaflet-bar a:hover { background-color: #121b2b !important; color: #fff !important; }
+          html.dark .leaflet-bar a.leaflet-disabled { background-color: #0a0f1c !important; color: rgba(255,255,255,0.2) !important; }
         `}} />
       </MapContainer>
 
@@ -120,7 +160,7 @@ export default function LeafletMapRender() {
             aria-live="polite"
             className="pointer-events-auto w-full max-w-sm rounded-2xl bg-white/95 p-5 text-center shadow-[0_16px_40px_rgba(6,11,20,0.2)] ring-1 ring-navy-900/10 backdrop-blur-md dark:bg-navy-950/95 dark:ring-white/10"
           >
-            <MapTrifold aria-hidden="true" weight="duotone" className="mx-auto mb-3 h-8 w-8 text-success-copy" />
+            <MapTrifold aria-hidden="true" weight="duotone" className="mx-auto mb-3 h-8 w-8 text-accent-copy" />
             <p className="font-display text-lg font-bold text-navy-950 dark:text-white">Mapa base indisponível</p>
             <p className="mx-auto mt-2 max-w-[34ch] text-sm leading-relaxed text-navy-600 dark:text-text-secondary">
               Os pontos continuam indicando o centro aproximado das cidades atendidas.

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     template: "%s | W. Lima Soluções",
   },
   description:
-    "Projetos de energia solar para residências, empresas e propriedades rurais. Faça uma simulação inicial e fale com a W. Lima Soluções.",
+    "Projetos de energia solar para residências, empresas e propriedades rurais. Solicite uma análise personalizada à W. Lima Soluções.",
   keywords: [
     "energia solar",
     "painel solar",
@@ -46,14 +46,14 @@ export const metadata: Metadata = {
     url: siteConfig.siteUrl,
     title: "Energia Solar para Residências e Empresas | W. Lima Soluções",
     description:
-      "Faça uma estimativa inicial para seu imóvel e fale com a equipe da W. Lima Soluções.",
+      "Solicite uma análise personalizada para seu imóvel e fale com a equipe da W. Lima Soluções.",
     siteName: siteConfig.company.displayName,
     images: [sharedOpenGraphImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Energia Solar | W. Lima Soluções",
-    description: "Faça uma estimativa inicial para seu imóvel e fale com nossa equipe.",
+    description: "Solicite uma análise personalizada para seu imóvel e fale com nossa equipe.",
     images: ["/og-image.jpg"],
   },
   robots: {

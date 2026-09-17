@@ -14,15 +14,6 @@ export async function isolateThirdPartyRequests(page: Page) {
       return;
     }
 
-    if (requestUrl.hostname === "viacep.com.br") {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ erro: true }),
-      });
-      return;
-    }
-
     if (requestUrl.hostname === "tile.openstreetmap.org") {
       await route.fulfill({ status: 200, contentType: "image/png", body: TRANSPARENT_PNG });
       return;
@@ -44,12 +35,6 @@ export async function isolateThirdPartyRequests(page: Page) {
   });
 }
 
-export async function mockViaCep(page: Page, body: { erro?: boolean; uf?: string }, status = 200) {
-  await page.route("https://viacep.com.br/**", async (route) => {
-    await route.fulfill({ status, contentType: "application/json", body: JSON.stringify(body) });
-  });
-}
-
 export async function dismissCookieBanner(page: Page) {
   const dialog = page.getByRole("dialog", { name: /dados de navegação/i });
 
@@ -64,10 +49,10 @@ export async function openHome(page: Page) {
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 }
 
-export async function openCalculator(page: Page) {
+export async function openAnalysisForm(page: Page) {
   await openHome(page);
-  await page.getByRole("button", { name: "Simular Economia" }).click();
-  await expect(page.getByRole("heading", { name: /Simule o Retorno/i })).toBeVisible();
+  await page.getByRole("button", { name: "Solicitar Análise", exact: true }).click();
+  await expect(page.getByRole("heading", { name: /Receba uma análise feita para o seu imóvel/i })).toBeVisible();
 }
 
 export async function installBlockedPopupStub(page: Page) {

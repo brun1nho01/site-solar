@@ -31,7 +31,7 @@ export function FloatingWhatsApp() {
 
   return (
     <a
-      href={createWhatsAppUrl("Olá, gostaria de simular meu projeto solar!")}
+      href={createWhatsAppUrl("Olá! Gostaria de conversar sobre um projeto de energia solar.")}
       target="_blank"
       rel="noopener noreferrer"
       className={`floating-whatsapp group fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp-action text-white shadow-lg shadow-emerald-900/30 transition-all hover:scale-110 hover:bg-whatsapp-action-hover active:scale-90 ${isHeroVisible ? "floating-whatsapp--hero" : ""}`}

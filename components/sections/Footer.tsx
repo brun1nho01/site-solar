@@ -24,18 +24,18 @@ export default function Footer() {
             </h2>
 
             <p className="text-navy-600 dark:text-text-secondary text-base sm:text-xl max-w-2xl mb-8 leading-relaxed">
-              Faça uma simulação inicial e converse com a equipe para confirmar viabilidade, dimensionamento e condições do projeto.
+              Envie os dados essenciais e converse com a equipe para avaliar viabilidade, dimensionamento e condições do projeto.
             </p>
 
             {/* Botão Magnético de Ação Principal */}
             <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center justify-center gap-4">
               <MagneticButton>
                 <a
-                  href="#simulador"
+                  href="#analise"
                   className="solar-cta flex items-center justify-center gap-3 px-9 py-4 font-bold text-navy-950 text-base sm:text-lg rounded-2xl shadow-[0_10px_30px_rgba(242,205,66,0.3)] transition-all duration-300 group cursor-pointer"
                 >
                   <Lightning weight="fill" className="w-5 h-5 text-navy-950" />
-                  <span>Simular Minha Economia Agora</span>
+                  <span>Solicitar Análise Personalizada</span>
                 </a>
               </MagneticButton>
 
@@ -52,7 +52,7 @@ export default function Footer() {
 
             <ul className="flex flex-wrap items-center justify-center gap-6 mt-8 text-xs font-mono text-subtle-copy">
               <li className="flex items-center gap-1.5">
-                <CheckCircle weight="fill" className="w-4 h-4 text-emerald-500" /> Simulação 100% Gratuita
+                <CheckCircle weight="fill" className="w-4 h-4 text-emerald-500" /> Análise Inicial Gratuita
               </li>
               <li className="flex items-center gap-1.5">
                 <CheckCircle weight="fill" className="w-4 h-4 text-emerald-500" /> Sem Compromisso

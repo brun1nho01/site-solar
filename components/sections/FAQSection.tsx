@@ -19,7 +19,7 @@ const FAQS = [
   },
   {
     question: "O investimento se paga em quanto tempo?",
-    answer: "O prazo de retorno depende do preço do sistema, forma de pagamento, consumo, tarifa, geração e manutenção. A simulação do site é apenas uma referência inicial; o cenário completo é apresentado depois da análise técnica.",
+    answer: "O prazo de retorno depende do preço do sistema, forma de pagamento, consumo, tarifa, geração e manutenção. A equipe avalia esses fatores e apresenta o cenário aplicável depois de analisar o imóvel e a fatura.",
   },
 ];
 

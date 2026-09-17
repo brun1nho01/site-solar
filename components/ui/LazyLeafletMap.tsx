@@ -10,7 +10,7 @@ const LeafletMapRender = dynamic(
     loading: () => (
       <div
         role="status"
-        className="flex h-full w-full items-center justify-center bg-[#0a0f1c] px-6 text-center font-mono text-xs font-bold uppercase tracking-widest text-emerald-400/70"
+        className="flex h-full w-full items-center justify-center bg-navy-50 px-6 text-center font-mono text-xs font-bold uppercase tracking-widest text-accent-copy dark:bg-[#0a0f1c]"
       >
         Carregando mapa de projetos ativos…
       </div>
@@ -55,7 +55,7 @@ export function LazyLeafletMap() {
       {shouldLoad ? (
         <LeafletMapRender />
       ) : (
-        <div className="flex h-full w-full items-center justify-center px-6 text-center font-mono text-xs font-bold uppercase tracking-widest text-success-copy">
+        <div className="flex h-full w-full items-center justify-center px-6 text-center font-mono text-xs font-bold uppercase tracking-widest text-accent-copy">
           Mapa disponível ao se aproximar desta seção
         </div>
       )}

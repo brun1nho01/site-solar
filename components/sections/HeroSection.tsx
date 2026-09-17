@@ -27,8 +27,8 @@ const HOTSPOTS = [
 export default function HeroSection() {
   const shouldReduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
-  const scrollToSimulador = () => {
-    const el = document.getElementById("simulador");
+  const scrollToAnalysis = () => {
+    const el = document.getElementById("analise");
     if (el) {
       el.scrollIntoView({ behavior: shouldReduceMotion ? "auto" : "smooth" });
     }
@@ -105,11 +105,11 @@ export default function HeroSection() {
 
             <div className="hero-actions flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <button
-                onClick={scrollToSimulador}
+                onClick={scrollToAnalysis}
                 className="hero-primary-action solar-cta group relative flex min-h-11 items-center gap-3 overflow-hidden rounded-full px-8 py-4 font-bold text-navy-950 shadow-[0_10px_30px_rgba(242,205,66,0.3),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-400/50 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-navy-950"
               >
                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                <span className="relative z-10">Simular Economia</span>
+                <span className="relative z-10">Solicitar Análise</span>
                 <ArrowDown size={20} weight="bold" className="relative z-10 group-hover:translate-y-1 transition-transform" />
               </button>
             </div>

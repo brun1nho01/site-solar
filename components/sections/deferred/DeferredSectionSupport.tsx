@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export type DeferredSectionKind = "calculator" | "process" | "instagram";
+export type DeferredSectionKind = "contact" | "process" | "instagram";
 
 export function useNearViewport(rootMargin: string, minimumRatio = 0) {
   const placeholderRef = useRef<HTMLElement>(null);
@@ -45,9 +45,9 @@ export function DeferredSectionPlaceholder({
   kind: DeferredSectionKind;
   placeholderRef?: React.Ref<HTMLElement>;
 }) {
-  if (kind === "calculator") {
+  if (kind === "contact") {
     return (
-      <section ref={placeholderRef} aria-label="Carregando simulador" className="min-h-[720px] rounded-3xl border border-navy-900/10 bg-white/60 p-6 dark:border-white/10 dark:bg-white/[0.03] sm:p-10">
+      <section ref={placeholderRef} aria-label="Carregando formulário de atendimento" className="min-h-[760px] rounded-2xl bg-white/60 p-6 dark:bg-white/[0.03] sm:p-10">
         <SkeletonBar className="mx-auto mb-5 h-9 w-4/5" />
         <SkeletonBar className="mx-auto mb-10 h-4 w-3/5" />
         <div aria-hidden="true" className="h-48 animate-pulse rounded-2xl bg-navy-900/5 dark:bg-white/5" />

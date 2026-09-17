@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import {
+  ArrowRight,
   ArrowSquareOut,
   Pause,
   Play,
@@ -67,6 +68,113 @@ const GALLERY_ITEMS: InstagramPost[] = [
     link: "https://www.instagram.com/p/DU6WYi-EpZy/?img_index=1",
   },
 ];
+
+const FEATURED_VIDEO = {
+  src: "/images/instalacao-w-lima.mp4",
+  poster: "/images/instalacao-w-lima-poster-v2.jpg",
+};
+
+function FeaturedInstallationVideo() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  const [playbackError, setPlaybackError] = useState(false);
+
+  const handleStart = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    setIsStarting(true);
+    setPlaybackError(false);
+
+    try {
+      await video.play();
+      setHasStarted(true);
+    } catch {
+      setPlaybackError(true);
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
+  const handleEnded = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = 0;
+      video.load();
+    }
+    setHasStarted(false);
+  };
+
+  return (
+    <div className="mb-16 grid items-center gap-8 lg:grid-cols-[minmax(0,1.8fr)_minmax(18rem,0.7fr)] lg:gap-12">
+      <div className="relative aspect-video overflow-hidden rounded-2xl border border-navy-900/10 bg-navy-950 dark:border-white/10">
+        {!hasStarted && (
+          <Image
+            src={FEATURED_VIDEO.poster}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 65vw, 100vw"
+            className="object-cover"
+          />
+        )}
+
+        <video
+          ref={videoRef}
+          controls={hasStarted}
+          playsInline
+          preload="none"
+          aria-label="Equipe da W. Lima instalando painéis solares em um telhado"
+          onPlay={() => setHasStarted(true)}
+          onEnded={handleEnded}
+          className={`absolute inset-0 block h-full w-full object-cover ${hasStarted ? "opacity-100" : "opacity-0"}`}
+        >
+          <source src={FEATURED_VIDEO.src} type="video/mp4" />
+          Seu navegador não suporta a reprodução deste vídeo.{" "}
+          <a href={FEATURED_VIDEO.src}>Abrir o vídeo da instalação</a>.
+        </video>
+
+        {!hasStarted && (
+          <button
+            type="button"
+            onClick={handleStart}
+            disabled={isStarting}
+            aria-label={playbackError ? "Tentar reproduzir novamente o vídeo da instalação" : "Reproduzir vídeo da instalação"}
+            className="group absolute inset-0 flex cursor-pointer items-center justify-center bg-gradient-to-t from-black/65 via-black/5 to-transparent text-white transition-colors hover:from-black/75 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold-400 disabled:cursor-wait"
+          >
+            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gold-400 text-navy-950 shadow-[0_14px_34px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-105 group-disabled:scale-95 group-disabled:opacity-75 sm:h-20 sm:w-20">
+              <Play aria-hidden="true" weight="fill" className="ml-1 h-7 w-7 sm:h-8 sm:w-8" />
+            </span>
+
+            <span aria-hidden="true" className="absolute bottom-4 left-4 rounded-full bg-black/55 px-3 py-2 text-xs font-bold tracking-wide text-white backdrop-blur-sm sm:bottom-5 sm:left-5 sm:text-sm">
+              {isStarting ? "Carregando…" : playbackError ? "Tentar novamente" : "Instalação de placas solares · 14 segundos"}
+            </span>
+          </button>
+        )}
+
+        <p aria-live="polite" className="sr-only">
+          {playbackError ? "Não foi possível iniciar o vídeo. Tente novamente." : ""}
+        </p>
+      </div>
+
+      <div className="border-y border-navy-900/10 py-8 dark:border-white/10 lg:py-10">
+        <h3 className="text-balance font-display text-3xl font-bold leading-tight text-navy-950 dark:text-white lg:text-4xl">
+          Veja nosso trabalho de perto.
+        </h3>
+        <p className="mt-5 text-base leading-7 text-navy-700 dark:text-text-secondary sm:text-lg">
+          Um registro da equipe posicionando os módulos e preparando a instalação no telhado.
+        </p>
+        <a
+          href="#processo"
+          className="mt-7 inline-flex min-h-11 items-center gap-2 font-bold text-accent-copy underline decoration-gold-500/35 underline-offset-8 transition-colors hover:text-gold-700 hover:decoration-gold-600 dark:hover:text-gold-300"
+        >
+          Conheça nossas etapas
+          <ArrowRight aria-hidden="true" className="h-5 w-5" />
+        </a>
+      </div>
+    </div>
+  );
+}
 
 const VideoPlayer = ({ src, poster }: { src: string; poster?: string }) => {
   const ref = useRef<HTMLVideoElement>(null);
@@ -377,6 +485,8 @@ export default function InstagramSection() {
             <span className="relative z-10 font-mono text-sm tracking-wide">@wlimasolucoes</span>
           </a>
         </div>
+
+        <FeaturedInstallationVideo />
 
         {/* Grid de Posts */}
         <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">

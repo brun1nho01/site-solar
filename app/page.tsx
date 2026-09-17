@@ -10,7 +10,7 @@ import QualitySection from "@/components/sections/QualitySection";
 import RegionalMapSection from "@/components/sections/RegionalMapSection";
 import FAQSection from "@/components/sections/FAQSection";
 import Footer from "@/components/sections/Footer";
-import LazyCalculatorSection from "@/components/sections/deferred/LazyCalculatorSection";
+import LazyContactSection from "@/components/sections/deferred/LazyContactSection";
 import LazyInstagramSection from "@/components/sections/deferred/LazyInstagramSection";
 import LazyProcessSection from "@/components/sections/deferred/LazyProcessSection";
 import { siteConfig } from "@/lib/site-config";
@@ -27,10 +27,10 @@ export default function Home() {
     <main id="conteudo-principal" tabIndex={-1} className="relative scroll-mt-24 outline-none">
       <HeroSection />
 
-      {/* Container Integrado do Simulador */}
-      <section id="simulador" className="safe-inline relative z-10 overflow-hidden px-4 pb-32 pt-4">
-        <div className="max-w-3xl mx-auto">
-          <LazyCalculatorSection />
+      {/* Solicitação de análise personalizada */}
+      <section id="analise" className="safe-inline relative z-10 overflow-hidden px-4 pb-32 pt-4 scroll-mt-24">
+        <div className="mx-auto max-w-5xl">
+          <LazyContactSection />
         </div>
         
         {/* SVG Wave Divider transitioning to QualitySection */}

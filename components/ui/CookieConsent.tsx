@@ -63,7 +63,7 @@ export function CookieConsent({ gaId }: CookieConsentProps) {
               </h2>
               <p className="mt-2 text-sm leading-6 text-navy-600 dark:text-text-secondary">
                 {analyticsConfigured
-                  ? "Usamos o Google Analytics somente com sua autorização para entender o uso do site. A recusa não afeta o simulador nem o contato pelo WhatsApp."
+                  ? "Usamos o Google Analytics somente com sua autorização para entender o uso do site. A recusa não afeta o formulário nem o contato pelo WhatsApp."
                   : "Este site não está carregando o Google Analytics no momento. Apenas a sua preferência de privacidade pode ser salva neste navegador."}{" "}
                 <Link href="/privacidade" className="font-semibold text-accent-copy underline-offset-4 hover:underline">Leia a política de privacidade.</Link>
               </p>

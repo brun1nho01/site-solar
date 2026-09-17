@@ -61,16 +61,16 @@ export default function Navbar() {
     }
   };
 
-  const handleSimularClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleAnalysisClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
     if (isMobileMenuOpen) {
-      pendingMobileTargetRef.current = "#simulador";
+      pendingMobileTargetRef.current = "#analise";
       setIsMobileMenuOpen(false);
       return;
     }
 
-    scrollToSection("#simulador");
+    scrollToSection("#analise");
   };
 
   const handleMobileNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -224,12 +224,12 @@ export default function Navbar() {
               <ThemeToggle />
 
               <a
-                href="#simulador"
-                onClick={handleSimularClick}
+                href="#analise"
+                onClick={handleAnalysisClick}
                 className="solar-cta group relative inline-flex min-h-11 items-center justify-center overflow-hidden rounded-full px-5 py-2 text-sm font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50 transition-all duration-300 hover:-translate-y-0.5"
               >
                 <span className="relative flex items-center gap-1.5">
-                  Simular Economia
+                  Solicitar Análise
                   <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </a>
@@ -284,11 +284,11 @@ export default function Navbar() {
             ))}
 
             <a
-              href="#simulador"
-              onClick={handleSimularClick}
+              href="#analise"
+              onClick={handleAnalysisClick}
               className="mobile-menu-cta solar-cta mt-6 flex min-h-11 w-full max-w-xs items-center justify-center rounded-full px-8 py-3.5 text-base font-bold text-navy-950 shadow-[0_4px_14px_rgba(242,205,66,0.25),inset_0_1px_rgba(255,255,255,0.4)] ring-1 ring-gold-500/50"
             >
-              Simular Economia
+              Solicitar Análise
             </a>
           </nav>
         </div>

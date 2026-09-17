@@ -12,7 +12,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "npm run test:unit",
-    "test:unit": "vitest run lib",
+    "test:unit": "vitest run lib --passWithNoTests",
     "test:e2e": "node scripts/run-e2e.mjs",
     "test:e2e:ci": "node scripts/run-e2e.mjs --skip-build",
     "test:e2e:headed": "node scripts/run-e2e.mjs --headed",

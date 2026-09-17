@@ -4,7 +4,7 @@ import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Termos de Uso",
-  description: "Consulte as condições de uso do site, os limites das simulações de energia solar e as responsabilidades aplicáveis ao visitante e à W. Lima Soluções.",
+  description: "Consulte as condições de uso do site, do formulário de atendimento e as responsabilidades aplicáveis ao visitante e à W. Lima Soluções.",
   path: "/termos",
 });
 
@@ -21,22 +21,9 @@ export default function TermsOfUse() {
           <p>
             Bem-vindo ao site da W.Lima Soluções em Energia Solar. Ao acessar o site da W Lima Soluções, você concorda em cumprir estes Termos de Uso, todas as leis e regulamentos aplicáveis e concorda que é responsável pelo cumprimento de todas as leis locais. Se você não concordar com algum desses termos, está proibido de usar ou acessar este site.
           </p>
-          <h2>Simulações, Orçamentos e Estimativas</h2>
+          <h2>Formulário, análise e proposta</h2>
           <p>
-            A W Lima Soluções usa os dados informados pelo visitante para apresentar uma referência inicial de consumo, geração, investimento, economia e retorno simples. A simulação não constitui proposta comercial, orçamento, dimensionamento técnico ou garantia de geração e economia. A equipe confirmará o cenário após analisar a fatura, o imóvel, a localização, os equipamentos e as regras aplicáveis à unidade consumidora.
-          </p>
-          <h2>Premissas do Simulador Solar</h2>
-          <p>
-            O visitante informa o valor mensal da conta e pode adicionar o consumo médio em kWh para melhorar a precisão. Quando o consumo não é informado, o simulador estima uma faixa usando a referência comercial de que R$ 500 por mês correspondem a cerca de 390 a 490 kWh por mês. Quando os dois dados são informados, o consumo orienta a geração e o valor da conta orienta a economia, sem converter um no outro. O simulador acrescenta uma margem de 15% e ajusta a geração para o próximo bloco de 100 kWh por mês.
-          </p>
-          <p>
-            A faixa de investimento usa os preços comerciais fornecidos pela empresa para gerações entre 600 e 1.000 kWh por mês. Portes fora dessa faixa exigem orçamento. A potência do sistema em kWp depende da irradiação, orientação, inclinação, sombreamento, perdas e demais condições do projeto.
-          </p>
-          <p>
-            A economia considera uma conta residual típica entre R$ 50 e R$ 100 por mês, degradação de 0,5% ao ano, horizonte de 25 anos e reajuste tarifário de 0%. Iluminação pública, disponibilidade da rede, impostos, demanda contratada, manutenção, seguro, troca de equipamentos e outras cobranças podem alterar o resultado.
-          </p>
-          <p>
-            O retorno exibido representa um payback simples para pagamento à vista. O site não calcula financiamento sem entrada, prazo, taxa, parcelas e Custo Efetivo Total (CET) definidos em proposta.
+            A W Lima Soluções usa os dados informados pelo visitante para iniciar um atendimento pelo WhatsApp. O formulário não calcula nem apresenta consumo, geração, investimento, economia ou retorno e não constitui proposta comercial, orçamento, dimensionamento técnico ou garantia. A equipe apresentará o cenário aplicável depois de analisar a fatura, o imóvel, a localização, os equipamentos e as regras da unidade consumidora.
           </p>
           <h2>Propriedade Intelectual e Uso do Site</h2>
           <p>
