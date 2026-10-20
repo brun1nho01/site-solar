@@ -52,7 +52,7 @@ export async function openHome(page: Page) {
 export async function openAnalysisForm(page: Page) {
   await openHome(page);
   await page.getByRole("button", { name: "Solicitar Análise", exact: true }).click();
-  await expect(page.getByRole("heading", { name: /Receba uma análise feita para o seu imóvel/i })).toBeVisible();
+  await expect(page.getByLabel("Nome completo")).toBeVisible();
 }
 
 export async function installBlockedPopupStub(page: Page) {

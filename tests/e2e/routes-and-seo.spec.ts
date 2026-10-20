@@ -24,7 +24,11 @@ test("home publica metadados, dados estruturados e cabeçalhos de segurança", a
     name: "W. Lima Soluções",
     taxID: "59.652.464/0001-25",
     url: "https://wlimasolucoes.com.br",
+    address: {
+      streetAddress: "Rua Virgilio Franklin, 915",
+    },
   });
+  await expect(page.locator("#footer")).toContainText("Rua Virgilio Franklin, 915");
   expect(localBusiness.areaServed).toHaveLength(7);
   expect(localBusiness.areaServed.map((area: { name: string }) => area.name)).toContain("Cambuci, RJ");
 
@@ -53,6 +57,9 @@ test("páginas legais respondem com canonical e título próprios", async ({ pag
       "href",
       `https://wlimasolucoes.com.br${legalPage.path}`,
     );
+    if (legalPage.path === "/privacidade") {
+      await expect(page.locator("main")).toContainText("Rua Virgilio Franklin, 915, Centro, Cambuci/RJ");
+    }
   }
 });
 

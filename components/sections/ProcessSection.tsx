@@ -34,6 +34,10 @@ const STEPS = [
 
 type ProcessStep = (typeof STEPS)[number];
 
+const STEP_PROGRESS = 1 / STEPS.length;
+// Transições curtas preservam a maior parte de cada etapa para leitura.
+const TRANSITION_PROGRESS = STEP_PROGRESS / 8;
+
 function StepText({
   step,
   index,
@@ -43,10 +47,10 @@ function StepText({
   index: number;
   scrollYProgress: MotionValue<number>;
 }) {
-  const start = index * 0.2;
-  const end = start + 0.2;
-  const fadeInEnd = start + 0.05;
-  const fadeOutStart = start + 0.15;
+  const start = index * STEP_PROGRESS;
+  const end = start + STEP_PROGRESS;
+  const fadeInEnd = start + TRANSITION_PROGRESS;
+  const fadeOutStart = end - TRANSITION_PROGRESS;
 
   let rangeX: number[];
   let opacityRange: number[];
@@ -55,15 +59,15 @@ function StepText({
   if (index === 0) {
     rangeX = [0, fadeOutStart, end, 1];
     opacityRange = [1, 1, 0, 0];
-    yRange = [0, 0, -30, -30];
+    yRange = [0, 0, -20, -20];
   } else if (index === STEPS.length - 1) {
     rangeX = [0, start, fadeInEnd, 1];
     opacityRange = [0, 0, 1, 1];
-    yRange = [30, 30, 0, 0];
+    yRange = [20, 20, 0, 0];
   } else {
     rangeX = [0, start, fadeInEnd, fadeOutStart, end, 1];
     opacityRange = [0, 0, 1, 1, 0, 0];
-    yRange = [30, 30, 0, 0, -30, -30];
+    yRange = [20, 20, 0, 0, -20, -20];
   }
 
   const opacity = useTransform(scrollYProgress, rangeX, opacityRange);
@@ -71,10 +75,11 @@ function StepText({
 
   return (
     <motion.div
+      data-process-step={index + 1}
       style={{ opacity, y, zIndex: 10 - index }}
       className="pointer-events-none absolute inset-0 flex flex-col"
     >
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-3 flex items-center gap-3">
         <span className="font-mono text-2xl font-bold text-accent-copy">0{index + 1}.</span>
         <h3 className="font-display text-4xl font-bold text-navy-950 dark:text-white">
           {step.title}
@@ -96,10 +101,10 @@ function StepIcon({
   index: number;
   scrollYProgress: MotionValue<number>;
 }) {
-  const start = index * 0.2;
-  const end = start + 0.2;
-  const fadeInEnd = start + 0.05;
-  const fadeOutStart = start + 0.15;
+  const start = index * STEP_PROGRESS;
+  const end = start + STEP_PROGRESS;
+  const fadeInEnd = start + TRANSITION_PROGRESS;
+  const fadeOutStart = end - TRANSITION_PROGRESS;
 
   let rangeX: number[];
   let opacityRange: number[];
@@ -108,15 +113,15 @@ function StepIcon({
   if (index === 0) {
     rangeX = [0, fadeOutStart, end, 1];
     opacityRange = [1, 1, 0, 0];
-    scaleRange = [1, 1, 1.1, 1.1];
+    scaleRange = [1, 1, 1.06, 1.06];
   } else if (index === STEPS.length - 1) {
     rangeX = [0, start, fadeInEnd, 1];
     opacityRange = [0, 0, 1, 1];
-    scaleRange = [0.9, 0.9, 1, 1];
+    scaleRange = [0.94, 0.94, 1, 1];
   } else {
     rangeX = [0, start, fadeInEnd, fadeOutStart, end, 1];
     opacityRange = [0, 0, 1, 1, 0, 0];
-    scaleRange = [0.9, 0.9, 1, 1, 1.1, 1.1];
+    scaleRange = [0.94, 0.94, 1, 1, 1.06, 1.06];
   }
 
   const opacity = useTransform(scrollYProgress, rangeX, opacityRange);
@@ -125,10 +130,11 @@ function StepIcon({
 
   return (
     <motion.div
+      data-process-icon={index + 1}
       style={{ opacity, scale }}
       className="pointer-events-none absolute inset-0 flex items-center justify-center"
     >
-      <div className="flex h-48 w-48 items-center justify-center rounded-full border border-navy-900/10 bg-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_0_50px_rgba(242,205,66,0.15)]">
+      <div className="flex h-40 w-40 items-center justify-center rounded-full border border-navy-900/10 bg-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_0_50px_rgba(242,205,66,0.15)]">
         <Icon aria-hidden="true" weight="duotone" className="h-12 w-12 text-gold-500" />
       </div>
     </motion.div>
@@ -143,7 +149,7 @@ export default function ProcessSection() {
   });
 
   return (
-    <section id="processo" className="relative bg-navy-50 transition-colors duration-500 dark:bg-navy-950">
+    <section className="relative bg-navy-50 transition-colors duration-500 dark:bg-navy-950">
       <div className="safe-inline mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:hidden motion-reduce:!block">
         <h2 className="mb-12 font-display text-3xl font-bold leading-tight text-navy-950 dark:text-white sm:text-4xl">
           Do Projeto à <span className="text-accent-copy">Economia</span>
@@ -179,18 +185,18 @@ export default function ProcessSection() {
         </ol>
       </div>
 
-      <div ref={containerRef} className="relative hidden h-[350vh] lg:block motion-reduce:!hidden">
+      <div ref={containerRef} data-process-animation className="relative hidden h-[300vh] lg:block motion-reduce:!hidden">
         <div className="sticky top-0 flex h-screen items-center overflow-hidden">
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-navy-50 transition-colors duration-500 dark:bg-navy-950" />
           <div aria-hidden="true" className="pointer-events-none absolute right-0 top-0 h-[400px] w-[400px] rounded-full bg-gold-500/8 blur-[120px] dark:bg-gold-500/3" />
 
-          <div className="safe-inline relative z-10 mx-auto flex w-full max-w-7xl items-center gap-20 px-8">
+          <div className="safe-inline relative z-10 mx-auto flex w-full max-w-7xl items-center gap-12 px-8">
             <div className="w-1/2">
-              <h2 className="mb-6 font-display text-5xl font-bold leading-tight text-navy-950 dark:text-white">
+              <h2 className="mb-5 font-display text-5xl font-bold leading-tight text-navy-950 dark:text-white">
                 Do Projeto à <span className="text-accent-copy">Economia</span>
               </h2>
 
-              <div aria-hidden="true" className="mb-10 h-1 w-full overflow-hidden rounded-full bg-navy-900/10 dark:bg-white/10">
+              <div aria-hidden="true" className="mb-7 h-1 w-full overflow-hidden rounded-full bg-navy-900/10 dark:bg-white/10">
                 <motion.div
                   className="h-full rounded-full bg-gold-500"
                   style={{ scaleX: scrollYProgress, transformOrigin: "left" }}
@@ -204,7 +210,7 @@ export default function ProcessSection() {
               </div>
             </div>
 
-            <div className="flex h-[400px] w-1/2 items-center justify-center">
+            <div className="flex h-80 w-1/2 items-center justify-center">
               <div className="relative h-full w-full max-w-md">
                 {STEPS.map((step, index) => (
                   <StepIcon key={step.title} step={step} index={index} scrollYProgress={scrollYProgress} />

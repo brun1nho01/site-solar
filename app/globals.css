@@ -306,6 +306,11 @@ textarea:focus-visible {
   will-change: transform;
 }
 
+.hero-scene:hover,
+.hero-scene:focus-within {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-hero-float {
     animation: none;
@@ -349,8 +354,8 @@ section[id] {
 
 .site-header {
   top: env(safe-area-inset-top, 0px);
-  padding-left: max(1rem, env(safe-area-inset-left, 0px));
-  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
 
 .site-header--scrolled {
@@ -489,8 +494,8 @@ section[id] {
     transform: none;
   }
 
-  .hero-image {
-    scale: 1.05;
+  .hero-scene {
+    max-width: max(16rem, calc(100svh - 5.5rem));
   }
 
   .mobile-menu-nav {

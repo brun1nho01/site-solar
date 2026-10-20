@@ -88,7 +88,7 @@ const focusIds: Record<keyof FormData, string> = {
   monthlyConsumption: "lead-monthly-consumption",
   cep: "lead-cep",
   propertyType: "lead-property-residencial",
-  installLocation: "lead-install-telhado",
+  installLocation: "lead-install-location",
   roofType: "lead-roof-type",
   financingInterest: "lead-financing-sim",
   lgpdConsent: "lead-consent",
@@ -147,7 +147,11 @@ export default function SolarLeadForm() {
     );
 
     if (firstField) {
-      window.requestAnimationFrame(() => document.getElementById(focusIds[firstField])?.focus());
+      window.requestAnimationFrame(() => {
+        const field = document.getElementById(focusIds[firstField]);
+        field?.focus({ preventScroll: true });
+        field?.scrollIntoView({ behavior: "instant", block: "center" });
+      });
     }
   };
 
@@ -223,16 +227,16 @@ Se necessário, posso enviar uma foto da fatura e mais informações por aqui.`;
   };
 
   const inputClass =
-    "min-h-12 w-full rounded-xl border border-navy-900/15 bg-white px-4 text-navy-950 outline-none transition-colors placeholder:text-navy-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/25 dark:border-white/15 dark:bg-navy-950/60 dark:text-white dark:placeholder:text-navy-500";
+    "min-h-12 w-full rounded-xl border border-navy-900/15 bg-white px-4 text-navy-950 outline-none transition-colors placeholder:text-subtle-copy focus:border-gold-500 focus:ring-2 focus:ring-gold-500/25 dark:border-white/15 dark:bg-navy-950/60 dark:text-white";
   const labelClass = "mb-2 block text-sm font-semibold text-navy-800 dark:text-navy-200";
   const errorClass = "mt-1.5 text-sm text-red-600 dark:text-red-400";
 
   return (
     <div className="overflow-hidden rounded-2xl bg-white shadow-[0_24px_70px_rgba(4,9,17,0.13)] dark:bg-navy-900 dark:shadow-[0_24px_70px_rgba(0,0,0,0.32)]">
-      <div className="grid lg:grid-cols-[0.78fr_1.22fr]">
+      <div className="grid grid-cols-1 lg:grid-cols-[0.78fr_1.22fr]">
         <div
           data-testid="analysis-intro-panel"
-          className="relative overflow-hidden bg-navy-50 px-6 py-9 text-navy-950 dark:bg-navy-950 dark:text-white sm:px-9 sm:py-11 lg:px-10 lg:py-12"
+          className="relative hidden min-w-0 overflow-hidden bg-navy-50 px-6 py-9 text-navy-950 dark:bg-navy-950 dark:text-white sm:px-9 sm:py-11 lg:block lg:px-10 lg:py-12"
         >
           <div aria-hidden="true" className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold-300/20 blur-3xl dark:bg-gold-400/10" />
           <div className="relative">
@@ -260,12 +264,21 @@ Se necessário, posso enviar uma foto da fatura e mais informações por aqui.`;
           </div>
         </div>
 
-        <form className="px-6 py-9 sm:px-9 sm:py-11 lg:px-10 lg:py-12" onSubmit={handleSubmit} noValidate>
+        <form className="min-w-0 px-6 py-7 sm:px-9 sm:py-8 lg:px-10 lg:py-12" onSubmit={handleSubmit} noValidate>
           <p className="sr-only" aria-live="polite" aria-atomic="true">
             {announcement}
           </p>
 
-          <div className="mb-7">
+          <div className="mb-7 lg:hidden">
+            <h2 className="text-balance break-words font-display text-3xl font-bold leading-tight text-navy-950 dark:text-white">
+              Solicite sua análise solar
+            </h2>
+            <p className="mt-3 text-base leading-7 text-navy-700 dark:text-text-secondary">
+              Preencha os dados do imóvel e revise a mensagem no WhatsApp antes de enviar.
+            </p>
+          </div>
+
+          <div className="mb-7 hidden lg:block">
             <h3 className="font-display text-2xl font-bold text-navy-950 dark:text-white">
               Conte um pouco sobre o projeto
             </h3>
@@ -296,7 +309,7 @@ Se necessário, posso enviar uma foto da fatura e mais informações por aqui.`;
             <div>
               <label htmlFor="lead-monthly-bill" className={labelClass}>Conta média de energia</label>
               <div className="relative">
-                <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-navy-500 dark:text-navy-300">R$</span>
+                <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-subtle-copy">R$</span>
                 <input
                   id="lead-monthly-bill"
                   name="monthlyBill"
@@ -317,7 +330,7 @@ Se necessário, posso enviar uma foto da fatura e mais informações por aqui.`;
 
             <div>
               <label htmlFor="lead-monthly-consumption" className={labelClass}>
-                Consumo em kWh <span className="font-normal text-navy-500 dark:text-text-muted">(opcional)</span>
+                Consumo em kWh <span className="font-normal text-subtle-copy">(opcional)</span>
               </label>
               <input
                 id="lead-monthly-consumption"
@@ -397,9 +410,9 @@ Se necessário, posso enviar uma foto da fatura e mais informações por aqui.`;
               </div>
             )}
 
-            <fieldset className="sm:col-span-2" aria-describedby={errors.propertyType ? "lead-property-error" : undefined}>
+            <fieldset className="min-w-0 sm:col-span-2" aria-describedby={errors.propertyType ? "lead-property-error" : undefined}>
               <legend className={labelClass}>Tipo de imóvel</legend>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,5.625rem),1fr))] gap-2">
                 {propertyOptions.map(({ value, label, Icon }) => (
                   <label
                     key={value}
@@ -420,21 +433,21 @@ Se necessário, posso enviar uma foto da fatura e mais informações por aqui.`;
                       className="sr-only"
                     />
                     <Icon aria-hidden="true" weight="duotone" className="mb-1.5 h-5 w-5" />
-                    <span className="text-xs font-semibold sm:text-sm">{label}</span>
+                    <span className="max-w-full break-words text-xs font-semibold sm:text-sm">{label}</span>
                   </label>
                 ))}
               </div>
               {errors.propertyType && <p id="lead-property-error" className={errorClass}>{errors.propertyType}</p>}
             </fieldset>
 
-            <fieldset className="sm:col-span-2" aria-describedby={errors.financingInterest ? "lead-financing-error" : undefined}>
+            <fieldset className="min-w-0 sm:col-span-2" aria-describedby={errors.financingInterest ? "lead-financing-error" : undefined}>
               <legend className={labelClass}>Deseja avaliar financiamento?</legend>
-              <div className="flex gap-3">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,5rem),1fr))] gap-3">
                 {(["sim", "nao"] as const).map((value) => (
                   <label
                     key={value}
                     htmlFor={`lead-financing-${value}`}
-                    className={`flex min-h-12 flex-1 cursor-pointer items-center justify-center rounded-xl border px-4 font-semibold transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold-500 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-navy-900 ${
+                    className={`flex min-h-12 cursor-pointer items-center justify-center rounded-xl border px-4 font-semibold transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold-500 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-navy-900 ${
                       formData.financingInterest === value
                         ? "border-gold-500 bg-gold-500/10 text-navy-950 dark:text-white"
                         : "border-navy-900/15 text-navy-600 hover:border-gold-500/60 dark:border-white/15 dark:text-navy-300"
@@ -457,7 +470,11 @@ Se necessário, posso enviar uma foto da fatura e mais informações por aqui.`;
             </fieldset>
           </div>
 
-          <label htmlFor="lead-consent" className="mt-7 flex cursor-pointer items-start gap-3 text-sm leading-6 text-navy-600 dark:text-text-secondary">
+          <p className="mt-7 text-sm leading-6 text-navy-600 dark:text-text-secondary lg:hidden">
+            O site não armazena este formulário em banco de dados próprio.
+          </p>
+
+          <label htmlFor="lead-consent" className="mt-4 flex cursor-pointer items-start gap-3 text-sm leading-6 text-navy-600 dark:text-text-secondary lg:mt-7">
             <input
               id="lead-consent"
               name="lgpdConsent"

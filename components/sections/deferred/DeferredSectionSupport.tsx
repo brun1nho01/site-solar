@@ -47,7 +47,7 @@ export function DeferredSectionPlaceholder({
 }) {
   if (kind === "contact") {
     return (
-      <section ref={placeholderRef} aria-label="Carregando formulário de atendimento" className="min-h-[760px] rounded-2xl bg-white/60 p-6 dark:bg-white/[0.03] sm:p-10">
+      <section ref={placeholderRef} data-deferred-section={kind} aria-label="Carregando formulário de atendimento" className="min-h-[760px] rounded-2xl bg-white/60 p-6 dark:bg-white/[0.03] sm:p-10">
         <SkeletonBar className="mx-auto mb-5 h-9 w-4/5" />
         <SkeletonBar className="mx-auto mb-10 h-4 w-3/5" />
         <div aria-hidden="true" className="h-48 animate-pulse rounded-2xl bg-navy-900/5 dark:bg-white/5" />
@@ -57,9 +57,9 @@ export function DeferredSectionPlaceholder({
 
   const config = {
     process: {
-      id: "processo",
+      id: undefined,
       label: "Carregando etapas do projeto",
-      className: "min-h-[900px] bg-navy-50 dark:bg-navy-950 lg:min-h-[350vh]",
+      className: "min-h-[900px] bg-navy-50 dark:bg-navy-950 lg:min-h-[300vh] motion-reduce:!min-h-[900px]",
     },
     instagram: {
       id: undefined,
@@ -68,5 +68,5 @@ export function DeferredSectionPlaceholder({
     },
   }[kind];
 
-  return <section ref={placeholderRef} id={config.id} aria-label={config.label} className={config.className} />;
+  return <section ref={placeholderRef} data-deferred-section={kind} id={config.id} aria-label={config.label} className={config.className} />;
 }

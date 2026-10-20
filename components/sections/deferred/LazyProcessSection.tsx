@@ -10,5 +10,9 @@ const Process = dynamic(() => import("@/components/sections/ProcessSection"), {
 
 export default function LazyProcessSection() {
   const { placeholderRef, isNearViewport } = useNearViewport("700px 0px");
-  return isNearViewport ? <Process /> : <DeferredSectionPlaceholder kind="process" placeholderRef={placeholderRef} />;
+  return (
+    <section id="processo" aria-label="Etapas do projeto" tabIndex={-1} className="outline-none">
+      {isNearViewport ? <Process /> : <DeferredSectionPlaceholder kind="process" placeholderRef={placeholderRef} />}
+    </section>
+  );
 }

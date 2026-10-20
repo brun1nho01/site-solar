@@ -54,6 +54,50 @@ test("formulário revela o tipo de telhado somente quando necessário", async ({
   await expect(page.getByLabel("Tipo de telhado")).toHaveCount(0);
 });
 
+test("erro no local dos painéis direciona o foco e permite corrigir sem perder dados", async ({ page }, testInfo) => {
+  await installBlockedPopupStub(page);
+  await openAnalysisForm(page);
+  await completeRequiredFields(page);
+
+  const installLocation = page.getByLabel("Local dos painéis");
+  const submitButton = page.getByRole("button", { name: "Solicitar análise pelo WhatsApp" });
+  await installLocation.selectOption("");
+  await submitButton.click();
+
+  await expect(installLocation).toBeFocused();
+  await expect(installLocation).toBeInViewport({ ratio: 1 });
+  await expect(page.locator("#lead-install-error")).toBeInViewport({ ratio: 1 });
+  await expect(installLocation).toHaveAttribute("aria-invalid", "true");
+  await expect(installLocation).toHaveAccessibleDescription("Selecione o local da instalação.");
+  await expect(page.locator("form [aria-live='polite']")).toHaveText(
+    "Há um campo para corrigir. Selecione o local da instalação.",
+  );
+  await expect(page.getByLabel("Nome completo")).toHaveValue("Cliente de Teste");
+  await expect(page.getByLabel("Conta média de energia")).toHaveValue("500,00");
+  await expect(page.getByLabel(/Consumo em kWh/)).toHaveValue("420");
+  await expect(page.getByLabel("CEP da instalação")).toHaveValue("28430-586");
+  await expect(page.locator("#lead-property-residencial")).toBeChecked();
+  await expect(page.locator("#lead-financing-nao")).toBeChecked();
+  await expect(page.locator("#lead-consent")).toBeChecked();
+  expect(await page.evaluate(() => window.sessionStorage.getItem("e2e:last-popup-url"))).toBeNull();
+
+  await page.screenshot({ path: testInfo.outputPath("install-location-error.png") });
+
+  await installLocation.selectOption("solo");
+  await expect(installLocation).toHaveAttribute("aria-invalid", "false");
+  await expect(page.locator("#lead-install-error")).toHaveCount(0);
+  await expect(page.getByLabel("Tipo de telhado")).toHaveCount(0);
+  await submitButton.click();
+
+  const fallback = page.getByRole("alert").filter({ hasText: "O navegador bloqueou a nova aba." });
+  await expect(fallback).toBeVisible();
+  const openedUrl = await page.evaluate(() => window.sessionStorage.getItem("e2e:last-popup-url"));
+  const message = new URL(openedUrl!).searchParams.get("text") ?? "";
+  expect(message).toContain("Cliente de Teste");
+  expect(message).toContain("Local pretendido: solo");
+  expect(message).not.toContain("Tipo de telhado:");
+});
+
 test("formulário valida o primeiro campo e prepara a mensagem sem estimativas", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-375x812", "Fluxo completo coberto no viewport móvel.");
   await installBlockedPopupStub(page);

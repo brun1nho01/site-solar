@@ -28,7 +28,7 @@ export default function Home() {
       <HeroSection />
 
       {/* Solicitação de análise personalizada */}
-      <section id="analise" className="safe-inline relative z-10 overflow-hidden px-4 pb-32 pt-4 scroll-mt-24">
+      <section id="analise" aria-label="Solicitação de análise" tabIndex={-1} className="safe-inline relative z-10 overflow-hidden px-4 pb-32 pt-4 scroll-mt-24 outline-none">
         <div className="mx-auto max-w-5xl">
           <LazyContactSection />
         </div>
@@ -45,7 +45,9 @@ export default function Home() {
       <QualitySection />
 
       {/* 3. Instagram Wall */}
-      <LazyInstagramSection />
+      <section id="projetos" aria-label="Projetos e bastidores" tabIndex={-1} className="outline-none">
+        <LazyInstagramSection />
+      </section>
 
       {/* 4. Processo com Sticky Scroll */}
       <LazyProcessSection />

@@ -16,14 +16,14 @@ export default function PrivacyPolicy() {
   return (
     <main id="conteudo-principal" tabIndex={-1} className="safe-inline min-h-screen scroll-mt-24 bg-slate-50 px-4 pb-16 pt-28 outline-none dark:bg-navy-950 sm:px-6">
       <article className="glass mx-auto max-w-3xl rounded-3xl border border-navy-900/10 p-7 dark:border-white/10 sm:p-12">
-        <Link href="/" className="inline-flex text-sm font-bold text-gold-600 hover:underline dark:text-gold-400">
+        <Link href="/" className="inline-flex text-sm font-bold text-accent-copy hover:underline">
           Voltar para o início
         </Link>
 
         <h1 className="mt-8 text-3xl font-display font-bold text-navy-950 dark:text-white sm:text-4xl">
           Política de Privacidade
         </h1>
-        <p className="mt-3 text-sm text-navy-500 dark:text-text-muted">Última atualização: 31 de agosto de 2026.</p>
+        <p className="mt-3 text-sm text-subtle-copy">Última atualização: 31 de agosto de 2026.</p>
 
         <p className={paragraphClass}>
           Esta política explica como a {siteConfig.company.legalName}, CNPJ {siteConfig.company.taxId}, trata dados pessoais durante o uso deste site e no atendimento solicitado pelo visitante.
@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
         <h2 className={sectionClass}>1. Quem controla os dados</h2>
         <p className={paragraphClass}>
           A controladora é a {siteConfig.company.legalName}, com sede em {siteConfig.company.address.street}, {siteConfig.company.address.number}, {siteConfig.company.address.district}, {siteConfig.company.address.city}/{siteConfig.company.address.state}. Dúvidas e solicitações podem ser enviadas para{" "}
-          <a href={`mailto:${siteConfig.company.email}`} className="font-semibold text-gold-600 hover:underline dark:text-gold-400">{siteConfig.company.email}</a>.
+          <a href={`mailto:${siteConfig.company.email}`} className="font-semibold text-accent-copy hover:underline">{siteConfig.company.email}</a>.
         </p>
 
         <h2 className={sectionClass}>2. Dados usados no formulário</h2>
@@ -69,7 +69,7 @@ export default function PrivacyPolicy() {
         <h2 className={sectionClass}>8. Seus direitos</h2>
         <p className={paragraphClass}>
           Nos termos da LGPD, você pode solicitar confirmação de tratamento, acesso, correção, informação sobre compartilhamento, portabilidade quando aplicável, anonimização, bloqueio ou eliminação nos casos previstos em lei, além de revogar consentimentos. Envie o pedido para{" "}
-          <a href={`mailto:${siteConfig.company.email}`} className="font-semibold text-gold-600 hover:underline dark:text-gold-400">{siteConfig.company.email}</a>. Podemos pedir informações para confirmar a identidade do solicitante.
+          <a href={`mailto:${siteConfig.company.email}`} className="font-semibold text-accent-copy hover:underline">{siteConfig.company.email}</a>. Podemos pedir informações para confirmar a identidade do solicitante.
         </p>
 
         <h2 className={sectionClass}>9. Alterações desta política</h2>

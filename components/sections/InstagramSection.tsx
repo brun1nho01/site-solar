@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
@@ -14,8 +15,8 @@ import {
 } from "@phosphor-icons/react";
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
+import { handleSectionLinkClick } from "@/lib/section-navigation";
 
-import post1Image from "@/public/images/post_1.webp";
 import post2Image from "@/public/images/post_2.jpg";
 import post3Image from "@/public/images/post_3.webp";
 import post4Image from "@/public/images/post_4.webp";
@@ -164,13 +165,23 @@ function FeaturedInstallationVideo() {
         <p className="mt-5 text-base leading-7 text-navy-700 dark:text-text-secondary sm:text-lg">
           Um registro da equipe posicionando os módulos e preparando a instalação no telhado.
         </p>
-        <a
-          href="#processo"
-          className="mt-7 inline-flex min-h-11 items-center gap-2 font-bold text-accent-copy underline decoration-gold-500/35 underline-offset-8 transition-colors hover:text-gold-700 hover:decoration-gold-600 dark:hover:text-gold-300"
-        >
-          Conheça nossas etapas
-          <ArrowRight aria-hidden="true" className="h-5 w-5" />
-        </a>
+        <div className="mt-7 flex flex-col items-start gap-3">
+          <a
+            href="#analise"
+            onClick={handleSectionLinkClick}
+            className="inline-flex min-h-11 items-center gap-2 font-bold text-accent-copy underline decoration-gold-500/35 underline-offset-8 transition-colors hover:text-gold-700 hover:decoration-gold-600 dark:hover:text-gold-300"
+          >
+            Solicitar análise
+            <ArrowRight aria-hidden="true" className="h-5 w-5" />
+          </a>
+          <a
+            href="#processo"
+            className="inline-flex min-h-11 items-center gap-2 font-semibold text-navy-700 underline decoration-navy-400/50 underline-offset-4 transition-colors hover:text-navy-950 dark:text-text-secondary dark:hover:text-white"
+          >
+            Conheça nossas etapas
+            <ArrowRight aria-hidden="true" className="h-5 w-5" />
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -299,7 +310,8 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost; onClose: () => voi
     "--media-source-width": post.isVideo ? "25rem" : `${post.image.width}px`,
   };
 
-  return (
+  // Opened only after interaction: escape the page's z-10 stacking context.
+  return createPortal(
     <motion.div
       initial={shouldReduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -413,7 +425,8 @@ const VideoModal = ({ post, onClose }: { post: InstagramPost; onClose: () => voi
           </div>
         </div>
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body,
   );
 };
 

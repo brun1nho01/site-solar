@@ -14,7 +14,7 @@ export function ThemeToggle() {
     return () => clearTimeout(t);
   }, []);
 
-  if (!mounted) return <div aria-hidden="true" className="h-11 w-11" />;
+  if (!mounted) return <div aria-hidden="true" className="h-[44px] w-[44px] shrink-0" />;
 
   const isDark = resolvedTheme === "dark";
 
@@ -22,7 +22,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-black/5 transition-colors hover:bg-black/10 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-white/10 dark:bg-navy-900/50 dark:hover:bg-white/5 dark:focus-visible:ring-offset-navy-950"
+      className="relative flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full border border-black/10 bg-black/5 transition-colors hover:bg-black/10 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-white/10 dark:bg-navy-900/50 dark:hover:bg-white/5 dark:focus-visible:ring-offset-navy-950"
       aria-label={isDark ? "Ativar tema claro" : "Ativar tema escuro"}
     >
       <span
