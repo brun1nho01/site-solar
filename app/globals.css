@@ -434,6 +434,7 @@ section[id] {
 }
 
 @media (max-width: 639px), (pointer: coarse) and (max-height: 600px) {
+  .floating-whatsapp--suppressed,
   .floating-whatsapp--hero {
     pointer-events: none;
     opacity: 0;

@@ -40,7 +40,7 @@ export default function Footer() {
               </MagneticButton>
 
               <a
-                href={createWhatsAppUrl()}
+                href={createWhatsAppUrl("Olá! Gostaria de conversar sobre um projeto de energia solar.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-7 py-4 font-bold text-navy-950 dark:text-white text-base rounded-2xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-navy-900/10 dark:border-white/10 transition-colors"

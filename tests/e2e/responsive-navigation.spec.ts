@@ -76,3 +76,32 @@ test("preferência por movimento reduzido remove a flutuação do hero", async (
     /animate-hero-float/,
   );
 });
+
+test("WhatsApp flutuante no celular só aparece após o formulário", async ({ page }, testInfo) => {
+  await openHome(page);
+  const whatsapp = page.locator(".floating-whatsapp");
+  const isMobile = testInfo.project.name === "mobile-375x812";
+
+  if (isMobile) {
+    // No hero (topo): deve estar oculto / suprimido
+    await expect(whatsapp).toHaveClass(/floating-whatsapp--suppressed/);
+    await expect(whatsapp).toHaveAttribute("aria-hidden", "true");
+
+    // No formulário (#analise): ainda deve estar oculto
+    const analise = page.locator("#analise");
+    await analise.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    await expect(whatsapp).toHaveClass(/floating-whatsapp--suppressed/);
+    await expect(whatsapp).toHaveAttribute("aria-hidden", "true");
+
+    // Após o formulário (ex: #qualidade): deve aparecer
+    const qualidade = page.locator("#qualidade");
+    await qualidade.scrollIntoViewIfNeeded();
+    await expect(whatsapp).not.toHaveClass(/floating-whatsapp--suppressed/);
+    await expect(whatsapp).not.toHaveAttribute("aria-hidden", "true");
+  } else {
+    // No desktop: sempre visível e acessível
+    await expect(whatsapp).not.toHaveAttribute("aria-hidden", "true");
+    await expect(whatsapp).toBeVisible();
+  }
+});
