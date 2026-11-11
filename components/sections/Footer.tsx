@@ -78,6 +78,16 @@ export default function Footer() {
               <p>{siteConfig.company.address.street}, {siteConfig.company.address.number}</p>
               <p>{siteConfig.company.address.district}</p>
               <p>{siteConfig.company.address.city} — {siteConfig.company.address.state}, CEP {siteConfig.company.address.postalCode}</p>
+              <p className="mt-1.5">
+                <a
+                  href={siteConfig.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center text-subtle-copy underline decoration-navy-400/40 underline-offset-4 transition-colors hover:text-accent-copy dark:decoration-white/25"
+                >
+                  Ver localização no Google Maps
+                </a>
+              </p>
             </div>
 
             {/* Coluna 2: Links Legais */}
@@ -110,7 +120,7 @@ export default function Footer() {
               <p className="font-display font-bold text-navy-950 dark:text-white mb-2 text-base">Atendimento</p>
               <ul className="space-y-1.5">
                 <li>
-                  <a href={createWhatsAppUrl()} className="inline-flex min-h-11 items-center font-mono transition-colors hover:text-accent-copy">
+                  <a href={`tel:${siteConfig.company.phone.e164}`} className="inline-flex min-h-11 items-center font-mono transition-colors hover:text-accent-copy">
                     {siteConfig.company.phone.display}
                   </a>
                 </li>

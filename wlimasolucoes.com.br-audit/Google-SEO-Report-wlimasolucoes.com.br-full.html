@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 18mm 25mm 18mm;
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 9pt;
+      color: #6b7280;
+      font-family: 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+    }
+    @bottom-left {
+      content: "Confidential";
+      font-size: 7pt;
+      color: #d6d3cc;
+      font-family: 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+    }
+    @bottom-right {
+      content: "wlimasolucoes.com.br Google SEO Report";
+      font-size: 8pt;
+      color: #cbd5e1;
+      font-family: 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+    }
+  }
+
+  @page :first {
+    margin: 0;
+    @bottom-left { content: none; }
+    @bottom-center { content: none; }
+    @bottom-right { content: none; }
+  }
+
+  @page toc {
+    @bottom-center {
+      content: counter(page);
+      font-size: 9pt;
+      color: #6b7280;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Times New Roman', 'DejaVu Serif', Georgia, serif;
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #1e293b;
+    background: white;
+  }
+
+  /* ─── Title Page (Clean White) ─── */
+  .title-page {
+    page: first;
+    width: 210mm;
+    height: 297mm;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #1a1a2e;
+    position: relative;
+    padding: 50mm 30mm 40mm 30mm;
+    border-top: 6mm solid #1e3a5f;
+  }
+
+  .title-page .badge {
+    background: #f7f6f3;
+    border: 1px solid #d6d3cc;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 9pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 15mm;
+    color: #1e3a5f;
+  }
+
+  .title-page h1 {
+    font-size: 28pt;
+    font-weight: bold;
+    margin-bottom: 5mm;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    color: #1a1a2e;
+  }
+
+  .title-page .subtitle {
+    font-size: 13pt;
+    color: #6b7280;
+    margin-bottom: 12mm;
+    font-weight: 300;
+  }
+
+  .title-page .url {
+    font-size: 12pt;
+    color: #1e3a5f;
+    margin-bottom: 15mm;
+    padding: 4mm 8mm;
+    border: 1px solid #d6d3cc;
+    border-radius: 6px;
+    background: #faf9f7;
+  }
+
+  .title-page .score-box {
+    background: #faf9f7;
+    border: 2px solid #d6d3cc;
+    border-radius: 12px;
+    padding: 6mm 12mm;
+    margin-bottom: 15mm;
+  }
+
+  .title-page .score-number {
+    font-size: 42pt;
+    font-weight: bold;
+    color: #1e3a5f;
+    line-height: 1;
+  }
+
+  .title-page .score-label {
+    font-size: 10pt;
+    color: #6b7280;
+    margin-top: 2mm;
+  }
+
+  .title-page .meta {
+    font-size: 9pt;
+    color: #6b7280;
+    margin-top: 8mm;
+    padding-top: 5mm;
+    border-top: 1px solid #d6d3cc;
+  }
+
+  .title-page .meta span {
+    margin: 0 8px;
+  }
+
+  /* ─── Table of Contents ─── */
+  .toc-page {
+    page: toc;
+    page-break-before: always;
+  }
+
+  .toc-page h2 {
+    font-size: 18pt;
+    color: #1e3a5f;
+    margin-bottom: 8mm;
+    padding-bottom: 3mm;
+    border-bottom: 2px solid #1e3a5f;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .toc-list li {
+    padding: 2mm 0;
+    border-bottom: 1px solid #f1f5f9;
+    overflow: hidden;
+  }
+
+  .toc-list li.toc-section {
+    font-weight: bold;
+    font-size: 11pt;
+    padding-top: 4mm;
+    color: #0f172a;
+  }
+
+  .toc-list li.toc-sub {
+    padding-left: 8mm;
+    font-size: 9.5pt;
+    color: #475569;
+  }
+
+  .toc-score {
+    display: inline-block;
+    float: right;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 9pt;
+    font-weight: bold;
+    color: white;
+  }
+
+  .score-good { background: #2d6a4f; }
+  .score-warn { background: #d4740e; }
+  .score-bad { background: #c53030; }
+
+  /* ─── Section Styles ─── */
+  div.section {
+    page-break-before: always;
+  }
+
+  .section-header {
+    background: #faf9f7;
+    border-left: 4px solid #1e3a5f;
+    padding: 5mm 6mm;
+    margin-bottom: 6mm;
+    page-break-after: avoid;
+  }
+
+  .section-header h2 {
+    font-size: 16pt;
+    color: #0f172a;
+    margin-bottom: 1mm;
+  }
+
+  .section-header .section-score {
+    font-size: 12pt;
+    font-weight: bold;
+    float: right;
+    margin-top: -6mm;
+  }
+
+  h3 {
+    font-size: 12pt;
+    color: #1e3a5f;
+    margin-top: 6mm;
+    margin-bottom: 3mm;
+    padding-bottom: 1.5mm;
+    border-bottom: 1px solid #d6d3cc;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-size: 10.5pt;
+    color: #334155;
+    margin-top: 4mm;
+    margin-bottom: 2mm;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin-bottom: 3mm;
+    color: #334155;
+  }
+
+  .highlight {
+    background: #fef3c7;
+    border-left: 3px solid #d4740e;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .critical-box {
+    background: #fef2f2;
+    border-left: 3px solid #c53030;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .success-box {
+    background: #f0fdf4;
+    border-left: 3px solid #2d6a4f;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  /* ─── Tables ─── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4mm 0 6mm 0;
+    font-size: 9pt;
+  }
+
+  thead th {
+    background: #f7f6f3;
+    color: #0f172a;
+    font-weight: bold;
+    padding: 3mm 4mm;
+    text-align: left;
+    border-bottom: 2px solid #d6d3cc;
+    font-size: 9pt;
+  }
+
+  tbody td {
+    padding: 2.5mm 3mm;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #fdfcfa;
+  }
+
+  .status-pass {
+    color: #2d6a4f;
+    font-weight: bold;
+  }
+
+  .status-fail {
+    color: #c53030;
+    font-weight: bold;
+  }
+
+  .status-warn {
+    color: #d4740e;
+    font-weight: bold;
+  }
+
+  .status-partial {
+    color: #4a5568;
+    font-weight: bold;
+  }
+
+  /* ─── Charts ─── */
+  .chart-container {
+    text-align: center;
+    margin: 4mm 0;
+  }
+
+  .chart-container img {
+    max-width: 100%;
+    max-height: 120mm;
+    height: auto;
+  }
+
+  .chart-caption {
+    font-size: 8.5pt;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 2mm;
+    text-align: center;
+  }
+
+  .chart-half {
+    display: inline-block;
+    width: 48%;
+    vertical-align: top;
+    text-align: center;
+    margin: 2mm 0;
+  }
+
+  .chart-half img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ─── Two column layout ─── */
+  .two-col {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin: 3mm 0;
+  }
+
+  .two-col .col {
+    display: table-cell;
+    vertical-align: top;
+    padding: 0 2mm;
+  }
+
+  .four-col {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin: 3mm 0;
+  }
+
+  .four-col .col {
+    display: table-cell;
+    vertical-align: top;
+    padding: 0 1.5mm;
+  }
+
+  /* ─── Metric Cards ─── */
+  .metric-card {
+    background: #faf9f7;
+    border: 1px solid #d6d3cc;
+    border-radius: 6px;
+    padding: 2.5mm 3mm;
+    text-align: center;
+    margin: 2mm 0;
+  }
+
+  .metric-card .value {
+    font-size: 14pt;
+    font-weight: bold;
+    line-height: 1.2;
+  }
+
+  .metric-card .label {
+    font-size: 7.5pt;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 1mm;
+  }
+
+  /* ─── Action Plan ─── */
+  .action-item {
+    background: #faf9f7;
+    border-radius: 4px;
+    padding: 3mm 4mm;
+    margin: 3mm 0;
+    border-left: 3px solid #cbd5e1;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .action-item.critical {
+    border-left-color: #c53030;
+    background: #fdf2f2;
+  }
+
+  .action-item.high {
+    border-left-color: #d4740e;
+    background: #fdf8ef;
+  }
+
+  .action-item.medium {
+    border-left-color: #1e3a5f;
+    background: #f0f4f8;
+  }
+
+  .action-item.low {
+    border-left-color: #94a3b8;
+  }
+
+  .action-item h4 {
+    margin-top: 0;
+    margin-bottom: 1.5mm;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .action-item .effort {
+    font-size: 8.5pt;
+    color: #64748b;
+    float: right;
+  }
+
+  .priority-tag {
+    display: inline-block;
+    padding: 0.5mm 3mm;
+    border-radius: 3px;
+    font-size: 8pt;
+    font-weight: bold;
+    color: white;
+    margin-right: 2mm;
+    vertical-align: middle;
+  }
+
+  .priority-critical { background: #c53030; }
+  .priority-high { background: #d4740e; }
+  .priority-medium { background: #1e3a5f; }
+  .priority-low { background: #94a3b8; }
+
+  /* ─── Code blocks ─── */
+  .code-block {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 3mm 4mm;
+    border-radius: 4px;
+    font-family: 'DejaVu Sans Mono', monospace;
+    font-size: 8pt;
+    line-height: 1.6;
+    margin: 3mm 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  /* ─── Divider ─── */
+  .divider {
+    border: none;
+    border-top: 1px solid #d6d3cc;
+    margin: 5mm 0;
+  }
+
+  /* ─── Roadmap ─── */
+  .roadmap-phase {
+    background: #faf9f7;
+    border-radius: 6px;
+    padding: 4mm 5mm;
+    margin: 4mm 0;
+    border: 1px solid #d6d3cc;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .roadmap-phase h4 {
+    margin-top: 0;
+    border-bottom: none;
+    color: #1e3a5f;
+  }
+
+  .roadmap-phase ul {
+    margin: 2mm 0 0 5mm;
+    padding: 0;
+  }
+
+  .roadmap-phase li {
+    margin-bottom: 1.5mm;
+    font-size: 9.5pt;
+    color: #334155;
+  }
+
+  /* ─── Lists ─── */
+  ul {
+    margin-left: 5mm;
+    margin-bottom: 3mm;
+  }
+
+  li {
+    margin-bottom: 1.5mm;
+  }
+
+  /* ─── Data freshness ─── */
+  .data-freshness {
+    font-size: 8pt;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 4mm;
+    padding-top: 2mm;
+    border-top: 1px solid #d6d3cc;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ======================================================= TITLE PAGE === -->
+<div class="title-page">
+  <div class="badge">Full SEO Audit Report</div>
+  <h1>wlimasolucoes.com.br</h1>
+  <div class="subtitle">Prepared by Claude SEO</div>
+  <div class="score-box">
+    <div class="score-number">76<span style="font-size: 20pt; color: #94a3b8;">/100</span></div>
+    <div class="score-label">SEO Health Score</div>
+  </div>
+  <div class="meta">
+    <span>November 10, 2026</span>
+    <span>Full Audit</span>
+  </div>
+</div>
+
+
+<!-- ======================================================= TABLE OF CONTENTS === -->
+<div class="toc-page">
+  <h2>Table of Contents</h2>
+  <ul class="toc-list">
+    <li class="toc-section"><span>1. Executive Summary</span></li>
+    <li class="toc-sub"><span>Key Metrics, Critical Issues &amp; Quick Wins</span></li>
+    <li class="toc-section"><span>2. Audit Categories</span></li>
+    <li class="toc-sub"><span>What Works</span></li>
+    <li class="toc-sub"><span>Findings by Severity</span></li>
+    <li class="toc-section"><span>3. Action Plan</span></li>
+    <li class="toc-sub"><span>Phased Roadmap</span></li>
+    <li class="toc-section"><span>4. Data Sources &amp; Methodology</span></li>
+  </ul>
+</div>
+
+
+<!-- ======================================================= 1. EXECUTIVE SUMMARY === -->
+<div class="section">
+  <div class="section-header">
+    <h2>1. Executive Summary</h2>
+  </div>
+
+  <p>This report presents a comprehensive SEO audit of <strong>wlimasolucoes.com.br</strong> for a <strong>Local Service (Hybrid: Physical HQ in Cambuci/RJ + Regional Service Area)</strong> site, generated on November 10, 2026. Findings combine technical, content, schema, performance, visual, and search-readiness evidence as available.</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="metric-card">
+        <div class="value" style="color: #d4740e;">76/100</div>
+        <div class="label">SEO Health Score</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="critical-box">
+    <strong>Critical Issues Found:</strong>
+    <ol>
+      <li><strong>High:</strong> Seções principais omitidas do HTML inicial (ssr: false)</li>
+      <li><strong>High:</strong> Title, Meta Description e H1 sem intenção geográfica local (Cambuci e Noroeste Fluminense)</li>
+      <li><strong>High:</strong> Falta de páginas dedicadas por tipo de serviço/cliente (Residencial, Rural/Agronegócio, Comercial)</li>
+      <li><strong>Medium:</strong> Schema LocalBusiness genérico e sem geo, openingHoursSpecification, hasMap e VideoObject</li>
+      <li><strong>Medium:</strong> Telefone no rodapé usa wa.me em vez de tel:+5522999618883 e falta link direto para o Google Maps/GBP</li>
+    </ol>
+  </div>
+
+  <div class="success-box">
+    <strong>Quick Wins:</strong>
+    <ol>
+      <li>Incluir &#x27;Cambuci e Região (RJ)&#x27; no &lt;title&gt;, na meta description e no subtítulo/kicker do Hero em app/layout.tsx e HeroSection.tsx</li>
+      <li>Remover ssr: false de LazyProcessSection e LazyInstagramSection (ou renderizar o texto das 5 etapas e cabeçalho da galeria no servidor, mantendo apenas o vídeo/modal e animações sob demanda no cliente)</li>
+      <li>Enriquecer o JSON-LD em app/layout.tsx com @type: [&#x27;LocalBusiness&#x27;, &#x27;Electrician&#x27;], geo (-21.57623, -41.91229), openingHoursSpecification, priceRange, hasMap (link do GBP) e VideoObject para instalacao-w-lima.mp4</li>
+      <li>Adicionar link tel:+5522999618883 para ligação direta e link externo para o Perfil da Empresa no Google Maps no Footer.tsx</li>
+      <li>Atualizar lastModified em app/sitemap.ts para refletir a data real de revisão e expandir a meta description de /privacidade de 87 para 125-155 caracteres</li>
+    </ol>
+  </div>
+
+</div>
+
+<!-- ======================================================= 2. AUDIT CATEGORIES === -->
+<div class="section">
+  <div class="section-header">
+    <h2>2. Audit Categories</h2>
+  </div>
+
+  <h3>2.1 Technical SEO</h3>
+  <p><strong>Score:</strong> <span class="status-pass">88/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>HTTPS ativo com TLSv1.3 (Let&#x27;s Encrypt válido até 26/01/2027), cobrindo wlimasolucoes.com.br e www.wlimasolucoes.com.br</li>
+    <li>Redirecionamento HTTP -&gt; HTTPS (301 em 1 salto) e consolidação canônica www -&gt; non-www funcionando perfeitamente</li>
+    <li>robots.txt acessível (HTTP 200), permitindo todos os crawlers de busca e IA e declarando o sitemap.xml</li>
+    <li>sitemap.xml válido (HTTP 200) com as 3 rotas públicas canônicas (/, /privacidade, /termos)</li>
+    <li>URLs desconhecidas retornam HTTP 404 real (sem soft-404)</li>
+    <li>Cabeçalhos de segurança X-Content-Type-Options: nosniff, X-Frame-Options: DENY, Referrer-Policy e Permissions-Policy ativos</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Renderização apenas em cliente (ssr: false) oculta 3 seções inteiras do HTML inicial <span class="status-warn">High</span></h4>
+    <p>LazyContactSection, LazyProcessSection e LazyInstagramSection usam next/dynamic com ssr: false e IntersectionObserver. O HTML inicial servido ao Googlebot e aos crawlers de IA contém apenas 466-578 palavras e omite as 5 etapas do processo (&#x27;Do Projeto à Economia&#x27;) e a seção &#x27;Projetos e bastidores&#x27;. Mesmo com Chromium headless sem rolagem até o final, essas seções permanecem como placeholders vazios.</p>
+    <p><strong>Recommendation:</strong> Renderizar o conteúdo textual e semântico (títulos H2/H3, lista ordenada das 5 etapas e textos de apoio) no servidor (SSR/SSG) e adiar apenas a hidratação interativa, o player de vídeo MP4 e os modais.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Datas &lt;lastmod&gt; estáticas e desatualizadas no sitemap.xml <span class="status-warn">Low</span></h4>
+    <p>Todas as 3 URLs em app/sitemap.ts exibem lastModified fixo em &#x27;2026-09-01&#x27;, embora o site tenha recebido alterações relevantes em outubro de 2026.</p>
+    <p><strong>Recommendation:</strong> Atualizar lastReviewed em app/sitemap.ts para a data real da última alteração significativa de conteúdo de cada rota.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>HSTS sem includeSubDomains e CSP apenas em modo Report-Only <span class="status-warn">Low</span></h4>
+    <p>Strict-Transport-Security está em max-age=31536000 sem includeSubDomains/preload, e Content-Security-Policy está em modo report-only.</p>
+    <p><strong>Recommendation:</strong> Adicionar includeSubDomains ao cabeçalho HSTS e, quando homologado, promover a CSP para bloqueio efetivo.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.2 Content Quality</h3>
+  <p><strong>Score:</strong> <span class="status-warn">66/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Excelente transparência e confiabilidade (Trustworthiness): CNPJ (59.652.464/0001-25), razão social (W. Lima Solucoes LTDA), endereço físico completo (Rua Virgilio Franklin, 915, Centro, Cambuci/RJ), telefone e e-mail visíveis</li>
+    <li>Linguagem honesta e alinhada às diretrizes do Google (sem promessas enganosas de &#x27;conta zerada&#x27;, explicando regras de compensação, iluminação pública e disponibilidade de rede)</li>
+    <li>Zero jargão artificial de IA ou texto oculto malicioso (overall_quality: 88 no avaliador QRG)</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Contagem de palavras no HTML inicial abaixo do piso para página inicial e serviço local <span class="status-warn">High</span></h4>
+    <p>O HTML servido tem 466-475 palavras (abaixo da referência de 500 palavras para homepage e 600-800 para serviço local), principalmente porque o processo de 5 etapas e os projetos estão ocultos em ssr: false.</p>
+    <p><strong>Recommendation:</strong> Tornar o texto das 5 etapas do processo (~140 palavras) e da seção de projetos (~50 palavras) visível no HTML inicial e adicionar um bloco curto sobre atuação na área de concessão Enel RJ (residencial, comercial e rural).</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Sinais de Experiência (E-E-A-T) e credenciais técnicas pouco explícitos em texto <span class="status-warn">Medium</span></h4>
+    <p>O site possui fotos e vídeo reais de obras (escola Sonho de Criança, FAC Floresta, limpeza de placas), mas esses sinais não aparecem como estudos de caso curtos no HTML inicial nem mencionam registro CREA/CFT ou concessionária local (Enel RJ).</p>
+    <p><strong>Recommendation:</strong> Incluir legendas visíveis no HTML para os projetos realizados e informar de forma verificável o registro profissional/responsabilidade técnica e a experiência em homologação na concessionária local.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.3 On-Page SEO</h3>
+  <p><strong>Score:</strong> <span class="status-warn">72/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Hierarquia de cabeçalhos limpa (1 H1, 5 H2, 4 H3) sem saltos de nível (heading_level_skips: 0)</li>
+    <li>Tags Open Graph e Twitter Card completas com imagem 1200x630 (/og-image.jpg)</li>
+    <li>Canonical autorreferenciado correto em todas as 3 páginas (/, /privacidade, /termos)</li>
+    <li>Atributo lang=&#x27;pt-BR&#x27; e meta robots=&#x27;index, follow&#x27; corretos</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Title Tag e H1 da Home não incluem localização geográfica (Cambuci / Noroeste Fluminense / RJ) <span class="status-warn">High</span></h4>
+    <p>O &lt;title&gt; atual (&#x27;Energia Solar para Residências e Empresas | W. Lima Soluções&#x27;, 60 chars) e o &lt;h1&gt; (&#x27;Não alugue sua energia. Seja dono dela.&#x27;) são 100% genéricos e competem nacionalmente em vez de capturar buscas locais de alta conversão em Cambuci, Itaocara, São Fidélis, Pádua e Aperibé.</p>
+    <p><strong>Recommendation:</strong> Ajustar o &lt;title&gt; para &#x27;Energia Solar em Cambuci e Região, RJ | W. Lima Soluções&#x27; (56 chars) e incluir a referência geográfica no kicker ou subtítulo imediato do Hero, preservando o slogan criativo no H1.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Meta description da página /privacidade abaixo de 120 caracteres <span class="status-warn">Low</span></h4>
+    <p>A meta description de /privacidade possui 87 caracteres (&#x27;Saiba como a W. Lima Soluções trata os dados do formulário e dos canais de atendimento.&#x27;).</p>
+    <p><strong>Recommendation:</strong> Expandir para 130-150 caracteres detalhando LGPD, uso exclusivo para atendimento via WhatsApp e ausência de armazenamento em banco próprio.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Telefone no rodapé usa link wa.me em vez de esquema tel: e falta link para o Google Maps <span class="status-warn">Medium</span></h4>
+    <p>No Footer.tsx, o número (22) 99961-8883 aponta para wa.me (que já tem botões dedicados na página), sem oferecer um link tel:+5522999618883 para chamada telefônica direta e sem linkar para o Perfil da Empresa no Google Maps.</p>
+    <p><strong>Recommendation:</strong> Usar href=&#x27;tel:+5522999618883&#x27; no número de telefone do rodapé e adicionar link externo &#x27;Ver no Google Maps&#x27; apontando para o Perfil da Empresa da W. Lima Soluções.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.4 Schema / Structured Data</h3>
+  <p><strong>Score:</strong> <span class="status-warn">78/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Bloco JSON-LD válido e renderizado no servidor em app/layout.tsx</li>
+    <li>Dados de NAP (name, legalName, taxID, telephone, email, PostalAddress com número 915 e CEP 28430-586) consistentes com o rodapé</li>
+    <li>Propriedade areaServed listando as 7 cidades atendidas (Cambuci, Itaocara, São Fidélis, Aperibé, Pádua, Rio de Janeiro, Saquarema)</li>
+    <li>Não utiliza FAQPage (aposentado pelo Google em maio de 2026) nem HowTo (aposentado em setembro de 2023)</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Ausência de subtipo específico (Electrician / HomeAndConstructionBusiness) e propriedades recomendadas no LocalBusiness <span class="status-warn">Medium</span></h4>
+    <p>O JSON-LD usa apenas @type: &#x27;LocalBusiness&#x27; e não inclui coordenadas geo (GeoCoordinates com 5+ casas decimais), openingHoursSpecification, priceRange nem hasMap.</p>
+    <p><strong>Recommendation:</strong> Definir @type: [&#x27;LocalBusiness&#x27;, &#x27;Electrician&#x27;], adicionar geo (-21.57623, -41.91229), openingHoursSpecification, hasMap com a URL do Google Maps e knowsAbout / makesOffer para projetos residenciais, comerciais e rurais.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Vídeo próprio de instalação (/images/instalacao-w-lima.mp4) sem marcação VideoObject <span class="status-warn">Low</span></h4>
+    <p>O site possui um vídeo original de 14 segundos da equipe em obra com poster dedicado (/images/instalacao-w-lima-poster-v2.jpg), mas não declara VideoObject em JSON-LD.</p>
+    <p><strong>Recommendation:</strong> Adicionar schema VideoObject (ou incluí-lo via @graph) com name, description, thumbnailUrl, contentUrl e uploadDate para habilitar indexação em Google Vídeos.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.5 Performance (CWV)</h3>
+  <p><strong>Score:</strong> <span class="status-pass">82/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Página extremamente enxuta (0,39-0,41 MB na abertura sem cache; vídeo MP4 de 2,11 MB só baixa após clique explícito)</li>
+    <li>Fontes Satoshi auto-hospedadas via next/font com preload e display: swap</li>
+    <li>Ausência de bloqueadores de bfcache (sem unload listeners ou no-store)</li>
+    <li>Estabilidade visual (CLS prevenido por dimensões explícitas na imagem Hero e placeholders com min-height reservado)</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Candidato LCP (/images/house_solar.png) usa preload mas sem atributo explícito fetchpriority=&#x27;high&#x27; detectado na tag &lt;img&gt; <span class="status-warn">Low</span></h4>
+    <p>O script preload_check.py identificou que o &lt;link rel=&#x27;preload&#x27; as=&#x27;image&#x27;&gt; está presente no &lt;head&gt;, mas a tag &lt;img&gt; renderizada não expõe fetchpriority=&#x27;high&#x27; e o arquivo fonte PNG original tem 1,53 MB (servido pelo Next Image como WebP de 125 KB na variante 3840w).</p>
+    <p><strong>Recommendation:</strong> Garantir priority / fetchPriority=&#x27;high&#x27; na imagem Hero e converter o ativo fonte public/images/house_solar.png (1,53 MB) para WebP/AVIF otimizado na origem.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Dados de campo CrUX indisponíveis e cota anônima da API PageSpeed excedida <span class="status-warn">Info</span></h4>
+    <p>Domínio recém-publicado sem volume histórico no CrUX; a consulta anônima ao PSI retornou HTTP 429 (cota pública compartilhada).</p>
+    <p><strong>Recommendation:</strong> Configurar uma chave gratuita GOOGLE_API_KEY em C:/Users/Bruno/.config/claude-seo/google-api.json ou executar npx lighthouse localmente quando desejar telemetria laboratorial automatizada.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.6 AI Search Readiness (GEO &amp; Agentic)</h3>
+  <p><strong>Score:</strong> <span class="status-warn">74/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Score perfeito (100/100) na árvore de acessibilidade para agentes (agent_ux_check.py): 11 botões reais, 15 links reais, 0 widgets div-onclick, 0 controles interativos sem nome</li>
+    <li>Todos os crawlers de busca de IA (OAI-SearchBot, Claude-SearchBot, PerplexityBot, Googlebot, Applebot) permitidos em robots.txt</li>
+    <li>FAQ estruturado com perguntas diretas e respostas claras e autocontidas</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Ausência de bloco definicional local citável nos primeiros 30% da página <span class="status-warn">Medium</span></h4>
+    <p>Cerca de 44% das citações de IA vêm dos primeiros 30% da página. Atualmente, o início da página não declara explicitamente em texto corrido que a W. Lima Soluções é uma empresa de engenharia e instalação de energia solar sediada em Cambuci/RJ que atende o Noroeste Fluminense.</p>
+    <p><strong>Recommendation:</strong> Adicionar um parágrafo conciso e citável logo abaixo do Hero ou na abertura da seção de qualidade explicando quem é a empresa, onde atua (Cambuci e região) e como funciona o atendimento.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Presença externa da entidade (Citações, Bing Places, Apple Maps) ainda incipiente <span class="status-warn">Medium</span></h4>
+    <p>Buscas públicas mostram o CNPJ em diretórios cadastrais (Serasa/Prospectei) com CEP genérico 28430-000, mas poucas menções editoriais ou listagens locais ricas (Bing Places, Apple Maps, Portal Solar).</p>
+    <p><strong>Recommendation:</strong> Cadastrar/reivindicar a empresa no Bing Places (que abastece ChatGPT Search e Copilot), Apple Maps e diretórios do setor solar com o endereço exato (Rua Virgilio Franklin, 915, CEP 28430-586).</p>
+  </div>
+  <hr class="divider">
+  <h3>2.7 Images</h3>
+  <p><strong>Score:</strong> <span class="status-pass">82/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Imagem Hero servida em formato moderno WebP (125 KB para 3840w) com srcset responsivo completo (32w a 3840w), width=&#x27;1254&#x27;, height=&#x27;1254&#x27; e alt descritivo</li>
+    <li>Sem lazy-load indevido na imagem LCP acima da dobra</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Imagens da galeria de instalações invisíveis para crawlers de imagem e arquivos legados duplicados em /public/images <span class="status-warn">Medium</span></h4>
+    <p>As 4 fotos reais de instalações (post_2.jpg, post_3.webp, post_4.webp, post_5.webp) não aparecem no HTML inicial por causa de ssr: false em LazyInstagramSection, impedindo sua indexação no Google Imagens. Além disso, a pasta public/images contém arquivos duplicados/não utilizados (post_1.jpg/webp, post_3.jpg, post_4.jpg, post_5.jpg, video_bateria.mp4 de 3,19 MB).</p>
+    <p><strong>Recommendation:</strong> Renderizar a grade de 4 imagens da galeria no servidor com loading=&#x27;lazy&#x27; nativo (para que o Googlebot Image descubra os &lt;img&gt; sem baixar os bytes antes da rolagem do usuário) e limpar ativos órfãos de public/images.</p>
+  </div>
+  <hr class="divider">
+</div>
+
+<!-- ======================================================= 3. ACTION PLAN === -->
+<div class="section">
+  <div class="section-header">
+    <h2>3. Action Plan</h2>
+  </div>
+
+  <div class="roadmap-phase">
+    <h4>Phase 1: Quick Wins de Alto Impacto (Código Local) <span class="effort">Semana 1</span></h4>
+    <ul>
+      <li>Otimizar &lt;title&gt;, meta description e subtítulo do Hero com foco regional (&#x27;Energia Solar em Cambuci e Região, RJ | W. Lima Soluções&#x27;)</li>
+      <li>Tornar o conteúdo textual de ProcessSection e a grade de imagens de InstagramSection renderizados no servidor (SSR), mantendo animações e vídeo MP4 sob demanda</li>
+      <li>Enriquecer o JSON-LD em app/layout.tsx com subtipo Electrician, geo, openingHoursSpecification, hasMap e VideoObject</li>
+      <li>Trocar o link do telefone no rodapé para tel:+5522999618883, adicionar link para o Google Maps e atualizar lastModified no sitemap.ts</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>Phase 2: SEO Local Off-Page &amp; Perfil da Empresa (GBP) <span class="effort">Semanas 2-3</span></h4>
+    <ul>
+      <li>Vincular https://wlimasolucoes.com.br/ no Perfil da Empresa do Google (GBP), validar categoria principal (&#x27;Fornecedor de equipamentos de energia solar&#x27; / &#x27;Serviço de instalação elétrica&#x27;) e cadastrar as 7 cidades atendidas</li>
+      <li>Cadastrar a W. Lima Soluções no Bing Places for Business e no Apple Business Connect (essenciais para respostas locais no ChatGPT, Copilot e Siri)</li>
+      <li>Iniciar rotina de coleta de avaliações reais no Google (meta inicial: atingir 10+ avaliações com resposta do proprietário e menção natural à cidade do serviço)</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>Phase 3: Expansão de Arquitetura &amp; Cobertura de Intenção (SXO) <span class="effort">Mês 2</span></h4>
+    <ul>
+      <li>Criar seções ou páginas dedicadas por perfil de projeto: Energia Solar Residencial, Energia Solar Rural / Agronegócio e Energia Solar para Empresas na região da Enel RJ</li>
+      <li>Publicar 2 a 3 estudos de caso reais de instalações (ex.: Escola Sonho de Criança, FAC Floresta) com fotos reais, cidade, tipo de telhado e escopo técnico</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>Phase 4: Monitoramento &amp; Iteração (Search Console &amp; Drift) <span class="effort">Contínuo</span></h4>
+    <ul>
+      <li>Confirmar leitura do sitemap.xml e indexação das 3 páginas no Google Search Console</li>
+      <li>Comparar evolução após mudanças usando /seo drift compare https://wlimasolucoes.com.br/ contra o baseline #1 capturado em 10/11/2026</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ======================================================= DATA SOURCES & METHODOLOGY === -->
+<div class="section" style="text-align: center; padding-top: 15mm;">
+  <hr class="divider">
+  <h3 style="text-align: left;">Data Sources &amp; Methodology</h3>
+  <table>
+    <thead>
+      <tr><th>Source</th><th>Description</th><th>Update Frequency</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>PageSpeed Insights API</td>
+          <td>Lighthouse lab audit (mobile emulation, Moto G Power, slow 4G)</td>
+          <td>Real-time</td></tr>
+      <tr><td>Chrome UX Report (CrUX)</td>
+          <td>28-day rolling field data from real Chrome users</td>
+          <td>Daily ~04:00 UTC</td></tr>
+      <tr><td>CrUX History API</td>
+          <td>25-week p75 trend data per metric</td>
+          <td>Weekly</td></tr>
+      <tr><td>Google Search Console</td>
+          <td>Search Analytics (clicks, impressions, CTR, position)</td>
+          <td>2-3 day lag</td></tr>
+      <tr><td>URL Inspection API</td>
+          <td>Per-URL index status, coverage state, crawl info</td>
+          <td>Real-time (2,000/day)</td></tr>
+    </tbody>
+  </table>
+  <p style="color: #94a3b8; font-size: 9pt; margin-top: 5mm;">
+    Report generated by Claude SEO (Google SEO Intelligence Skill), November 10, 2026<br>
+    Methodology based on Google Web Vitals thresholds, Search Console documentation, and Lighthouse scoring algorithms.
+  </p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,264 @@
+{
+  "summary": {
+    "health_score": 76,
+    "business_type": "Local Service (Hybrid: Physical HQ in Cambuci/RJ + Regional Service Area)",
+    "top_findings": [
+      {
+        "title": "Seções principais omitidas do HTML inicial (ssr: false)",
+        "severity": "High",
+        "category": "Technical SEO / Content Quality"
+      },
+      {
+        "title": "Title, Meta Description e H1 sem intenção geográfica local (Cambuci e Noroeste Fluminense)",
+        "severity": "High",
+        "category": "On-Page SEO / Local SEO"
+      },
+      {
+        "title": "Falta de páginas dedicadas por tipo de serviço/cliente (Residencial, Rural/Agronegócio, Comercial)",
+        "severity": "High",
+        "category": "Local SEO / SXO"
+      },
+      {
+        "title": "Schema LocalBusiness genérico e sem geo, openingHoursSpecification, hasMap e VideoObject",
+        "severity": "Medium",
+        "category": "Schema / Structured Data"
+      },
+      {
+        "title": "Telefone no rodapé usa wa.me em vez de tel:+5522999618883 e falta link direto para o Google Maps/GBP",
+        "severity": "Medium",
+        "category": "Local SEO / On-Page SEO"
+      }
+    ],
+    "quick_wins": [
+      "Incluir 'Cambuci e Região (RJ)' no <title>, na meta description e no subtítulo/kicker do Hero em app/layout.tsx e HeroSection.tsx",
+      "Remover ssr: false de LazyProcessSection e LazyInstagramSection (ou renderizar o texto das 5 etapas e cabeçalho da galeria no servidor, mantendo apenas o vídeo/modal e animações sob demanda no cliente)",
+      "Enriquecer o JSON-LD em app/layout.tsx com @type: ['LocalBusiness', 'Electrician'], geo (-21.57623, -41.91229), openingHoursSpecification, priceRange, hasMap (link do GBP) e VideoObject para instalacao-w-lima.mp4",
+      "Adicionar link tel:+5522999618883 para ligação direta e link externo para o Perfil da Empresa no Google Maps no Footer.tsx",
+      "Atualizar lastModified em app/sitemap.ts para refletir a data real de revisão e expandir a meta description de /privacidade de 87 para 125-155 caracteres"
+    ]
+  },
+  "categories": [
+    {
+      "name": "Technical SEO",
+      "score": 88,
+      "weight": 0.22,
+      "what_works": [
+        "HTTPS ativo com TLSv1.3 (Let's Encrypt válido até 26/01/2027), cobrindo wlimasolucoes.com.br e www.wlimasolucoes.com.br",
+        "Redirecionamento HTTP -> HTTPS (301 em 1 salto) e consolidação canônica www -> non-www funcionando perfeitamente",
+        "robots.txt acessível (HTTP 200), permitindo todos os crawlers de busca e IA e declarando o sitemap.xml",
+        "sitemap.xml válido (HTTP 200) com as 3 rotas públicas canônicas (/, /privacidade, /termos)",
+        "URLs desconhecidas retornam HTTP 404 real (sem soft-404)",
+        "Cabeçalhos de segurança X-Content-Type-Options: nosniff, X-Frame-Options: DENY, Referrer-Policy e Permissions-Policy ativos"
+      ],
+      "findings": [
+        {
+          "title": "Renderização apenas em cliente (ssr: false) oculta 3 seções inteiras do HTML inicial",
+          "severity": "High",
+          "description": "LazyContactSection, LazyProcessSection e LazyInstagramSection usam next/dynamic com ssr: false e IntersectionObserver. O HTML inicial servido ao Googlebot e aos crawlers de IA contém apenas 466-578 palavras e omite as 5 etapas do processo ('Do Projeto à Economia') e a seção 'Projetos e bastidores'. Mesmo com Chromium headless sem rolagem até o final, essas seções permanecem como placeholders vazios.",
+          "recommendation": "Renderizar o conteúdo textual e semântico (títulos H2/H3, lista ordenada das 5 etapas e textos de apoio) no servidor (SSR/SSG) e adiar apenas a hidratação interativa, o player de vídeo MP4 e os modais."
+        },
+        {
+          "title": "Datas <lastmod> estáticas e desatualizadas no sitemap.xml",
+          "severity": "Low",
+          "description": "Todas as 3 URLs em app/sitemap.ts exibem lastModified fixo em '2026-09-01', embora o site tenha recebido alterações relevantes em outubro de 2026.",
+          "recommendation": "Atualizar lastReviewed em app/sitemap.ts para a data real da última alteração significativa de conteúdo de cada rota."
+        },
+        {
+          "title": "HSTS sem includeSubDomains e CSP apenas em modo Report-Only",
+          "severity": "Low",
+          "description": "Strict-Transport-Security está em max-age=31536000 sem includeSubDomains/preload, e Content-Security-Policy está em modo report-only.",
+          "recommendation": "Adicionar includeSubDomains ao cabeçalho HSTS e, quando homologado, promover a CSP para bloqueio efetivo."
+        }
+      ]
+    },
+    {
+      "name": "Content Quality",
+      "score": 66,
+      "weight": 0.23,
+      "what_works": [
+        "Excelente transparência e confiabilidade (Trustworthiness): CNPJ (59.652.464/0001-25), razão social (W. Lima Solucoes LTDA), endereço físico completo (Rua Virgilio Franklin, 915, Centro, Cambuci/RJ), telefone e e-mail visíveis",
+        "Linguagem honesta e alinhada às diretrizes do Google (sem promessas enganosas de 'conta zerada', explicando regras de compensação, iluminação pública e disponibilidade de rede)",
+        "Zero jargão artificial de IA ou texto oculto malicioso (overall_quality: 88 no avaliador QRG)"
+      ],
+      "findings": [
+        {
+          "title": "Contagem de palavras no HTML inicial abaixo do piso para página inicial e serviço local",
+          "severity": "High",
+          "description": "O HTML servido tem 466-475 palavras (abaixo da referência de 500 palavras para homepage e 600-800 para serviço local), principalmente porque o processo de 5 etapas e os projetos estão ocultos em ssr: false.",
+          "recommendation": "Tornar o texto das 5 etapas do processo (~140 palavras) e da seção de projetos (~50 palavras) visível no HTML inicial e adicionar um bloco curto sobre atuação na área de concessão Enel RJ (residencial, comercial e rural)."
+        },
+        {
+          "title": "Sinais de Experiência (E-E-A-T) e credenciais técnicas pouco explícitos em texto",
+          "severity": "Medium",
+          "description": "O site possui fotos e vídeo reais de obras (escola Sonho de Criança, FAC Floresta, limpeza de placas), mas esses sinais não aparecem como estudos de caso curtos no HTML inicial nem mencionam registro CREA/CFT ou concessionária local (Enel RJ).",
+          "recommendation": "Incluir legendas visíveis no HTML para os projetos realizados e informar de forma verificável o registro profissional/responsabilidade técnica e a experiência em homologação na concessionária local."
+        }
+      ]
+    },
+    {
+      "name": "On-Page SEO",
+      "score": 72,
+      "weight": 0.20,
+      "what_works": [
+        "Hierarquia de cabeçalhos limpa (1 H1, 5 H2, 4 H3) sem saltos de nível (heading_level_skips: 0)",
+        "Tags Open Graph e Twitter Card completas com imagem 1200x630 (/og-image.jpg)",
+        "Canonical autorreferenciado correto em todas as 3 páginas (/, /privacidade, /termos)",
+        "Atributo lang='pt-BR' e meta robots='index, follow' corretos"
+      ],
+      "findings": [
+        {
+          "title": "Title Tag e H1 da Home não incluem localização geográfica (Cambuci / Noroeste Fluminense / RJ)",
+          "severity": "High",
+          "description": "O <title> atual ('Energia Solar para Residências e Empresas | W. Lima Soluções', 60 chars) e o <h1> ('Não alugue sua energia. Seja dono dela.') são 100% genéricos e competem nacionalmente em vez de capturar buscas locais de alta conversão em Cambuci, Itaocara, São Fidélis, Pádua e Aperibé.",
+          "recommendation": "Ajustar o <title> para 'Energia Solar em Cambuci e Região, RJ | W. Lima Soluções' (56 chars) e incluir a referência geográfica no kicker ou subtítulo imediato do Hero, preservando o slogan criativo no H1."
+        },
+        {
+          "title": "Meta description da página /privacidade abaixo de 120 caracteres",
+          "severity": "Low",
+          "description": "A meta description de /privacidade possui 87 caracteres ('Saiba como a W. Lima Soluções trata os dados do formulário e dos canais de atendimento.').",
+          "recommendation": "Expandir para 130-150 caracteres detalhando LGPD, uso exclusivo para atendimento via WhatsApp e ausência de armazenamento em banco próprio."
+        },
+        {
+          "title": "Telefone no rodapé usa link wa.me em vez de esquema tel: e falta link para o Google Maps",
+          "severity": "Medium",
+          "description": "No Footer.tsx, o número (22) 99961-8883 aponta para wa.me (que já tem botões dedicados na página), sem oferecer um link tel:+5522999618883 para chamada telefônica direta e sem linkar para o Perfil da Empresa no Google Maps.",
+          "recommendation": "Usar href='tel:+5522999618883' no número de telefone do rodapé e adicionar link externo 'Ver no Google Maps' apontando para o Perfil da Empresa da W. Lima Soluções."
+        }
+      ]
+    },
+    {
+      "name": "Schema / Structured Data",
+      "score": 78,
+      "weight": 0.10,
+      "what_works": [
+        "Bloco JSON-LD válido e renderizado no servidor em app/layout.tsx",
+        "Dados de NAP (name, legalName, taxID, telephone, email, PostalAddress com número 915 e CEP 28430-586) consistentes com o rodapé",
+        "Propriedade areaServed listando as 7 cidades atendidas (Cambuci, Itaocara, São Fidélis, Aperibé, Pádua, Rio de Janeiro, Saquarema)",
+        "Não utiliza FAQPage (aposentado pelo Google em maio de 2026) nem HowTo (aposentado em setembro de 2023)"
+      ],
+      "findings": [
+        {
+          "title": "Ausência de subtipo específico (Electrician / HomeAndConstructionBusiness) e propriedades recomendadas no LocalBusiness",
+          "severity": "Medium",
+          "description": "O JSON-LD usa apenas @type: 'LocalBusiness' e não inclui coordenadas geo (GeoCoordinates com 5+ casas decimais), openingHoursSpecification, priceRange nem hasMap.",
+          "recommendation": "Definir @type: ['LocalBusiness', 'Electrician'], adicionar geo (-21.57623, -41.91229), openingHoursSpecification, hasMap com a URL do Google Maps e knowsAbout / makesOffer para projetos residenciais, comerciais e rurais."
+        },
+        {
+          "title": "Vídeo próprio de instalação (/images/instalacao-w-lima.mp4) sem marcação VideoObject",
+          "severity": "Low",
+          "description": "O site possui um vídeo original de 14 segundos da equipe em obra com poster dedicado (/images/instalacao-w-lima-poster-v2.jpg), mas não declara VideoObject em JSON-LD.",
+          "recommendation": "Adicionar schema VideoObject (ou incluí-lo via @graph) com name, description, thumbnailUrl, contentUrl e uploadDate para habilitar indexação em Google Vídeos."
+        }
+      ]
+    },
+    {
+      "name": "Performance (CWV)",
+      "score": 82,
+      "weight": 0.10,
+      "what_works": [
+        "Página extremamente enxuta (0,39-0,41 MB na abertura sem cache; vídeo MP4 de 2,11 MB só baixa após clique explícito)",
+        "Fontes Satoshi auto-hospedadas via next/font com preload e display: swap",
+        "Ausência de bloqueadores de bfcache (sem unload listeners ou no-store)",
+        "Estabilidade visual (CLS prevenido por dimensões explícitas na imagem Hero e placeholders com min-height reservado)"
+      ],
+      "findings": [
+        {
+          "title": "Candidato LCP (/images/house_solar.png) usa preload mas sem atributo explícito fetchpriority='high' detectado na tag <img>",
+          "severity": "Low",
+          "description": "O script preload_check.py identificou que o <link rel='preload' as='image'> está presente no <head>, mas a tag <img> renderizada não expõe fetchpriority='high' e o arquivo fonte PNG original tem 1,53 MB (servido pelo Next Image como WebP de 125 KB na variante 3840w).",
+          "recommendation": "Garantir priority / fetchPriority='high' na imagem Hero e converter o ativo fonte public/images/house_solar.png (1,53 MB) para WebP/AVIF otimizado na origem."
+        },
+        {
+          "title": "Dados de campo CrUX indisponíveis e cota anônima da API PageSpeed excedida",
+          "severity": "Info",
+          "description": "Domínio recém-publicado sem volume histórico no CrUX; a consulta anônima ao PSI retornou HTTP 429 (cota pública compartilhada).",
+          "recommendation": "Configurar uma chave gratuita GOOGLE_API_KEY em C:/Users/Bruno/.config/claude-seo/google-api.json ou executar npx lighthouse localmente quando desejar telemetria laboratorial automatizada."
+        }
+      ]
+    },
+    {
+      "name": "AI Search Readiness (GEO & Agentic)",
+      "score": 74,
+      "weight": 0.10,
+      "what_works": [
+        "Score perfeito (100/100) na árvore de acessibilidade para agentes (agent_ux_check.py): 11 botões reais, 15 links reais, 0 widgets div-onclick, 0 controles interativos sem nome",
+        "Todos os crawlers de busca de IA (OAI-SearchBot, Claude-SearchBot, PerplexityBot, Googlebot, Applebot) permitidos em robots.txt",
+        "FAQ estruturado com perguntas diretas e respostas claras e autocontidas"
+      ],
+      "findings": [
+        {
+          "title": "Ausência de bloco definicional local citável nos primeiros 30% da página",
+          "severity": "Medium",
+          "description": "Cerca de 44% das citações de IA vêm dos primeiros 30% da página. Atualmente, o início da página não declara explicitamente em texto corrido que a W. Lima Soluções é uma empresa de engenharia e instalação de energia solar sediada em Cambuci/RJ que atende o Noroeste Fluminense.",
+          "recommendation": "Adicionar um parágrafo conciso e citável logo abaixo do Hero ou na abertura da seção de qualidade explicando quem é a empresa, onde atua (Cambuci e região) e como funciona o atendimento."
+        },
+        {
+          "title": "Presença externa da entidade (Citações, Bing Places, Apple Maps) ainda incipiente",
+          "severity": "Medium",
+          "description": "Buscas públicas mostram o CNPJ em diretórios cadastrais (Serasa/Prospectei) com CEP genérico 28430-000, mas poucas menções editoriais ou listagens locais ricas (Bing Places, Apple Maps, Portal Solar).",
+          "recommendation": "Cadastrar/reivindicar a empresa no Bing Places (que abastece ChatGPT Search e Copilot), Apple Maps e diretórios do setor solar com o endereço exato (Rua Virgilio Franklin, 915, CEP 28430-586)."
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "score": 82,
+      "weight": 0.05,
+      "what_works": [
+        "Imagem Hero servida em formato moderno WebP (125 KB para 3840w) com srcset responsivo completo (32w a 3840w), width='1254', height='1254' e alt descritivo",
+        "Sem lazy-load indevido na imagem LCP acima da dobra"
+      ],
+      "findings": [
+        {
+          "title": "Imagens da galeria de instalações invisíveis para crawlers de imagem e arquivos legados duplicados em /public/images",
+          "severity": "Medium",
+          "description": "As 4 fotos reais de instalações (post_2.jpg, post_3.webp, post_4.webp, post_5.webp) não aparecem no HTML inicial por causa de ssr: false em LazyInstagramSection, impedindo sua indexação no Google Imagens. Além disso, a pasta public/images contém arquivos duplicados/não utilizados (post_1.jpg/webp, post_3.jpg, post_4.jpg, post_5.jpg, video_bateria.mp4 de 3,19 MB).",
+          "recommendation": "Renderizar a grade de 4 imagens da galeria no servidor com loading='lazy' nativo (para que o Googlebot Image descubra os <img> sem baixar os bytes antes da rolagem do usuário) e limpar ativos órfãos de public/images."
+        }
+      ]
+    }
+  ],
+  "action_plan": {
+    "phases": [
+      {
+        "name": "Phase 1: Quick Wins de Alto Impacto (Código Local)",
+        "timeframe": "Semana 1",
+        "items": [
+          "Otimizar <title>, meta description e subtítulo do Hero com foco regional ('Energia Solar em Cambuci e Região, RJ | W. Lima Soluções')",
+          "Tornar o conteúdo textual de ProcessSection e a grade de imagens de InstagramSection renderizados no servidor (SSR), mantendo animações e vídeo MP4 sob demanda",
+          "Enriquecer o JSON-LD em app/layout.tsx com subtipo Electrician, geo, openingHoursSpecification, hasMap e VideoObject",
+          "Trocar o link do telefone no rodapé para tel:+5522999618883, adicionar link para o Google Maps e atualizar lastModified no sitemap.ts"
+        ]
+      },
+      {
+        "name": "Phase 2: SEO Local Off-Page & Perfil da Empresa (GBP)",
+        "timeframe": "Semanas 2-3",
+        "items": [
+          "Vincular https://wlimasolucoes.com.br/ no Perfil da Empresa do Google (GBP), validar categoria principal ('Fornecedor de equipamentos de energia solar' / 'Serviço de instalação elétrica') e cadastrar as 7 cidades atendidas",
+          "Cadastrar a W. Lima Soluções no Bing Places for Business e no Apple Business Connect (essenciais para respostas locais no ChatGPT, Copilot e Siri)",
+          "Iniciar rotina de coleta de avaliações reais no Google (meta inicial: atingir 10+ avaliações com resposta do proprietário e menção natural à cidade do serviço)"
+        ]
+      },
+      {
+        "name": "Phase 3: Expansão de Arquitetura & Cobertura de Intenção (SXO)",
+        "timeframe": "Mês 2",
+        "items": [
+          "Criar seções ou páginas dedicadas por perfil de projeto: Energia Solar Residencial, Energia Solar Rural / Agronegócio e Energia Solar para Empresas na região da Enel RJ",
+          "Publicar 2 a 3 estudos de caso reais de instalações (ex.: Escola Sonho de Criança, FAC Floresta) com fotos reais, cidade, tipo de telhado e escopo técnico"
+        ]
+      },
+      {
+        "name": "Phase 4: Monitoramento & Iteração (Search Console & Drift)",
+        "timeframe": "Contínuo",
+        "items": [
+          "Confirmar leitura do sitemap.xml e indexação das 3 páginas no Google Search Console",
+          "Comparar evolução após mudanças usando /seo drift compare https://wlimasolucoes.com.br/ contra o baseline #1 capturado em 10/11/2026"
+        ]
+      }
+    ]
+  },
+  "artifacts": {
+    "findings_dir": "findings/",
+    "screenshots_dir": "screenshots/"
+  }
+}

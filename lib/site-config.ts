@@ -1,6 +1,7 @@
 export const siteConfig = {
   siteUrl: "https://wlimasolucoes.com.br",
   instagramUrl: "https://www.instagram.com/wlimasolucoes/",
+  googleMapsUrl: "https://maps.app.goo.gl/JbvTH7mcU1W2RpPz7",
   company: {
     displayName: "W. Lima Soluções",
     registeredTradeName: "W. Lima Solucoes",
@@ -22,6 +23,10 @@ export const siteConfig = {
       state: "RJ",
       postalCode: "28430-586",
       country: "BR",
+      geo: {
+        latitude: -21.5762274,
+        longitude: -41.912293,
+      },
     },
   },
 } as const;

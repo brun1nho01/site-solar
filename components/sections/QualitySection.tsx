@@ -13,7 +13,7 @@ export default function QualitySection() {
             <span> W <span className="text-accent-copy">Lima </span> Soluções?</span>
           </h2>
           <p className="text-navy-600 dark:text-text-secondary text-lg max-w-2xl">
-            Entregamos projetos de energia solar com excelência, desde o dimensionamento até a instalação, focando na sua tranquilidade e economia real.
+            Entregamos projetos de energia solar em Cambuci, no Noroeste Fluminense e em outras regiões do RJ para residências, comércios e propriedades rurais, do dimensionamento à homologação e instalação.
           </p>
         </div>
 
@@ -59,7 +59,7 @@ export default function QualitySection() {
               </div>
               <h3 className="font-display font-bold text-xl text-navy-950 dark:text-white mb-3">Dimensionamento sob Medida</h3>
               <p className="text-sm text-navy-600 dark:text-text-secondary leading-relaxed">
-                Projeto calculado estritamente para o seu histórico de consumo, sem sobredimensionar para inflar o valor final.
+                Projeto calculado estritamente para o seu histórico de consumo e para instalação em telhado ou solo, sem sobredimensionar para inflar o valor final.
               </p>
             </div>
           </MouseGlowCard>
@@ -72,7 +72,7 @@ export default function QualitySection() {
               </div>
               <h3 className="font-display font-bold text-xl text-navy-950 dark:text-white mb-3">Acompanhamento Técnico</h3>
               <p className="text-sm text-navy-600 dark:text-text-secondary leading-relaxed">
-                Responsabilidades, profissionais envolvidos e documentação técnica são definidos conforme as características e o escopo de cada obra.
+                Condução das etapas técnicas e da homologação junto à concessionária de energia, com documentação e responsabilidades definidas conforme o escopo de cada obra.
               </p>
             </div>
           </MouseGlowCard>

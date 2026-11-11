@@ -21,6 +21,14 @@ const FAQS = [
     question: "O investimento se paga em quanto tempo?",
     answer: "O prazo de retorno depende do preço do sistema, forma de pagamento, consumo, tarifa, geração e manutenção. A equipe avalia esses fatores e apresenta o cenário aplicável depois de analisar o imóvel e a fatura.",
   },
+  {
+    question: "Vocês atendem residências, empresas e propriedades rurais (em telhado ou solo)?",
+    answer: "Sim. Dimensionamos sistemas fotovoltaicos para residências, comércios, indústrias e propriedades rurais (agronegócio), avaliando a viabilidade de instalação tanto em diferentes tipos de telhado quanto em estrutura de solo.",
+  },
+  {
+    question: "Como funciona a homologação do sistema junto à concessionária de energia?",
+    answer: "A equipe conduz o projeto técnico e as etapas aplicáveis de solicitação de acesso, vistoria e conexão junto à concessionária da região (como a Enel RJ), conforme o escopo formal definido na proposta.",
+  },
 ];
 
 export default function FAQSection() {

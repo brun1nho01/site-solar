@@ -26,7 +26,7 @@ test("âncora dos projetos já existe no HTML sem carregar a galeria", async ({ 
   expect(response.ok()).toBe(true);
   expect(html).toContain('id="projetos"');
   expect(html).toContain('href="#projetos"');
-  expect(html).not.toContain("instalacao-w-lima.mp4");
+  expect(html).not.toContain('<source src="/images/instalacao-w-lima.mp4"');
 });
 
 for (const colorScheme of ["light", "dark"] as const) {

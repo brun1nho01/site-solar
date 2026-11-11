@@ -5,7 +5,8 @@ import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Política de Privacidade",
-  description: "Saiba como a W. Lima Soluções trata os dados do formulário e dos canais de atendimento.",
+  description:
+    "Saiba como a W. Lima Soluções trata os dados pessoais informados no formulário de análise solar, no atendimento via WhatsApp e nos cookies (LGPD).",
   path: "/privacidade",
 });
 

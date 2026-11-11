@@ -40,6 +40,11 @@ const nextConfig: NextConfig = {
         { key: "X-Frame-Options", value: "DENY" },
         /* Controla o que é enviado no header Referer */
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        /* Força HTTPS em todo o domínio e subdomínios */
+        {
+          key: "Strict-Transport-Security",
+          value: "max-age=63072000; includeSubDomains; preload",
+        },
         /* Relata violações sem bloquear integrações durante a homologação */
         {
           key: "Content-Security-Policy-Report-Only",

@@ -66,7 +66,7 @@ export default function HeroSection() {
             </h1>
 
             <p className="hero-description text-lg sm:text-xl text-navy-700 dark:text-text-secondary max-w-xl mx-auto lg:mx-0 mb-10">
-              Descubra o potencial de economia do seu imóvel com um projeto solar dimensionado para o seu consumo e para as condições do local.
+              Projetos de energia solar em Cambuci e no RJ para residências, empresas e áreas rurais, dimensionados para o seu consumo.
             </p>
 
             <div className="hero-actions flex flex-wrap items-center justify-center gap-x-4 gap-y-2 lg:justify-start">
